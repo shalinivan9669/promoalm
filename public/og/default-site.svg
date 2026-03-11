@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#111317"/>
+  <rect x="54" y="54" width="1092" height="522" rx="32" fill="#161A1F" stroke="#2A313C"/>
+  <path d="M98 174h112l189 280H287L98 174Z" fill="#EDF1F6"/>
+  <path d="M297 174h92v280h-92z" fill="#8CC8FF"/>
+  <text x="470" y="260" fill="#EDF1F6" font-family="Arial, sans-serif" font-size="58" font-weight="700">
+    Neon Market
+  </text>
+  <text x="470" y="336" fill="#9EA8B7" font-family="Arial, sans-serif" font-size="30">
+    Световые и фасадные вывески для бизнеса
+  </text>
+  <text x="470" y="392" fill="#9EA8B7" font-family="Arial, sans-serif" font-size="24">
+    Казахстан • макет • производство • монтаж
+  </text>
+</svg>

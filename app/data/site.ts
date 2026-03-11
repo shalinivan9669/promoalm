@@ -1,0 +1,233 @@
+import type {
+  AboutPageData,
+  ContactInfo,
+  HomePageData,
+  SeoMetaInput,
+  SiteConfig,
+  TrustStat
+} from "../../shared/types/content";
+
+export const siteConfig: SiteConfig = {
+  brandName: "Neon Market",
+  publicName: "Neon Market",
+  defaultTitleSuffix: "Neon Market",
+  baseDescription: "Световые и фасадные вывески для бизнеса по Казахстану: макет, производство, доставка и монтаж.",
+  primaryCity: "Казахстан",
+  coverage: "Работаем по всему Казахстану",
+  minOrder: "от 100 000 ₸",
+  leadTime: "3–7 дней",
+  warranty: "1 год",
+  prepayment: "50% после согласования макета",
+  urgentOrders: "Срочные заказы возможны за доплату",
+  designOffer: "Бесплатный дизайн-макет перед запуском"
+};
+
+export const contactInfo: ContactInfo = {
+  brandName: "Neon Market",
+  publicName: "Neon Market",
+  shortDescription: "Производитель световых и фасадных вывесок для бизнеса по Казахстану.",
+  serviceArea: "Казахстан",
+  minOrder: "Минимальный заказ от 100 000 ₸",
+  leadTime: "Стандартный срок 3–7 дней",
+  warranty: "Гарантия 1 год",
+  prepayment: "Предоплата 50% после макета",
+  designOffer: "Бесплатный дизайн-макет",
+  channels: [
+    {
+      type: "whatsapp",
+      label: "WhatsApp",
+      value: "Подставьте номер в app/data/site.ts",
+      note: "До подключения номера используйте форму расчёта.",
+      available: false,
+      evidenceLevel: "placeholder"
+    },
+    {
+      type: "phone",
+      label: "Телефон",
+      value: "Подставьте номер в app/data/site.ts",
+      note: "Колл-трекинг и финальный номер подключаются перед запуском.",
+      available: false,
+      evidenceLevel: "placeholder"
+    },
+    {
+      type: "email",
+      label: "Email",
+      value: "Подставьте email в app/data/site.ts",
+      note: "Используйте для входящих запросов и документов.",
+      available: false,
+      evidenceLevel: "placeholder"
+    },
+    {
+      type: "form",
+      label: "Форма расчёта",
+      value: "Самый короткий путь на старте",
+      href: "/kontakty/#lead-form",
+      note: "Подходит для новых проектов, сетей и удалённых заказов.",
+      available: true,
+      evidenceLevel: "confirmed"
+    }
+  ],
+  addressEvidenceLevel: "hidden",
+  legalNote: "Реквизиты, рабочее время и юридический блок добавьте после подтверждения у владельца."
+};
+
+export const globalTrustStats: TrustStat[] = [
+  {
+    label: "Минимальный заказ",
+    value: "100 000 ₸",
+    note: "Ниже этого порога проект в производство не ставим.",
+    evidenceLevel: "confirmed",
+    sourceType: "business-brief"
+  },
+  {
+    label: "Срок запуска",
+    value: "3–7 дней",
+    note: "После макета и предоплаты по стандартным задачам.",
+    evidenceLevel: "confirmed",
+    sourceType: "business-brief"
+  },
+  {
+    label: "Гарантия",
+    value: "1 год",
+    note: "На согласованный объём работ и комплектующие.",
+    evidenceLevel: "confirmed",
+    sourceType: "business-brief"
+  },
+  {
+    label: "Формат работы",
+    value: "Онлайн + монтаж",
+    note: "Можно согласовать проект дистанционно и отдельно утвердить установку.",
+    evidenceLevel: "confirmed",
+    sourceType: "business-brief"
+  }
+];
+
+export const staticPageMeta: Record<"home" | "about" | "contacts" | "cases", SeoMetaInput> = {
+  home: {
+    title: "Световые и фасадные вывески для бизнеса по Казахстану | Neon Market",
+    description: "Производство световых и фасадных вывесок для бизнеса по Казахстану: макет, изготовление, доставка, монтаж и rollout для сетей.",
+    path: "/"
+  },
+  about: {
+    title: "О компании и подходе к вывескам | Neon Market",
+    description: "Как Neon Market работает как подрядчик: бриф, макет, производство, монтаж и проекты для нескольких точек по Казахстану.",
+    path: "/o-kompanii/"
+  },
+  contacts: {
+    title: "Контакты и заявка на расчёт | Neon Market",
+    description: "Контакты, каналы связи и короткая форма заявки на фасадные и световые вывески для бизнеса по Казахстану.",
+    path: "/kontakty/"
+  },
+  cases: {
+    title: "Кейсы и типовые сценарии по вывескам | Neon Market",
+    description: "Типовые сценарии по фасадным вывескам, световым коробам, буквам, сетям и удалённым заказам по Казахстану.",
+    path: "/cases/"
+  }
+};
+
+export const homePageData: HomePageData = {
+  hero: {
+    eyebrow: "Производство и монтаж по Казахстану",
+    title: "Световые и фасадные вывески для бизнеса без хаоса в подрядчике",
+    description:
+      "Берём проект целиком: бриф, макет, производство, доставку и монтаж. Работаем с фасадами, объёмными буквами, световыми коробами, крышными установками и rollout для сетей.",
+    facts: ["Минимальный заказ от 100 000 ₸", "Стандартный срок 3–7 дней", "Предоплата 50% после согласования макета"],
+    actions: [
+      {
+        label: "Рассчитать проект",
+        href: "/kontakty/#lead-form",
+        intent: "calculate",
+        trackingEvent: "click_calculate"
+      },
+      {
+        label: "Смотреть кейсы",
+        href: "/cases/",
+        intent: "secondary",
+        trackingEvent: "open_case"
+      }
+    ],
+    note: "Интерьерный неон делаем для коммерческих помещений. Для улицы считаем отдельные наружные решения."
+  },
+  intro:
+    "Сайт не про декоративный неон ради неона. Основной фокус здесь — вывески, которые работают на точку, читаются с улицы и выдерживают нормальный производственный процесс.",
+  industries: ["Компьютерные клубы", "Кафе и рестораны", "Сервисные компании", "Подрядчики и оформители", "Сети и несколько точек"],
+  pricingSummary: [
+    {
+      title: "Что влияет на расчёт",
+      text: "Размер, тип конструкции, подсветка, материалы, крепление, логистика и монтаж.",
+      emphasis: "Фиксированной цены без вводных нет."
+    },
+    {
+      title: "Когда можно считать быстро",
+      text: "Если есть фото точки, примерные размеры, логотип и понимание, нужна ли установка.",
+      emphasis: "Удалённые расчёты собираем без лишних созвонов."
+    }
+  ],
+  deliveryHighlights: [
+    "Согласование можно пройти полностью онлайн.",
+    "Отгрузку по Казахстану считаем под город и тип конструкции.",
+    "Монтаж согласуем отдельно: по доступу, графику и креплению."
+  ],
+  finalCta: {
+    label: "Получить расчёт",
+    href: "/kontakty/#lead-form",
+    intent: "primary",
+    trackingEvent: "click_calculate",
+    note: "Приложите фото объекта и краткую задачу."
+  }
+};
+
+export const aboutPageData: AboutPageData = {
+  hero: {
+    eyebrow: "О подрядчике",
+    title: "Neon Market ведёт проект от макета до монтажа, а не продаёт случайные изделия",
+    description:
+      "Сильнее всего мы работаем там, где нужен контролируемый результат: фасады, световые конструкции, repeatable quality для нескольких точек и понятная логистика по Казахстану.",
+    facts: ["Бесплатный дизайн-макет", "Монтаж и замер по согласованию", "Подходит для сетей и региональных заказов"],
+    actions: [
+      {
+        label: "Обсудить задачу",
+        href: "/kontakty/#lead-form",
+        intent: "primary",
+        trackingEvent: "submit_lead_form"
+      },
+      {
+        label: "Открыть услуги",
+        href: "/#services",
+        intent: "secondary"
+      }
+    ]
+  },
+  summary:
+    "Нам ближе производственный подход, чем рекламная болтовня. Сначала фиксируем задачу, потом показываем макет, считаем конструкцию и только после этого запускаем изготовление.",
+  strengths: [
+    "Фасадные и световые вывески для бизнеса",
+    "Тиражные и многоточечные заказы",
+    "Удалённое согласование по Казахстану",
+    "Монтаж по графику и по согласованному объекту"
+  ],
+  workPrinciples: [
+    {
+      title: "Брифуем задачу без лишнего шума",
+      description: "Сначала понимаем, где будет конструкция, как она должна работать и есть ли ограничения по объекту."
+    },
+    {
+      title: "Показываем макет до запуска",
+      description: "Бесплатный дизайн-макет снимает базовые вопросы по виду, масштабу и читаемости."
+    },
+    {
+      title: "Не обещаем уличный неон там, где он не нужен",
+      description: "Интерьерные решения и фасадные конструкции — это разные сценарии с разной эксплуатацией."
+    },
+    {
+      title: "Считаем логистику отдельно от красивых слов",
+      description: "Если проект едет в другой город или на несколько точек, это сразу попадает в расчёт и график."
+    }
+  ],
+  finalCta: {
+    label: "Запросить проект",
+    href: "/kontakty/#lead-form",
+    intent: "primary",
+    trackingEvent: "click_calculate"
+  }
+};

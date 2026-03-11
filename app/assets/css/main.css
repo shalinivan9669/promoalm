@@ -1,0 +1,107 @@
+@import "@fontsource/manrope/500.css";
+@import "@fontsource/manrope/600.css";
+@import "@fontsource/manrope/700.css";
+@import "@fontsource/manrope/800.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "Consolas", monospace;
+
+  --color-canvas: #111317;
+  --color-canvas-soft: #171a20;
+  --color-panel: #161a1f;
+  --color-panel-strong: #1b2128;
+  --color-line: #2a313c;
+  --color-line-strong: #394250;
+  --color-ink: #edf1f6;
+  --color-muted: #9ea8b7;
+  --color-accent: #8cc8ff;
+  --color-accent-soft: #a6d5ff;
+  --color-success: #86d39a;
+  --color-danger: #ff8f8f;
+
+  --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.32);
+  --radius-4xl: 2rem;
+}
+
+@layer base {
+  * {
+    @apply border-line;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-ink;
+    background-image:
+      radial-gradient(circle at top, rgba(140, 200, 255, 0.08), transparent 28%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent 24%);
+  }
+
+  ::selection {
+    background: rgba(140, 200, 255, 0.22);
+    color: #ffffff;
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    @apply outline-none;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply ring-2 ring-accent ring-offset-2 ring-offset-canvas;
+  }
+}
+
+@layer components {
+  .site-shell {
+    @apply mx-auto w-full max-w-[1200px] px-5 sm:px-6 lg:px-8;
+  }
+
+  .section-space {
+    @apply py-16 sm:py-20 lg:py-28;
+  }
+
+  .section-divider {
+    @apply border-t border-line/80;
+  }
+
+  .surface {
+    @apply rounded-4xl border border-line bg-panel shadow-soft;
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-full border border-line bg-white/3 px-3 py-1 text-xs font-medium tracking-[0.02em] text-muted;
+  }
+
+  .eyebrow {
+    @apply font-mono text-[11px] uppercase tracking-[0.28em] text-accent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
