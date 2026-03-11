@@ -5,7 +5,6 @@ import { getCasesByIds } from "../../utils/links";
 import { buildBreadcrumbSchema, buildFaqSchema, buildServiceSchema } from "../../utils/schema";
 
 const route = useRoute();
-const analytics = useAnalytics();
 const slug = route.params.slug as string;
 const page = services.find((item) => item.slug === slug && item.status === "published");
 
@@ -27,12 +26,6 @@ usePageSeo({
   meta: page.meta,
   breadcrumbs,
   schemas
-});
-
-onMounted(() => {
-  analytics.track("open_service_page", {
-    slug: page.slug
-  });
 });
 </script>
 

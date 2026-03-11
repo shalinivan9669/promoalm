@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { cases } from "../data/cases";
 import { homeFaqs } from "../data/faqs";
-import { serviceCards } from "../data/services";
+import { serviceCards } from "../data/service-summaries";
 import { aboutPageData, contactInfo, globalTrustStats, homePageData, staticPageMeta } from "../data/site";
 import { buildCollectionPageSchema, buildLocalBusinessSchema, buildOrganizationSchema } from "../utils/schema";
 
 const config = useRuntimeConfig();
 const siteUrl = config.public.siteUrl as string;
-const publishedServiceCards = computed(() => serviceCards.filter((item) => item.status === "published"));
-const featuredCases = computed(() => cases.filter((item) => item.status === "published").slice(0, 3));
+const publishedServiceCards = serviceCards.filter((item) => item.status === "published");
+const featuredCases = cases.filter((item) => item.status === "published").slice(0, 3);
 const schemas = [
   buildOrganizationSchema(siteUrl, contactInfo),
   buildLocalBusinessSchema(siteUrl, contactInfo),
-  buildCollectionPageSchema(siteUrl, "Кейсы", "Типовые сценарии по вывескам для бизнеса.", featuredCases.value)
+  buildCollectionPageSchema(siteUrl, "Кейсы", "Типовые сценарии по вывескам для бизнеса.", featuredCases)
 ].filter(Boolean) as Record<string, unknown>[];
 
 usePageSeo({

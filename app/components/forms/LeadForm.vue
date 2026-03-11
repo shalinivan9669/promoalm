@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { serviceCards } from "../../data/services";
+import type { LeadApiError } from "~~/shared/types/lead";
+import { serviceCards } from "../../data/service-summaries";
 
 const props = withDefaults(
   defineProps<{
@@ -15,7 +16,15 @@ const props = withDefaults(
   }
 );
 
-const taskOptions = computed(() => [
+const route = useRoute();
+const startedAt = Date.now();
+const leadStatus = Array.isArray(route.query.leadStatus) ? route.query.leadStatus[0] : route.query.leadStatus;
+const leadReason = Array.isArray(route.query.leadReason) ? route.query.leadReason[0] : route.query.leadReason;
+const isSuccess = leadStatus === "success";
+const showTaskType = !props.presetTaskType;
+const showLocationsCount = props.showLocations || !props.presetTaskType;
+
+const taskOptions = [
   { label: "Общий запрос", value: "Общий запрос" },
   ...serviceCards
     .filter((item) => item.status === "published")
@@ -23,7 +32,7 @@ const taskOptions = computed(() => [
       label: item.title,
       value: item.title
     }))
-]);
+];
 
 const cityOptions = [
   { label: "Не указывать", value: "" },
@@ -33,18 +42,22 @@ const cityOptions = [
   { label: "Другой город", value: "Другой город" }
 ];
 
-const { form, errors, status, errorMessage, successMessage, submit, resetForm } = useLeadForm({
-  sourcePage: props.sourcePage,
-  presetTaskType: props.presetTaskType || undefined,
-  presetCity: props.presetCity || undefined
-});
+const errorMessages: Record<LeadApiError["reason"], string> = {
+  validation: "Проверьте поля формы и попробуйте ещё раз.",
+  honeypot: "Заявка отклонена. Попробуйте ещё раз без автозаполнения скрытых полей.",
+  "too-fast": "Форма отправлена слишком быстро. Проверьте данные и попробуйте ещё раз.",
+  "rate-limit": "Слишком много заявок с одного адреса. Попробуйте позже.",
+  duplicate: "Похожая заявка уже была отправлена недавно. Если задача изменилась, отправьте обновлённые данные.",
+  origin: "Не удалось подтвердить источник заявки. Попробуйте отправить форму заново.",
+  agent: "Автоматические запросы отключены. Отправьте заявку вручную."
+};
 
-const showTaskType = computed(() => !props.presetTaskType);
-const showLocationsCount = computed(() => props.showLocations || /сети|сеть/i.test(form.taskType));
-
-async function handleSubmit() {
-  await submit();
-}
+const errorMessage =
+  leadStatus === "error" && leadReason && leadReason in errorMessages
+    ? errorMessages[leadReason as LeadApiError["reason"]]
+    : leadStatus === "error"
+      ? errorMessages.validation
+      : "";
 </script>
 
 <template>
@@ -53,15 +66,17 @@ async function handleSubmit() {
     class="surface p-6 sm:p-8"
   >
     <div
-      v-if="status === 'success'"
+      v-if="isSuccess"
       class="flex flex-col gap-4"
     >
       <p class="eyebrow">Заявка принята</p>
       <h3 class="text-2xl font-semibold text-white">
-        {{ successMessage }}
+        Заявка принята. Следующий шаг: уточнение проекта и расчёт.
       </h3>
       <p class="text-sm leading-6 text-muted">
-        Если номер для WhatsApp и телефона ещё не подключён, ответ пойдёт по каналу, который владелец добавит перед запуском. Для боевого запуска замените placeholder-контакты в `app/data/site.ts`.
+        Если прямой номер для WhatsApp и телефона ещё не подключён, ответ придёт по рабочему каналу,
+        который владелец добавит перед запуском. Для боевого запуска замените placeholder-контакты в
+        `app/data/site.ts`.
       </p>
       <div class="flex flex-wrap gap-3">
         <ButtonLink
@@ -69,43 +84,58 @@ async function handleSubmit() {
           label="Смотреть кейсы"
           intent="secondary"
         />
-        <button
-          type="button"
-          class="inline-flex items-center rounded-full border border-line px-5 py-3 text-sm font-semibold text-white transition hover:border-accent hover:text-accent"
-          @click="resetForm"
-        >
-          Отправить ещё одну заявку
-        </button>
+        <ButtonLink
+          href="/kontakty/#lead-form"
+          label="Отправить ещё одну заявку"
+          intent="primary"
+        />
       </div>
     </div>
 
     <form
       v-else
+      action="/api/lead"
+      method="post"
       class="grid gap-5"
-      @submit.prevent="handleSubmit"
     >
+      <input
+        type="hidden"
+        name="sourcePage"
+        :value="sourcePage"
+      >
+      <input
+        type="hidden"
+        name="startedAt"
+        :value="startedAt"
+      >
+
       <div class="grid gap-5 md:grid-cols-2">
         <FormField
           label="Имя или компания"
-          :error="errors.name"
           required
         >
           <InputField
-            v-model="form.name"
+            name="name"
             autocomplete="name"
             placeholder="Например, Арман / Coffee Point"
+            required
+            minlength="2"
+            maxlength="120"
           />
         </FormField>
 
         <FormField
           label="Телефон или WhatsApp"
-          :error="errors.contact"
           required
         >
           <InputField
-            v-model="form.contact"
+            name="contact"
             autocomplete="tel"
+            inputmode="tel"
             placeholder="+7 7XX XXX XX XX"
+            required
+            minlength="6"
+            maxlength="40"
           />
         </FormField>
       </div>
@@ -114,20 +144,18 @@ async function handleSubmit() {
         <FormField
           label="Город"
           hint="Можно не указывать, если вы уже на странице города."
-          :error="errors.city"
         >
           <SelectField
-            v-model="form.city"
+            name="city"
             :options="cityOptions"
+            :model-value="presetCity"
           />
         </FormField>
 
-        <FormField
-          label="Предпочтительный канал"
-          :error="errors.preferredChannel"
-        >
+        <FormField label="Предпочтительный канал">
           <SelectField
-            v-model="form.preferredChannel"
+            name="preferredChannel"
+            model-value="whatsapp"
             :options="[
               { label: 'WhatsApp', value: 'whatsapp' },
               { label: 'Телефон', value: 'phone' }
@@ -139,45 +167,60 @@ async function handleSubmit() {
       <FormField
         v-if="showTaskType"
         label="Тип задачи"
-        :error="errors.taskType"
       >
         <SelectField
-          v-model="form.taskType"
+          name="taskType"
+          model-value="Общий запрос"
           :options="taskOptions"
         />
       </FormField>
+      <input
+        v-else
+        type="hidden"
+        name="taskType"
+        :value="presetTaskType"
+      >
 
       <FormField
         label="Коротко о задаче"
-        :error="errors.message"
         required
       >
         <TextareaField
-          v-model="form.message"
+          name="message"
           placeholder="Что нужно сделать, для какого объекта, какой город и нужен ли монтаж."
+          required
+          minlength="12"
+          maxlength="2000"
         />
       </FormField>
 
       <FormField
         v-if="showLocationsCount"
         label="Количество точек"
-        hint="Показываем это поле только для сетевых сценариев."
-        :error="errors.locationsCount"
+        hint="Заполните, только если проект сетевой или адресов несколько."
       >
         <InputField
-          v-model="form.locationsCount as unknown as string"
+          name="locationsCount"
           type="number"
+          inputmode="numeric"
           placeholder="Например, 5"
+          min="2"
+          max="500"
         />
       </FormField>
 
-      <CheckboxField v-model="form.needsInstallation">
-        Нужен монтаж или установка по объекту
-      </CheckboxField>
+      <label class="flex items-start gap-3 rounded-3xl border border-line bg-canvas-soft px-4 py-3 text-sm text-white">
+        <input
+          type="checkbox"
+          name="needsInstallation"
+          class="mt-1 h-4 w-4 rounded border-line bg-canvas-soft"
+        >
+        <span>Нужен монтаж или установка по объекту</span>
+      </label>
 
       <input
-        v-model="form.hp"
         type="text"
+        name="hp"
         tabindex="-1"
         autocomplete="off"
         class="hidden"
@@ -187,24 +230,23 @@ async function handleSubmit() {
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
         <button
           type="submit"
-          class="inline-flex items-center justify-center rounded-full bg-accent px-5 py-3 text-sm font-semibold text-canvas transition hover:bg-accent-soft disabled:cursor-not-allowed disabled:opacity-60"
-          :disabled="status === 'loading'"
+          class="inline-flex items-center justify-center rounded-full bg-accent px-5 py-3 text-sm font-semibold text-canvas transition hover:bg-accent-soft"
         >
-          {{ status === "loading" ? "Отправляем..." : "Отправить заявку" }}
+          Отправить заявку
         </button>
         <p class="text-xs leading-5 text-muted">
           Отправляя заявку, вы соглашаетесь с
-          <NuxtLink
-            to="/politika-konfidentsialnosti/"
+          <a
+            href="/politika-konfidentsialnosti/"
             class="text-white underline decoration-line underline-offset-4"
           >
             политикой обработки данных
-          </NuxtLink>.
+          </a>.
         </p>
       </div>
 
       <p
-        v-if="status === 'error'"
+        v-if="errorMessage"
         class="text-sm text-danger"
       >
         {{ errorMessage }}

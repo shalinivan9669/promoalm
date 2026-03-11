@@ -16,9 +16,6 @@ const props = withDefaults(
   }
 );
 
-const analytics = useAnalytics();
-const isExternal = computed(() => props.external || /^(https?:\/\/|mailto:|tel:)/.test(props.href));
-
 const classes = computed(() => {
   const base =
     "inline-flex items-center justify-center rounded-full font-semibold transition focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas";
@@ -35,33 +32,15 @@ const classes = computed(() => {
 
   return `${base} ${size} ${intentMap[props.intent]}${width}`;
 });
-
-function handleClick() {
-  if (props.trackingEvent) {
-    analytics.track(props.trackingEvent as never, {
-      href: props.href
-    });
-  }
-}
 </script>
 
 <template>
   <a
-    v-if="isExternal"
     :href="href"
     :class="classes"
     :target="external ? '_blank' : undefined"
     :rel="external ? 'noreferrer' : undefined"
-    @click="handleClick"
   >
     <slot>{{ label }}</slot>
   </a>
-  <NuxtLink
-    v-else
-    :to="href"
-    :class="classes"
-    @click="handleClick"
-  >
-    <slot>{{ label }}</slot>
-  </NuxtLink>
 </template>

@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { primaryNavigation } from "../../data/navigation";
-
-const menuOpen = ref(false);
 </script>
 
 <template>
-  <header class="sticky top-0 z-40 border-b border-line/70 bg-canvas/88 backdrop-blur-xl">
-    <Container class="flex items-center justify-between gap-6 py-4">
-      <NuxtLink
-        to="/"
+  <header class="sticky top-0 z-40 border-b border-line/70 bg-canvas/96">
+    <Container class="relative flex items-center justify-between gap-6 py-4">
+      <a
+        href="/"
         class="flex items-center gap-3"
       >
         <span class="flex h-11 w-11 items-center justify-center rounded-2xl border border-line bg-panel text-lg font-semibold text-white">
@@ -18,17 +16,17 @@ const menuOpen = ref(false);
           <span class="text-sm font-semibold text-white">Neon Market</span>
           <span class="text-xs text-muted">Вывески для бизнеса</span>
         </span>
-      </NuxtLink>
+      </a>
 
       <nav class="hidden items-center gap-6 lg:flex">
-        <NuxtLink
+        <a
           v-for="item in primaryNavigation"
           :key="item.href"
-          :to="item.href"
+          :href="item.href"
           class="text-sm text-muted transition hover:text-white"
         >
           {{ item.label }}
-        </NuxtLink>
+        </a>
       </nav>
 
       <div class="hidden lg:block">
@@ -41,38 +39,34 @@ const menuOpen = ref(false);
         />
       </div>
 
-      <button
-        type="button"
-        class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line text-white lg:hidden"
-        aria-label="Открыть меню"
-        @click="menuOpen = !menuOpen"
-      >
-        <span class="font-mono text-sm">{{ menuOpen ? "×" : "≡" }}</span>
-      </button>
-    </Container>
-
-    <div
-      v-if="menuOpen"
-      class="border-t border-line lg:hidden"
-    >
-      <Container class="flex flex-col gap-3 py-4">
-        <NuxtLink
-          v-for="item in primaryNavigation"
-          :key="item.href"
-          :to="item.href"
-          class="rounded-2xl border border-line bg-panel px-4 py-3 text-sm text-white"
-          @click="menuOpen = false"
+      <details class="group lg:hidden">
+        <summary
+          class="flex h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-full border border-line px-3 text-white marker:hidden"
+          aria-label="Открыть меню"
         >
-          {{ item.label }}
-        </NuxtLink>
-        <ButtonLink
-          href="/kontakty/#lead-form"
-          label="Рассчитать проект"
-          intent="calculate"
-          tracking-event="click_calculate"
-          block
-        />
-      </Container>
-    </div>
+          <span class="font-mono text-sm group-open:hidden">≡</span>
+          <span class="hidden font-mono text-sm group-open:block">×</span>
+        </summary>
+        <div class="absolute right-5 top-full mt-3 w-[min(22rem,calc(100vw-2.5rem))] rounded-4xl border border-line bg-panel p-4 shadow-soft">
+          <nav class="flex flex-col gap-3">
+            <a
+              v-for="item in primaryNavigation"
+              :key="item.href"
+              :href="item.href"
+              class="rounded-2xl border border-line bg-canvas-soft px-4 py-3 text-sm text-white"
+            >
+              {{ item.label }}
+            </a>
+            <ButtonLink
+              href="/kontakty/#lead-form"
+              label="Рассчитать проект"
+              intent="calculate"
+              tracking-event="click_calculate"
+              block
+            />
+          </nav>
+        </div>
+      </details>
+    </Container>
   </header>
 </template>

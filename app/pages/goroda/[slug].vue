@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { cases } from "../../data/cases";
 import { cities } from "../../data/cities";
-import { serviceCards } from "../../data/services";
+import { serviceCards } from "../../data/service-summaries";
+import { contactInfo } from "../../data/site";
 import { getCasesByIds, getServiceCardsBySlugs } from "../../utils/links";
 import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationSchema, buildServiceSchema } from "../../utils/schema";
-import { contactInfo } from "../../data/site";
 
 const route = useRoute();
-const analytics = useAnalytics();
 const slug = route.params.slug as string;
 const page = cities.find((item) => item.slug === slug && item.status === "published");
 
@@ -31,12 +30,6 @@ usePageSeo({
   meta: page.meta,
   breadcrumbs,
   schemas
-});
-
-onMounted(() => {
-  analytics.track("open_city_page", {
-    slug: page.slug
-  });
 });
 </script>
 

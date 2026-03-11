@@ -17,13 +17,13 @@ defineProps<{
         :key="item.href"
         class="flex items-center gap-2"
       >
-        <NuxtLink
+        <a
           v-if="!item.current"
-          :to="item.href"
+          :href="item.href"
           class="transition hover:text-white"
         >
           {{ item.label }}
-        </NuxtLink>
+        </a>
         <span
           v-else
           class="text-white"

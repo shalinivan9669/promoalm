@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { footerNavigation } from "../../data/navigation";
 import { contactInfo } from "../../data/site";
+
+const currentYear = new Date().getFullYear();
 </script>
 
 <template>
@@ -9,7 +11,8 @@ import { contactInfo } from "../../data/site";
       <div class="max-w-sm">
         <p class="text-xl font-semibold text-white">Neon Market</p>
         <p class="mt-4 text-sm leading-6 text-muted">
-          Производитель световых и фасадных вывесок для бизнеса по Казахстану: макет, производство, доставка и монтаж.
+          Производитель световых и фасадных вывесок для бизнеса по Казахстану: макет, производство,
+          доставка и монтаж.
         </p>
         <ul class="mt-6 space-y-2 text-sm text-muted">
           <li>{{ contactInfo.minOrder }}</li>
@@ -25,12 +28,12 @@ import { contactInfo } from "../../data/site";
             v-for="item in footerNavigation.services"
             :key="item.href"
           >
-            <NuxtLink
-              :to="item.href"
+            <a
+              :href="item.href"
               class="text-sm text-muted transition hover:text-white"
             >
               {{ item.label }}
-            </NuxtLink>
+            </a>
           </li>
         </ul>
       </div>
@@ -42,12 +45,12 @@ import { contactInfo } from "../../data/site";
             v-for="item in footerNavigation.support"
             :key="item.href"
           >
-            <NuxtLink
-              :to="item.href"
+            <a
+              :href="item.href"
               class="text-sm text-muted transition hover:text-white"
             >
               {{ item.label }}
-            </NuxtLink>
+            </a>
           </li>
         </ul>
       </div>
@@ -59,25 +62,25 @@ import { contactInfo } from "../../data/site";
             v-for="item in footerNavigation.cities"
             :key="item.href"
           >
-            <NuxtLink
-              :to="item.href"
+            <a
+              :href="item.href"
               class="text-sm text-muted transition hover:text-white"
             >
               {{ item.label }}
-            </NuxtLink>
+            </a>
           </li>
         </ul>
       </div>
     </Container>
 
     <Container class="mt-12 flex flex-col gap-4 border-t border-line pt-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
-      <p>© {{ new Date().getFullYear() }} Neon Market. {{ contactInfo.legalNote }}</p>
-      <NuxtLink
-        to="/politika-konfidentsialnosti/"
+      <p>© {{ currentYear }} Neon Market. {{ contactInfo.legalNote }}</p>
+      <a
+        href="/politika-konfidentsialnosti/"
         class="transition hover:text-white"
       >
         Политика конфиденциальности
-      </NuxtLink>
+      </a>
     </Container>
   </footer>
 </template>

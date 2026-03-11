@@ -9,10 +9,10 @@ export const leadFormSchema = z.object({
   message: z.string().trim().min(12, "Коротко опишите задачу.").max(2000),
   preferredChannel: z.enum(["phone", "whatsapp"]).optional(),
   locationsCount: z.coerce.number().int().min(2).max(500).optional(),
-  needsInstallation: z.boolean().optional(),
+  needsInstallation: z.coerce.boolean().optional(),
   taskType: z.string().trim().min(2).max(120),
   sourcePage: z.string().trim().min(1).max(240),
-  startedAt: z.number().int().positive(),
+  startedAt: z.coerce.number().int().positive(),
   hp: z.string().max(0).optional().or(z.literal(""))
 }) satisfies z.ZodType<LeadFormData>;
 

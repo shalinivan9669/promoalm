@@ -1,14 +1,10 @@
-@import "@fontsource/manrope/500.css";
-@import "@fontsource/manrope/600.css";
-@import "@fontsource/manrope/700.css";
-@import "@fontsource/manrope/800.css";
-@import "@fontsource/jetbrains-mono/500.css";
-@import "@fontsource/jetbrains-mono/700.css";
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Manrope", "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", "Consolas", monospace;
+  --font-sans:
+    "Segoe UI", "Segoe UI Variable", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --font-mono:
+    "Cascadia Mono", "SFMono-Regular", "Consolas", "Liberation Mono", "Courier New", monospace;
 
   --color-canvas: #111317;
   --color-canvas-soft: #171a20;
@@ -23,7 +19,7 @@
   --color-success: #86d39a;
   --color-danger: #ff8f8f;
 
-  --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.32);
+  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.22);
   --radius-4xl: 2rem;
 }
 
@@ -32,15 +28,11 @@
     @apply border-line;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
-
   body {
     @apply bg-canvas font-sans text-ink;
     background-image:
-      radial-gradient(circle at top, rgba(140, 200, 255, 0.08), transparent 28%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent 24%);
+      radial-gradient(circle at top, rgba(140, 200, 255, 0.06), transparent 24%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent 22%);
   }
 
   ::selection {
@@ -92,10 +84,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {

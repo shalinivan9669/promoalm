@@ -2,41 +2,17 @@
 import { contactInfo } from "../../data/site";
 
 const route = useRoute();
-const globalSuccess = useState<boolean>("lead-form-success", () => false);
-const hasFocusedField = ref(false);
-
-const whatsappChannel = computed(() => contactInfo.channels.find((item) => item.type === "whatsapp"));
-const phoneChannel = computed(() => contactInfo.channels.find((item) => item.type === "phone"));
-
-const whatsappHref = computed(() => whatsappChannel.value?.available && whatsappChannel.value.href ? whatsappChannel.value.href : "/kontakty/#lead-form");
-const callHref = computed(() => phoneChannel.value?.available && phoneChannel.value.href ? phoneChannel.value.href : "/kontakty/#lead-form");
-
-const hidden = computed(() => globalSuccess.value || hasFocusedField.value || route.path.startsWith("/politika-konfidentsialnosti"));
-
-function updateFocusState(event: FocusEvent) {
-  const target = event.target as HTMLElement | null;
-  hasFocusedField.value = Boolean(target && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) && window.innerHeight < 760);
-}
-
-function clearFocusState() {
-  hasFocusedField.value = false;
-}
-
-onMounted(() => {
-  window.addEventListener("focusin", updateFocusState);
-  window.addEventListener("focusout", clearFocusState);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("focusin", updateFocusState);
-  window.removeEventListener("focusout", clearFocusState);
-});
+const whatsappChannel = contactInfo.channels.find((item) => item.type === "whatsapp");
+const phoneChannel = contactInfo.channels.find((item) => item.type === "phone");
+const whatsappHref = whatsappChannel?.available && whatsappChannel.href ? whatsappChannel.href : "/kontakty/#lead-form";
+const callHref = phoneChannel?.available && phoneChannel.href ? phoneChannel.href : "/kontakty/#lead-form";
+const hidden = route.path.startsWith("/politika-konfidentsialnosti");
 </script>
 
 <template>
   <div
     v-if="!hidden"
-    class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas/95 px-3 py-3 backdrop-blur-xl lg:hidden"
+    class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas px-3 py-3 lg:hidden"
   >
     <div class="mx-auto grid max-w-xl grid-cols-3 gap-2">
       <ButtonLink
