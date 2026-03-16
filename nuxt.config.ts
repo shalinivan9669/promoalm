@@ -3,6 +3,9 @@ import tailwindcss from "@tailwindcss/vite";
 import { cities } from "./app/data/cities";
 import { services } from "./app/data/services";
 
+const nitroPreset = process.env.NITRO_PRESET || (process.env.VERCEL ? "vercel" : undefined);
+const shouldPrecompressPublicAssets = nitroPreset !== "vercel";
+
 const staticRoutes = [
   "/",
   "/o-kompanii/",
@@ -70,7 +73,11 @@ export default defineNuxtConfig({
     }
   },
   nitro: {
-    compressPublicAssets: true,
+    preset: nitroPreset,
+    // Vercel already negotiates compression at the edge. Shipping precompressed
+    // `.html.br` / `.html.gz` sidecars into the static output can be mis-served
+    // as downloadable artifacts instead of HTML documents.
+    compressPublicAssets: shouldPrecompressPublicAssets,
     prerender: {
       routes: staticRoutes
     }
