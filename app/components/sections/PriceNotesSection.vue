@@ -1,26 +1,38 @@
 <script setup lang="ts">
 import type { PriceNote } from "../../../shared/types/content";
 
-defineProps<{
-  title: string;
-  description: string;
-  notes: PriceNote[];
-}>();
+const props = withDefaults(
+  defineProps<{
+    title: string;
+    description: string;
+    notes: PriceNote[];
+    variant?: "default" | "home";
+  }>(),
+  {
+    variant: "default"
+  }
+);
 </script>
 
 <template>
-  <section class="section-divider section-space">
+  <section :class="props.variant === 'home' ? 'home-band-section' : 'section-divider section-space'">
     <Container>
       <SectionHeader
         eyebrow="Цена и расчёт"
         :title="title"
         :description="description"
       />
-      <div class="mt-8 grid gap-4 md:grid-cols-2">
+      <div
+        :class="
+          props.variant === 'home'
+            ? 'mt-8 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]'
+            : 'mt-8 grid gap-4 md:grid-cols-2'
+        "
+      >
         <article
           v-for="note in notes"
           :key="note.title"
-          class="surface p-6"
+          :class="props.variant === 'home' ? 'home-price-card' : 'surface p-6'"
         >
           <h3 class="text-lg font-semibold text-white">
             {{ note.title }}

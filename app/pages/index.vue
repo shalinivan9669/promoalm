@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cases } from "../data/cases";
-import { homeCityNavigation } from "../data/navigation";
+import { homeCityNavigation, serviceNavigation } from "../data/navigation";
 import { homeFaqs } from "../data/faqs";
 import { serviceCards } from "../data/service-summaries";
 import { aboutPageData, contactInfo, globalTrustStats, homePageData, staticPageMeta } from "../data/site";
@@ -10,6 +10,36 @@ const config = useRuntimeConfig();
 const siteUrl = config.public.siteUrl as string;
 const publishedServiceCards = serviceCards.filter((item) => item.status === "published");
 const featuredCases = cases.filter((item) => item.status === "published").slice(0, 3);
+const homeHero = {
+  ...homePageData.hero,
+  note: undefined
+};
+
+const heroQuickLinks = [
+  ...homeCityNavigation.slice(0, 3).map((item) => ({
+    label: item.label,
+    href: item.href
+  })),
+  ...[
+    { slug: "fasadnye-vyveski", label: "Фасадные" },
+    { slug: "svetovye-koroba", label: "Световые короба" },
+    { slug: "vyveski-dlya-seti", label: "Для сети" },
+    { slug: "vyveski-pod-klyuch", label: "Под ключ" },
+    { slug: "montazh-vyvesok", label: "Монтаж" }
+  ]
+    .map((item) => {
+      const match = serviceNavigation.find((service) => service.href.includes(`/${item.slug}/`));
+
+      return match
+        ? {
+            label: item.label,
+            href: match.href
+          }
+        : null;
+    })
+    .filter((item): item is { label: string; href: string } => Boolean(item))
+];
+
 const schemas = [
   buildOrganizationSchema(siteUrl, contactInfo),
   buildLocalBusinessSchema(siteUrl, contactInfo),
@@ -23,80 +53,70 @@ usePageSeo({
 </script>
 
 <template>
-  <div>
-    <HeroSection :hero="homePageData.hero" />
+  <div class="home-page">
+    <HeroSection
+      :hero="homeHero"
+      variant="home"
+      media-mode="abstract"
+      :quick-links="heroQuickLinks"
+    />
 
-    <Container>
-      <p class="max-w-3xl text-lg leading-8 text-muted">
-        {{ homePageData.intro }}
-      </p>
-      <nav
-        aria-label="Города обслуживания"
-        class="mt-6 flex flex-wrap items-center gap-3"
-      >
-        <span class="text-xs font-semibold uppercase tracking-[0.18em] text-white">Города</span>
-        <a
-          v-for="item in homeCityNavigation"
-          :key="item.href"
-          :href="item.href"
-          class="chip text-white transition hover:border-accent hover:text-white"
-        >
-          {{ item.label }}
-        </a>
-      </nav>
-    </Container>
-
-    <TrustStrip
-      title="Короткие факты"
-      description="Подтверждённые ограничения и условия, которые влияют на решение ещё до расчёта."
-      :items="globalTrustStats"
+    <HomeStatementSection
+      :statement="homePageData.intro"
+      :note="homePageData.hero.note"
+      :city-navigation="homeCityNavigation"
+      :trust-items="globalTrustStats"
+      :industries="homePageData.industries"
     />
 
     <ServiceGridSection
+      variant="home"
       title="Основные коммерческие страницы"
       description="Не распыляемся на всё подряд. В v1 собираем только те направления, где есть нормальный спрос и понятная производственная логика."
       :cards="publishedServiceCards"
     />
 
-    <IndustryListSection
-      title="Кому это особенно полезно"
-      description="Типичные клиенты, где важны управляемый подряд, сроки и repeatable quality."
-      :items="homePageData.industries"
-    />
+    <div class="home-confidence-band">
+      <CasePreviewSection
+        variant="home"
+        title="Что уже умеет proof layer"
+        description="Пока без вымышленных клиентов и адресов. Только типовые сценарии, близкие к реальным коммерческим задачам."
+        :cases="featuredCases"
+      />
 
-    <CasePreviewSection
-      title="Что уже умеет proof layer"
-      description="Пока без вымышленных клиентов и адресов. Только типовые сценарии, близкие к реальным коммерческим задачам."
-      :cases="featuredCases"
-    />
+      <ProcessSection
+        variant="home"
+        title="Как проходит заказ"
+        description="Базовый маршрут один: заявка, бриф, макет, согласование, предоплата, производство, доставка и монтаж."
+        :steps="aboutPageData.workPrinciples"
+      />
 
-    <ProcessSection
-      title="Как проходит заказ"
-      description="Базовый маршрут один: заявка, бриф, макет, согласование, предоплата, производство, доставка и монтаж."
-      :steps="aboutPageData.workPrinciples"
-    />
+      <PriceNotesSection
+        variant="home"
+        title="Как собирается цена"
+        description="На сайте нет фальшивого прайса. Есть честная логика расчёта и понятный порог входа."
+        :notes="homePageData.pricingSummary"
+      />
 
-    <PriceNotesSection
-      title="Как собирается цена"
-      description="На сайте нет фальшивого прайса. Есть честная логика расчёта и понятный порог входа."
-      :notes="homePageData.pricingSummary"
-    />
-
-    <ProofSection
-      title="Доставка, монтаж и удалённый запуск"
-      description="Сайт рассчитан на Казахстан, а не на один локальный офис и случайный самовывоз."
-      :bullets="homePageData.deliveryHighlights"
-      :secondary-items="['Онлайн-согласование', 'Срочность за доплату', 'Монтаж по согласованию']"
-      secondary-title="Что важно помнить"
-    />
+      <ProofSection
+        variant="home"
+        title="Доставка, монтаж и удалённый запуск"
+        description="Сайт рассчитан на Казахстан, а не на один локальный офис и случайный самовывоз."
+        :bullets="homePageData.deliveryHighlights"
+        :secondary-items="['Онлайн-согласование', 'Срочность за доплату', 'Монтаж по согласованию']"
+        secondary-title="Что важно помнить"
+      />
+    </div>
 
     <FaqSection
+      variant="home"
       title="Частые вопросы по старту проекта"
       description="Цена, сроки, предоплата, доставка, монтаж и разница между интерьером и улицей."
       :items="homeFaqs"
     />
 
     <FinalCtaSection
+      variant="home"
       title="Нужен расчёт по конкретной точке или по сети?"
       description="Отправьте фото объекта, размеры и краткое описание задачи. Если адресов несколько, напишите количество точек сразу."
       :cta="homePageData.finalCta"

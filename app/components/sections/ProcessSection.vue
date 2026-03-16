@@ -1,26 +1,39 @@
 <script setup lang="ts">
 import type { ProcessStep } from "../../../shared/types/content";
 
-defineProps<{
-  title: string;
-  description: string;
-  steps: ProcessStep[];
-}>();
+const props = withDefaults(
+  defineProps<{
+    title: string;
+    description: string;
+    steps: ProcessStep[];
+    variant?: "default" | "home";
+  }>(),
+  {
+    variant: "default"
+  }
+);
 </script>
 
 <template>
-  <section class="section-divider section-space">
+  <section :class="props.variant === 'home' ? 'home-band-section' : 'section-divider section-space'">
     <Container>
       <SectionHeader
         eyebrow="Процесс"
         :title="title"
         :description="description"
       />
-      <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+
+      <div
+        :class="
+          props.variant === 'home'
+            ? 'mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4'
+            : 'mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4'
+        "
+      >
         <article
           v-for="(step, index) in steps"
           :key="step.title"
-          class="surface p-6"
+          :class="props.variant === 'home' ? 'home-process-step' : 'surface p-6'"
         >
           <p class="eyebrow">Шаг {{ index + 1 }}</p>
           <h3 class="mt-4 text-lg font-semibold text-white">

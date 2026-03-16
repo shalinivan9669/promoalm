@@ -1,17 +1,29 @@
 <script setup lang="ts">
-defineProps<{
-  title: string;
-  description: string;
-  bullets: string[];
-  secondaryItems?: string[];
-  secondaryTitle?: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    title: string;
+    description: string;
+    bullets: string[];
+    secondaryItems?: string[];
+    secondaryTitle?: string;
+    variant?: "default" | "home";
+  }>(),
+  {
+    variant: "default"
+  }
+);
 </script>
 
 <template>
-  <section class="section-divider section-space">
+  <section :class="props.variant === 'home' ? 'home-band-section' : 'section-divider section-space'">
     <Container>
-      <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+      <div
+        :class="
+          props.variant === 'home'
+            ? 'grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-start'
+            : 'grid gap-8 lg:grid-cols-[0.9fr_1.1fr]'
+        "
+      >
         <SectionHeader
           eyebrow="Почему это работает"
           :title="title"
@@ -21,7 +33,11 @@ defineProps<{
           <article
             v-for="bullet in bullets"
             :key="bullet"
-            class="surface p-6 text-sm leading-6 text-muted"
+            :class="
+              props.variant === 'home'
+                ? 'home-proof-card text-sm leading-6 text-muted'
+                : 'surface p-6 text-sm leading-6 text-muted'
+            "
           >
             {{ bullet }}
           </article>
@@ -29,7 +45,7 @@ defineProps<{
       </div>
       <div
         v-if="secondaryItems?.length"
-        class="mt-8"
+        :class="props.variant === 'home' ? 'mt-6' : 'mt-8'"
       >
         <p class="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">
           {{ secondaryTitle || "Где это уместно" }}
@@ -38,7 +54,7 @@ defineProps<{
           <span
             v-for="item in secondaryItems"
             :key="item"
-            class="chip"
+            :class="props.variant === 'home' ? 'home-proof-chip' : 'chip'"
           >
             {{ item }}
           </span>
