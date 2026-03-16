@@ -14,6 +14,6 @@ defineProps<{
     :type="type || 'text'"
     :placeholder="placeholder"
     :autocomplete="autocomplete"
-    class="w-full rounded-3xl border border-line bg-canvas-soft px-4 py-3 text-sm text-white placeholder:text-muted"
+    class="form-control w-full rounded-3xl border border-line bg-canvas-soft px-4 py-3 text-sm text-white placeholder:text-muted"
   >
 </template>

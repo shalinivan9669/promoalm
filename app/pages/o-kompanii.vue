@@ -21,19 +21,23 @@ usePageSeo({
 
 <template>
   <div>
-    <HeroSection :hero="aboutPageData.hero" />
+    <HeroSection
+      :hero="aboutPageData.hero"
+      variant="about"
+    />
 
-    <Container>
-      <Breadcrumbs :items="breadcrumbs" />
-      <p class="max-w-3xl text-lg leading-8 text-muted">
-        {{ aboutPageData.summary }}
-      </p>
-    </Container>
+    <PageLeadSection
+      :breadcrumbs="breadcrumbs"
+      :intro="aboutPageData.summary"
+      :chips="aboutPageData.strengths"
+      variant="about"
+    />
 
     <ProofSection
       title="На чём держится подход"
       description="Это не студия декора и не агентство «на всё». Фокус на управляемом производственном результате."
       :bullets="aboutPageData.strengths"
+      variant="about"
       :secondary-items="['Фасады', 'Световые конструкции', 'Сети', 'Удалённые проекты']"
       secondary-title="Основной фокус"
     />
@@ -42,30 +46,35 @@ usePageSeo({
       title="Как мы работаем как подрядчик"
       description="Внутренняя логика проекта важнее громких обещаний."
       :steps="aboutPageData.workPrinciples"
+      variant="about"
     />
 
     <TrustStrip
       title="Базовые условия"
       description="То, что владелец бизнеса должен понимать до запуска проекта."
       :items="globalTrustStats"
+      variant="about"
     />
 
     <CasePreviewSection
       title="Что считаем релевантным proof layer"
       description="Пока здесь типовые сценарии. После передачи реальных фото и кейсов блок просто усилится, а не поменяет структуру."
       :cases="cases.filter((item) => item.status === 'published').slice(0, 3)"
+      variant="about"
     />
 
     <FaqSection
       title="FAQ о подрядчике"
       description="Коротко о специализации, сетевых задачах и реальном фокусе сайта."
       :items="aboutFaqs"
+      variant="about"
     />
 
     <FinalCtaSection
       title="Если нужен подрядчик, а не просто изготовитель таблички"
       description="Пришлите задачу и город. В ответ соберём производственный маршрут, а не общие слова."
       :cta="aboutPageData.finalCta"
+      variant="about"
     />
   </div>
 </template>

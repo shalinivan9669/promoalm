@@ -3,13 +3,14 @@ import type { BreadcrumbItem } from "../../../shared/types/content";
 
 defineProps<{
   items: BreadcrumbItem[];
+  compact?: boolean;
 }>();
 </script>
 
 <template>
   <nav
     aria-label="Хлебные крошки"
-    class="mb-8"
+    :class="compact ? 'mb-4' : 'mb-8'"
   >
     <ol class="flex flex-wrap items-center gap-2 text-sm text-muted">
       <li

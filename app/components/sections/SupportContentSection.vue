@@ -1,27 +1,37 @@
 <script setup lang="ts">
 import type { SupportBodySection } from "../../../shared/types/content";
 
-defineProps<{
-  title: string;
-  description: string;
-  sections: SupportBodySection[];
-  highlights?: string[];
-}>();
+const props = withDefaults(
+  defineProps<{
+    title: string;
+    description: string;
+    sections: SupportBodySection[];
+    highlights?: string[];
+    variant?: "default" | "support" | "contact";
+  }>(),
+  {
+    variant: "default",
+    highlights: () => []
+  }
+);
+
+const isInternal = computed(() => props.variant !== "default");
 </script>
 
 <template>
-  <section class="section-divider section-space">
+  <section :class="props.variant === 'default' ? 'section-divider section-space' : `section-divider section-space page-section page-section--${props.variant}`">
     <Container>
       <SectionHeader
         eyebrow="Содержание"
-        :title="title"
-        :description="description"
+        :title="props.title"
+        :description="props.description"
+        :variant="props.variant === 'support' ? 'support' : 'page'"
       />
       <div class="mt-8 grid gap-4 lg:grid-cols-3">
         <article
-          v-for="section in sections"
+          v-for="(section, index) in props.sections"
           :key="section.title"
-          class="surface p-6"
+          :class="isInternal && index === 0 ? 'page-card page-card--feature lg:col-span-2' : isInternal ? 'page-card page-card--quiet' : 'surface p-6'"
         >
           <h3 class="text-lg font-semibold text-white">
             {{ section.title }}
@@ -45,13 +55,13 @@ defineProps<{
       </div>
 
       <div
-        v-if="highlights?.length"
+        v-if="props.highlights?.length"
         class="mt-8 flex flex-wrap gap-3"
       >
         <span
-          v-for="highlight in highlights"
+          v-for="highlight in props.highlights"
           :key="highlight"
-          class="chip"
+          :class="isInternal ? 'page-chip' : 'chip'"
         >
           {{ highlight }}
         </span>

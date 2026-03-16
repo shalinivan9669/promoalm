@@ -6,38 +6,58 @@ const props = withDefaults(
     bullets: string[];
     secondaryItems?: string[];
     secondaryTitle?: string;
-    variant?: "default" | "home";
+    variant?: "default" | "home" | "service" | "city" | "support" | "about" | "cases" | "contact";
   }>(),
   {
     variant: "default"
   }
 );
+
+const isInternal = computed(() => props.variant !== "default" && props.variant !== "home");
+const sectionClass = computed(() =>
+  props.variant === "home"
+    ? "home-band-section"
+    : isInternal.value
+      ? `section-divider section-space page-section page-section--${props.variant}`
+      : "section-divider section-space"
+);
+const gridClass = computed(() =>
+  props.variant === "home"
+    ? "grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-start"
+    : isInternal.value
+      ? "grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start"
+      : "grid gap-8 lg:grid-cols-[0.9fr_1.1fr]"
+);
+const headerVariant = computed(() => (props.variant === "support" ? "support" : isInternal.value ? "page" : "default"));
+
+function bulletClass(index: number) {
+  if (props.variant === "home") {
+    return "home-proof-card text-sm leading-6 text-muted";
+  }
+
+  if (isInternal.value) {
+    return `${index === 0 ? "page-card page-card--feature" : "page-card page-card--quiet"} text-sm leading-6 text-muted`;
+  }
+
+  return "surface p-6 text-sm leading-6 text-muted";
+}
 </script>
 
 <template>
-  <section :class="props.variant === 'home' ? 'home-band-section' : 'section-divider section-space'">
+  <section :class="sectionClass">
     <Container>
-      <div
-        :class="
-          props.variant === 'home'
-            ? 'grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-start'
-            : 'grid gap-8 lg:grid-cols-[0.9fr_1.1fr]'
-        "
-      >
+      <div :class="gridClass">
         <SectionHeader
           eyebrow="Почему это работает"
           :title="title"
           :description="description"
+          :variant="headerVariant"
         />
-        <div class="grid gap-4">
+        <div :class="isInternal ? 'page-rail' : 'grid gap-4'">
           <article
-            v-for="bullet in bullets"
+            v-for="(bullet, index) in bullets"
             :key="bullet"
-            :class="
-              props.variant === 'home'
-                ? 'home-proof-card text-sm leading-6 text-muted'
-                : 'surface p-6 text-sm leading-6 text-muted'
-            "
+            :class="bulletClass(index)"
           >
             {{ bullet }}
           </article>
@@ -54,7 +74,7 @@ const props = withDefaults(
           <span
             v-for="item in secondaryItems"
             :key="item"
-            :class="props.variant === 'home' ? 'home-proof-chip' : 'chip'"
+            :class="props.variant === 'home' ? 'home-proof-chip' : isInternal ? 'page-chip' : 'chip'"
           >
             {{ item }}
           </span>

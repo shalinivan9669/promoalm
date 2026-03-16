@@ -3,18 +3,31 @@ import type { ServiceCard } from "../../../shared/types/content";
 
 const FEATURED_SLUG = "fasadnye-vyveski";
 const PROMOTED_SLUGS = ["svetovye-koroba", "vyveski-dlya-seti"];
+const LOWER_FEATURED_SLUG = "vyveski-pod-klyuch";
+const LOWER_SUPPORTING_ORDER = [
+  "obemnye-bukvy",
+  "kryshnye-ustanovki",
+  "interernye-vyveski-dlya-biznesa",
+  "montazh-vyvesok"
+] as const;
+const LOWER_WIDE_SLUGS = ["obemnye-bukvy", "interernye-vyveski-dlya-biznesa"] as const;
+const LOWER_SERVICE_SLUGS = ["interernye-vyveski-dlya-biznesa", "montazh-vyvesok"] as const;
 
 const props = withDefaults(
   defineProps<{
     title: string;
     description: string;
     cards: ServiceCard[];
-    variant?: "default" | "home";
+    variant?: "default" | "home" | "city" | "service" | "support" | "about" | "cases" | "contact";
   }>(),
   {
     variant: "default"
   }
 );
+
+const isCity = computed(() => props.variant === "city");
+const isInternal = computed(() => props.variant !== "default" && props.variant !== "home");
+const headerVariant = computed(() => (props.variant === "support" ? "support" : isInternal.value ? "page" : "default"));
 
 const featuredCard = computed(() => props.cards.find((card) => card.slug === FEATURED_SLUG) ?? props.cards[0] ?? null);
 
@@ -63,6 +76,58 @@ const supportingCards = computed(() => {
 
   return props.cards.filter((card) => !reserved.has(card.slug));
 });
+
+const lowerFeaturedCard = computed(() => {
+  const match = supportingCards.value.find((card) => card.slug === LOWER_FEATURED_SLUG);
+
+  return match ?? supportingCards.value[0] ?? null;
+});
+
+const lowerSupportingCards = computed(() => {
+  const reserved = new Set<string>();
+  const orderedCards: ServiceCard[] = [];
+
+  if (lowerFeaturedCard.value) {
+    reserved.add(lowerFeaturedCard.value.slug);
+  }
+
+  for (const slug of LOWER_SUPPORTING_ORDER) {
+    const match = supportingCards.value.find((card) => card.slug === slug && !reserved.has(card.slug));
+
+    if (match) {
+      orderedCards.push(match);
+      reserved.add(match.slug);
+    }
+  }
+
+  for (const card of supportingCards.value) {
+    if (!reserved.has(card.slug)) {
+      orderedCards.push(card);
+    }
+  }
+
+  return orderedCards;
+});
+
+function getVisibleTags(card: ServiceCard, maxTags: number) {
+  return (card.tags ?? []).slice(0, maxTags);
+}
+
+function getHiddenTagCount(card: ServiceCard, maxTags: number) {
+  return Math.max((card.tags?.length ?? 0) - maxTags, 0);
+}
+
+function isLowerWideCard(slug: ServiceCard["slug"]) {
+  return LOWER_WIDE_SLUGS.includes(slug as (typeof LOWER_WIDE_SLUGS)[number]);
+}
+
+function isLowerServiceCard(slug: ServiceCard["slug"]) {
+  return LOWER_SERVICE_SLUGS.includes(slug as (typeof LOWER_SERVICE_SLUGS)[number]);
+}
+
+function getLowerCtaLabel(slug: ServiceCard["slug"]) {
+  return isLowerServiceCard(slug) ? "Подробнее" : "Открыть услугу";
+}
 </script>
 
 <template>
@@ -71,7 +136,9 @@ const supportingCards = computed(() => {
     :class="
       props.variant === 'home'
         ? 'home-service-cluster section-divider scroll-mt-32'
-        : 'section-divider section-space scroll-mt-32'
+        : isInternal
+          ? `section-divider section-space page-section page-section--${props.variant} scroll-mt-32`
+          : 'section-divider section-space scroll-mt-32'
     "
   >
     <Container>
@@ -79,6 +146,7 @@ const supportingCards = computed(() => {
         eyebrow="Услуги"
         :title="title"
         :description="description"
+        :variant="headerVariant"
       />
 
       <template v-if="props.variant === 'home' && featuredCard">
@@ -143,37 +211,87 @@ const supportingCards = computed(() => {
           </div>
         </div>
 
-        <div class="home-service-cluster__supporting">
-          <article
-            v-for="card in supportingCards"
-            :key="card.slug"
-            class="home-service-card home-service-card--supporting"
+        <div
+          v-if="lowerFeaturedCard"
+          class="home-service-cluster__supporting home-service-cluster__supporting--architected"
+        >
+          <a
+            :href="lowerFeaturedCard.path"
+            class="home-service-card home-service-card--link home-service-card--lower-feature"
           >
-            <div class="flex flex-wrap gap-2">
+            <div class="home-service-card__chips">
               <span
-                v-for="tag in card.tags"
+                v-for="tag in getVisibleTags(lowerFeaturedCard, 3)"
                 :key="tag"
-                class="chip"
+                class="home-service-card__chip"
               >
                 {{ tag }}
               </span>
             </div>
-            <h3 class="text-lg font-semibold text-white">
-              {{ card.title }}
-            </h3>
-            <p class="text-sm leading-6 text-muted [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4] overflow-hidden">
-              {{ card.summary }}
-            </p>
-            <div class="mt-auto pt-2">
-              <ButtonLink
-                :href="card.path"
-                label="Открыть услугу"
-                intent="secondary"
-                tracking-event="open_service_page"
-                block
-              />
+            <div class="home-service-card__body home-service-card__body--feature">
+              <h3 class="home-service-card__title text-2xl font-semibold text-white sm:text-[2rem]">
+                {{ lowerFeaturedCard.title }}
+              </h3>
+              <p class="text-base leading-7 text-muted">
+                {{ lowerFeaturedCard.summary }}
+              </p>
             </div>
-          </article>
+            <div class="home-service-card__footer home-service-card__footer--feature">
+              <span class="home-service-card__button">Открыть услугу</span>
+              <span
+                v-if="getHiddenTagCount(lowerFeaturedCard, 3)"
+                class="home-service-card__meta"
+              >
+                +{{ getHiddenTagCount(lowerFeaturedCard, 3) }}
+              </span>
+            </div>
+          </a>
+
+          <div class="home-service-cluster__supporting-matrix">
+            <a
+              v-for="card in lowerSupportingCards"
+              :key="card.slug"
+              :href="card.path"
+              :class="
+                isLowerServiceCard(card.slug)
+                  ? `home-service-card home-service-card--link home-service-card--lower-supporting home-service-card--supporting-service ${isLowerWideCard(card.slug) ? 'home-service-card--span-wide' : 'home-service-card--span-narrow'}`
+                  : `home-service-card home-service-card--link home-service-card--lower-supporting home-service-card--supporting-product ${isLowerWideCard(card.slug) ? 'home-service-card--span-wide' : 'home-service-card--span-narrow'}`
+              "
+            >
+              <div class="home-service-card__chips">
+                <span
+                  v-for="tag in getVisibleTags(card, 2)"
+                  :key="tag"
+                  class="home-service-card__chip"
+                >
+                  {{ tag }}
+                </span>
+                <span
+                  v-if="getHiddenTagCount(card, 2)"
+                  class="home-service-card__chip home-service-card__chip--more"
+                >
+                  +{{ getHiddenTagCount(card, 2) }}
+                </span>
+              </div>
+              <div class="home-service-card__body">
+                <h3 class="home-service-card__title text-lg font-semibold text-white sm:text-[1.15rem]">
+                  {{ card.title }}
+                </h3>
+                <p class="home-service-card__summary home-service-card__summary--compact text-sm leading-6 text-muted">
+                  {{ card.summary }}
+                </p>
+              </div>
+              <div class="home-service-card__footer">
+                <span class="home-service-card__cta">{{ getLowerCtaLabel(card.slug) }}</span>
+                <span
+                  aria-hidden="true"
+                  class="home-service-card__chevron"
+                >
+                  →
+                </span>
+              </div>
+            </a>
+          </div>
         </div>
       </template>
 
@@ -182,15 +300,21 @@ const supportingCards = computed(() => {
         class="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4"
       >
         <article
-          v-for="card in cards"
+          v-for="(card, index) in cards"
           :key="card.slug"
-          class="surface flex h-full flex-col gap-4 p-6"
+          :class="
+            isCity && index === 0
+              ? 'page-card page-card--feature md:col-span-2 xl:col-span-2'
+              : isInternal
+                ? 'page-card h-full'
+                : 'surface flex h-full flex-col gap-4 p-6'
+          "
         >
           <div class="flex flex-wrap gap-2">
             <span
               v-for="tag in card.tags"
               :key="tag"
-              class="chip"
+              :class="isInternal ? 'page-chip' : 'chip'"
             >
               {{ tag }}
             </span>

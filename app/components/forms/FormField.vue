@@ -8,8 +8,8 @@ defineProps<{
 </script>
 
 <template>
-  <label class="flex flex-col gap-2 text-sm text-white">
-    <span class="flex items-center gap-1">
+  <label class="form-field flex flex-col gap-2 text-sm text-white">
+    <span class="form-field__label flex items-center gap-1">
       <span>{{ label }}</span>
       <span
         v-if="required"
@@ -21,13 +21,13 @@ defineProps<{
     <slot />
     <span
       v-if="error"
-      class="text-xs text-danger"
+      class="form-field__error text-xs text-danger"
     >
       {{ error }}
     </span>
     <span
       v-else-if="hint"
-      class="text-xs text-muted"
+      class="form-field__hint text-xs text-muted"
     >
       {{ hint }}
     </span>

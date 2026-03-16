@@ -38,19 +38,26 @@ usePageSeo({
 
 <template>
   <div>
-    <HeroSection :hero="hero" />
+    <HeroSection
+      :hero="hero"
+      variant="cases"
+    />
 
-    <Container>
-      <Breadcrumbs :items="breadcrumbs" />
+    <PageLeadSection
+      :breadcrumbs="breadcrumbs"
+      :chips="hero.facts"
+      variant="cases"
+    >
       <p class="max-w-3xl text-lg leading-8 text-muted">
         Как только число реальных кейсов перевалит за 12–15 и появятся разные сценарии по городам и нишам, раздел логично развернуть в `/cases/[slug]/`.
       </p>
-    </Container>
+    </PageLeadSection>
 
     <CasePreviewSection
       title="Все сценарии v1"
       description="Каждая карточка привязана к услуге и региональному слою, чтобы не быть декоративным proof-блоком."
       :cases="publishedCases"
+      variant="cases"
     />
 
     <FinalCtaSection
@@ -62,6 +69,7 @@ usePageSeo({
         intent: 'primary',
         trackingEvent: 'click_calculate'
       }"
+      variant="cases"
     />
   </div>
 </template>

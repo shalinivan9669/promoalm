@@ -6,34 +6,51 @@ const props = withDefaults(
     title: string;
     description: string;
     steps: ProcessStep[];
-    variant?: "default" | "home";
+    variant?: "default" | "home" | "service" | "city" | "support" | "about" | "cases" | "contact";
   }>(),
   {
     variant: "default"
   }
 );
+
+const isInternal = computed(() => props.variant !== "default" && props.variant !== "home");
+const sectionClass = computed(() =>
+  props.variant === "home"
+    ? "home-band-section"
+    : isInternal.value
+      ? `section-divider section-space page-section page-section--${props.variant}`
+      : "section-divider section-space"
+);
+const headerVariant = computed(() => (props.variant === "support" ? "support" : isInternal.value ? "page" : "default"));
+
+function stepClass(index: number) {
+  if (props.variant === "home") {
+    return "home-process-step";
+  }
+
+  if (isInternal.value) {
+    return index === 0 ? "page-card page-card--feature" : "page-card";
+  }
+
+  return "surface p-6";
+}
 </script>
 
 <template>
-  <section :class="props.variant === 'home' ? 'home-band-section' : 'section-divider section-space'">
+  <section :class="sectionClass">
     <Container>
       <SectionHeader
         eyebrow="Процесс"
         :title="title"
         :description="description"
+        :variant="headerVariant"
       />
 
-      <div
-        :class="
-          props.variant === 'home'
-            ? 'mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4'
-            : 'mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4'
-        "
-      >
+      <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <article
           v-for="(step, index) in steps"
           :key="step.title"
-          :class="props.variant === 'home' ? 'home-process-step' : 'surface p-6'"
+          :class="stepClass(index)"
         >
           <p class="eyebrow">Шаг {{ index + 1 }}</p>
           <h3 class="mt-4 text-lg font-semibold text-white">

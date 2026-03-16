@@ -10,8 +10,8 @@ interface HeroMediaFrame {
 
 const props = withDefaults(
   defineProps<{
-  hero: HeroBlock;
-    variant?: "default" | "home";
+    hero: HeroBlock;
+    variant?: "default" | "home" | "service" | "city" | "support" | "about" | "cases" | "contact";
     mediaMode?: "abstract" | "image";
     mediaFrames?: HeroMediaFrame[];
     quickLinks?: Array<{
@@ -28,6 +28,7 @@ const props = withDefaults(
 );
 
 const isImageMode = computed(() => props.variant === "home" && props.mediaMode === "image" && props.mediaFrames.length > 0);
+const internalVariant = computed(() => (props.variant === "home" ? "default" : props.variant));
 </script>
 
 <template>
@@ -142,17 +143,18 @@ const isImageMode = computed(() => props.variant === "home" && props.mediaMode =
 
   <section
     v-else
-    class="section-space"
+    class="page-hero"
+    :class="`page-hero--${internalVariant}`"
   >
     <Container>
-      <div class="surface overflow-hidden p-8 sm:p-10 lg:p-12">
-        <div class="grid gap-10 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">
-          <div>
+      <div class="page-hero__frame">
+        <div class="page-hero__grid">
+          <div class="page-hero__copy">
             <p class="eyebrow">{{ hero.eyebrow }}</p>
-            <h1 class="mt-5 max-w-4xl text-4xl font-semibold text-white sm:text-5xl lg:text-6xl">
+            <h1 class="page-hero__title">
               {{ hero.title }}
             </h1>
-            <p class="mt-6 max-w-3xl text-base leading-7 text-muted sm:text-lg">
+            <p class="page-hero__description">
               {{ hero.description }}
             </p>
             <div class="mt-8 flex flex-wrap gap-3">
@@ -168,19 +170,38 @@ const isImageMode = computed(() => props.variant === "home" && props.mediaMode =
             </div>
             <p
               v-if="hero.note"
-              class="mt-6 max-w-2xl text-sm leading-6 text-muted"
+              class="page-hero__note"
             >
               {{ hero.note }}
             </p>
           </div>
 
-          <div class="grid gap-3">
-            <div
-              v-for="fact in hero.facts"
-              :key="fact"
-              class="rounded-3xl border border-line bg-canvas-soft px-4 py-4 text-sm text-white"
-            >
-              {{ fact }}
+          <div class="page-hero__aside">
+            <div class="page-hero__signal">
+              <div
+                aria-hidden="true"
+                class="page-hero__scene"
+              >
+                <div class="page-hero__plate page-hero__plate--one" />
+                <div class="page-hero__plate page-hero__plate--two" />
+                <div class="page-hero__line page-hero__line--one" />
+                <div class="page-hero__line page-hero__line--two" />
+                <div class="page-hero__node page-hero__node--one" />
+                <div class="page-hero__node page-hero__node--two" />
+              </div>
+
+              <div class="page-hero__fact-list">
+                <article
+                  v-for="(fact, index) in hero.facts"
+                  :key="fact"
+                  class="page-hero__fact"
+                >
+                  <span class="page-hero__fact-index">
+                    {{ String(index + 1).padStart(2, "0") }}
+                  </span>
+                  <span class="min-w-0">{{ fact }}</span>
+                </article>
+              </div>
             </div>
           </div>
         </div>

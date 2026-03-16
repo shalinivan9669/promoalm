@@ -7,32 +7,34 @@ const props = withDefaults(
     title: string;
     description: string;
     cta: CTAConfig;
-    variant?: "default" | "home";
+    variant?: "default" | "home" | "service" | "city" | "support" | "about" | "cases" | "contact";
   }>(),
   {
     variant: "default"
   }
 );
+
+const isInternal = computed(() => props.variant !== "default" && props.variant !== "home");
 </script>
 
 <template>
-  <section :class="props.variant === 'home' ? 'home-final-cta section-divider' : 'section-divider section-space'">
+  <section :class="props.variant === 'home' ? 'home-final-cta section-divider' : isInternal ? `section-divider section-space page-section page-section--${props.variant}` : 'section-divider section-space'">
     <Container>
-      <div :class="props.variant === 'home' ? 'home-final-cta__frame' : 'surface p-8 sm:p-10 lg:p-12'">
-        <div :class="props.variant === 'home' ? 'home-final-cta__grid' : 'grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end'">
+      <div :class="props.variant === 'home' ? 'home-final-cta__frame' : isInternal ? 'page-terminal-cta' : 'surface p-8 sm:p-10 lg:p-12'">
+        <div :class="props.variant === 'home' ? 'home-final-cta__grid' : isInternal ? 'page-terminal-cta__grid' : 'grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end'">
           <div>
             <p class="eyebrow">{{ eyebrow || "Следующий шаг" }}</p>
-            <h2 :class="props.variant === 'home' ? 'home-final-cta__title' : 'mt-4 text-3xl font-semibold text-white sm:text-4xl'">
+            <h2 :class="props.variant === 'home' ? 'home-final-cta__title' : isInternal ? 'page-terminal-cta__title' : 'mt-4 text-3xl font-semibold text-white sm:text-4xl'">
               {{ title }}
             </h2>
-            <p :class="props.variant === 'home' ? 'home-final-cta__description' : 'mt-4 max-w-3xl text-base leading-7 text-muted'">
+            <p :class="props.variant === 'home' ? 'home-final-cta__description' : isInternal ? 'page-terminal-cta__description' : 'mt-4 max-w-3xl text-base leading-7 text-muted'">
               {{ description }}
             </p>
           </div>
-          <div :class="props.variant === 'home' ? 'home-final-cta__action' : 'flex flex-col gap-3'">
+          <div :class="props.variant === 'home' ? 'home-final-cta__action' : isInternal ? 'page-terminal-cta__action' : 'flex flex-col gap-3'">
             <p
               v-if="cta.note"
-              :class="props.variant === 'home' ? 'home-final-cta__note' : 'mt-4 text-sm text-muted'"
+              :class="props.variant === 'home' ? 'home-final-cta__note' : 'text-sm text-muted'"
             >
               {{ cta.note }}
             </p>
