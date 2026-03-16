@@ -1,8 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap");
 @import "tailwindcss";
 
 @theme {
   --font-sans:
-    "Segoe UI", "Segoe UI Variable", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    "Onest", "Segoe UI", "Segoe UI Variable", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
   --font-mono:
     "Cascadia Mono", "SFMono-Regular", "Consolas", "Liberation Mono", "Courier New", monospace;
 
@@ -832,19 +833,33 @@
   }
 
   .home-case-stack {
+    position: relative;
     margin-top: 2.5rem;
     display: grid;
     gap: 1rem;
   }
 
+  .home-case-stack::before {
+    content: "";
+    position: absolute;
+    inset: -1.5rem 0 -0.5rem;
+    background:
+      radial-gradient(circle at 18% 12%, rgba(140, 200, 255, 0.08), transparent 24%),
+      radial-gradient(circle at 82% 78%, rgba(140, 200, 255, 0.06), transparent 22%);
+    pointer-events: none;
+  }
+
   .home-case-card--panel {
+    display: grid;
     gap: 1.25rem;
-    padding: 1.4rem;
     color: inherit;
     text-decoration: none;
-    background:
-      radial-gradient(circle at 100% 0%, rgba(140, 200, 255, 0.1), transparent 28%),
-      linear-gradient(180deg, rgba(22, 26, 31, 0.98), rgba(15, 18, 23, 0.96));
+    border-radius: 1.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(180deg, rgba(17, 21, 26, 0.98), rgba(13, 16, 21, 0.98));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 18px 40px rgba(0, 0, 0, 0.2);
     transition:
       transform 220ms ease,
       border-color 220ms ease,
@@ -856,11 +871,8 @@
     content: "";
     position: absolute;
     inset: 0;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px);
-    background-size: 4.5rem 4.5rem;
-    opacity: 0.1;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0));
+    opacity: 0.9;
     pointer-events: none;
   }
 
@@ -873,6 +885,147 @@
       0 22px 44px rgba(0, 0, 0, 0.24);
   }
 
+  .home-case-card__visual,
+  .home-case-card__dock {
+    position: relative;
+    min-width: 0;
+  }
+
+  .home-case-card__visual {
+    overflow: hidden;
+    min-height: 12.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background:
+      radial-gradient(circle at 50% 35%, rgba(140, 200, 255, 0.18), transparent 26%),
+      linear-gradient(180deg, rgba(18, 22, 28, 0.7), rgba(13, 16, 21, 0.92));
+  }
+
+  .home-case-card__visual-vignette,
+  .home-case-card__visual-grid,
+  .home-case-card__visual-frame,
+  .home-case-card__visual-object,
+  .home-case-card__visual-line {
+    position: absolute;
+  }
+
+  .home-case-card__visual-vignette {
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(8, 10, 14, 0.12), rgba(8, 10, 14, 0.45)),
+      radial-gradient(circle at 50% 35%, rgba(140, 200, 255, 0.14), transparent 32%);
+    transition: background 220ms ease;
+  }
+
+  .home-case-card__visual-grid {
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px);
+    background-size: 4.4rem 4.4rem;
+    opacity: 0.16;
+  }
+
+  .home-case-card__visual-frame {
+    inset: 1.15rem;
+    border-radius: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .home-case-card__visual-object {
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 18px 35px rgba(0, 0, 0, 0.18);
+  }
+
+  .home-case-card__visual-line {
+    height: 1px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(140, 200, 255, 0), rgba(140, 200, 255, 0.7), rgba(140, 200, 255, 0));
+    opacity: 0.8;
+  }
+
+  .home-case-card__visual--rollout .home-case-card__visual-object--primary {
+    left: 15%;
+    right: 15%;
+    bottom: 22%;
+    height: 2.9rem;
+  }
+
+  .home-case-card__visual--rollout .home-case-card__visual-object--secondary {
+    left: 24%;
+    width: 32%;
+    top: 23%;
+    height: 2.2rem;
+  }
+
+  .home-case-card__visual--rollout .home-case-card__visual-line {
+    left: 14%;
+    right: 12%;
+    top: 54%;
+  }
+
+  .home-case-card__visual--lightbox .home-case-card__visual-object--primary {
+    left: 50%;
+    top: 50%;
+    width: min(20rem, 58%);
+    height: 6rem;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(180deg, rgba(166, 213, 255, 0.28), rgba(166, 213, 255, 0.08));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 0 36px rgba(140, 200, 255, 0.16);
+  }
+
+  .home-case-card__visual--lightbox .home-case-card__visual-object--secondary {
+    left: 16%;
+    right: 16%;
+    bottom: 18%;
+    height: 2.7rem;
+  }
+
+  .home-case-card__visual--lightbox .home-case-card__visual-line {
+    left: 22%;
+    right: 22%;
+    top: 28%;
+  }
+
+  .home-case-card__visual--roof .home-case-card__visual-object--primary {
+    left: 18%;
+    right: 18%;
+    bottom: 18%;
+    height: 3rem;
+    clip-path: polygon(0 100%, 20% 28%, 80% 28%, 100% 100%);
+  }
+
+  .home-case-card__visual--roof .home-case-card__visual-object--secondary {
+    left: 24%;
+    width: 44%;
+    top: 18%;
+    height: 1.6rem;
+  }
+
+  .home-case-card__visual--roof .home-case-card__visual-line {
+    left: 20%;
+    right: 16%;
+    top: 42%;
+    transform: rotate(-11deg);
+    transform-origin: center;
+  }
+
+  .home-case-card__dock {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 1rem;
+    padding: 1.35rem;
+    background:
+      linear-gradient(180deg, rgba(18, 22, 28, 0.9), rgba(13, 16, 21, 0.98));
+  }
+
   .home-case-card__meta-rail,
   .home-case-card__action-rail {
     display: flex;
@@ -882,6 +1035,7 @@
   }
 
   .home-case-card__meta-rail {
+    min-height: 2rem;
     padding-bottom: 0.4rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   }
@@ -890,6 +1044,7 @@
   .home-case-card__metric {
     display: inline-flex;
     align-items: center;
+    min-height: 1.9rem;
     border-radius: 999px;
     border: 1px solid rgba(255, 255, 255, 0.07);
     background: rgba(255, 255, 255, 0.03);
@@ -911,6 +1066,7 @@
   .home-case-card__panel-grid {
     display: grid;
     gap: 1.15rem;
+    align-content: start;
   }
 
   .home-case-card__narrative {
@@ -999,6 +1155,12 @@
   .home-case-card--link:is(:hover, :focus-visible) .home-case-card__chevron {
     transform: translateX(0.25rem);
     color: #ffffff;
+  }
+
+  .home-case-card--link:is(:hover, :focus-visible) .home-case-card__visual-vignette {
+    background:
+      linear-gradient(180deg, rgba(8, 10, 14, 0.08), rgba(8, 10, 14, 0.38)),
+      radial-gradient(circle at 50% 35%, rgba(140, 200, 255, 0.18), transparent 34%);
   }
 
   .home-process-step {
@@ -2188,6 +2350,45 @@
     gap: 1.15rem;
   }
 
+  .home-case-card--panel {
+    min-height: 31rem;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .home-case-card__visual,
+  .home-case-card__dock {
+    min-height: 100%;
+  }
+
+  .home-case-card__visual {
+    grid-column: span 6;
+    border-bottom: 0;
+  }
+
+  .home-case-card__dock {
+    grid-column: span 6;
+    padding: 1.5rem;
+  }
+
+  .home-case-card--dock-leading .home-case-card__dock {
+    order: 1;
+  }
+
+  .home-case-card--dock-leading .home-case-card__visual {
+    order: 2;
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .home-case-card--visual-leading .home-case-card__visual {
+    order: 1;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .home-case-card--visual-leading .home-case-card__dock {
+    order: 2;
+  }
+
   .home-case-card__operations {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2205,19 +2406,21 @@
     gap: 1.2rem;
   }
 
-  .home-case-card__panel-grid {
-    grid-template-columns: minmax(0, 0.44fr) minmax(0, 0.56fr);
-    align-items: start;
+  .home-case-card__dock {
+    padding: 1.6rem;
   }
 
-  .home-case-card--offset-right {
-    margin-left: auto;
-    max-width: calc(100% - 2.75rem);
+  .home-case-card__visual-frame {
+    inset: 1.35rem;
   }
 
-  .home-case-card--offset-left {
-    margin-right: auto;
-    max-width: calc(100% - 1.9rem);
+  .home-case-card__visual--rollout .home-case-card__visual-object--primary,
+  .home-case-card__visual--roof .home-case-card__visual-object--primary {
+    height: 3.2rem;
+  }
+
+  .home-case-card__visual--lightbox .home-case-card__visual-object--primary {
+    height: 6.4rem;
   }
 }
 

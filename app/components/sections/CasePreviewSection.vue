@@ -36,10 +36,27 @@ function cardClass(index: number) {
   return "surface flex h-full flex-col gap-4 p-6";
 }
 
-function homeCasePanelClass(index: number) {
-  const staggerClass = index % 3 === 1 ? "home-case-card--offset-right" : index % 3 === 2 ? "home-case-card--offset-left" : "";
+function isVisualLeading(index: number) {
+  return index % 2 === 1;
+}
 
-  return ["home-case-card", "home-case-card--panel", "home-case-card--link", staggerClass].filter(Boolean).join(" ");
+function homeCasePanelClass(index: number) {
+  return [
+    "home-case-card",
+    "home-case-card--panel",
+    "home-case-card--link",
+    isVisualLeading(index) ? "home-case-card--visual-leading" : "home-case-card--dock-leading"
+  ].join(" ");
+}
+
+function homeCaseVisualClass(index: number) {
+  const themeClass = index === 0 ? "home-case-card__visual--rollout" : index === 1 ? "home-case-card__visual--lightbox" : "home-case-card__visual--roof";
+
+  return ["home-case-card__visual", themeClass].join(" ");
+}
+
+function homeCaseDockClass() {
+  return ["home-case-card__dock"].join(" ");
 }
 </script>
 
@@ -64,53 +81,67 @@ function homeCasePanelClass(index: number) {
           :href="`/cases/#${item.slug}`"
           :class="homeCasePanelClass(index)"
         >
-          <div class="home-case-card__meta-rail">
-            <span class="home-case-card__meta-chip">{{ item.proofMode === "scenario" ? "Типовой сценарий" : "Кейс" }}</span>
-            <span class="home-case-card__city">{{ item.cityLabel }}</span>
+          <div
+            :class="homeCaseVisualClass(index)"
+            aria-hidden="true"
+          >
+            <span class="home-case-card__visual-vignette"></span>
+            <span class="home-case-card__visual-grid"></span>
+            <span class="home-case-card__visual-frame"></span>
+            <span class="home-case-card__visual-object home-case-card__visual-object--primary"></span>
+            <span class="home-case-card__visual-object home-case-card__visual-object--secondary"></span>
+            <span class="home-case-card__visual-line"></span>
           </div>
 
-          <div class="home-case-card__panel-grid">
-            <div class="home-case-card__narrative">
-              <h3 class="home-case-card__title text-2xl font-semibold text-white">
-                {{ item.title }}
-              </h3>
-              <p class="home-case-card__summary text-sm leading-7 text-muted sm:text-[15px]">
-                {{ item.summary }}
-              </p>
+          <div :class="homeCaseDockClass()">
+            <div class="home-case-card__meta-rail">
+              <span class="home-case-card__meta-chip">{{ item.proofMode === "scenario" ? "Типовой сценарий" : "Кейс" }}</span>
+              <span class="home-case-card__city">{{ item.cityLabel }}</span>
             </div>
 
-            <div class="home-case-card__operations">
-              <div class="home-case-card__operation">
-                <p class="home-case-card__label">Задача</p>
-                <p class="home-case-card__text text-sm leading-6 text-muted">{{ item.challenge }}</p>
+            <div class="home-case-card__panel-grid">
+              <div class="home-case-card__narrative">
+                <h3 class="home-case-card__title text-2xl font-semibold text-white">
+                  {{ item.title }}
+                </h3>
+                <p class="home-case-card__summary text-sm leading-7 text-muted sm:text-[15px]">
+                  {{ item.summary }}
+                </p>
               </div>
-              <div class="home-case-card__operation">
-                <p class="home-case-card__label">Решение</p>
-                <p class="home-case-card__text text-sm leading-6 text-muted">{{ item.solution }}</p>
+
+              <div class="home-case-card__operations">
+                <div class="home-case-card__operation">
+                  <p class="home-case-card__label">Задача</p>
+                  <p class="home-case-card__text text-sm leading-6 text-muted">{{ item.challenge }}</p>
+                </div>
+                <div class="home-case-card__operation">
+                  <p class="home-case-card__label">Решение</p>
+                  <p class="home-case-card__text text-sm leading-6 text-muted">{{ item.solution }}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="home-case-card__action-rail">
-            <div class="home-case-card__metrics">
-              <span
-                v-for="metric in item.metrics.slice(0, 2)"
-                :key="metric"
-                class="home-case-card__metric"
-              >
-                {{ metric }}
+            <div class="home-case-card__action-rail">
+              <div class="home-case-card__metrics">
+                <span
+                  v-for="metric in item.metrics.slice(0, 2)"
+                  :key="metric"
+                  class="home-case-card__metric"
+                >
+                  {{ metric }}
+                </span>
+              </div>
+
+              <span class="home-case-card__cta">
+                <span>Открыть на странице кейсов</span>
+                <span
+                  aria-hidden="true"
+                  class="home-case-card__chevron"
+                >
+                  →
+                </span>
               </span>
             </div>
-
-            <span class="home-case-card__cta">
-              <span>Открыть на странице кейсов</span>
-              <span
-                aria-hidden="true"
-                class="home-case-card__chevron"
-              >
-                →
-              </span>
-            </span>
           </div>
         </a>
       </div>
