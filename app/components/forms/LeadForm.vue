@@ -18,9 +18,9 @@ const props = withDefaults(
 
 const route = useRoute();
 const startedAt = Date.now();
-const leadStatus = Array.isArray(route.query.leadStatus) ? route.query.leadStatus[0] : route.query.leadStatus;
-const leadReason = Array.isArray(route.query.leadReason) ? route.query.leadReason[0] : route.query.leadReason;
-const isSuccess = leadStatus === "success";
+const leadStatus = computed(() => (Array.isArray(route.query.leadStatus) ? route.query.leadStatus[0] : route.query.leadStatus));
+const leadReason = computed(() => (Array.isArray(route.query.leadReason) ? route.query.leadReason[0] : route.query.leadReason));
+const isSuccess = computed(() => leadStatus.value === "success");
 const showTaskType = !props.presetTaskType;
 const showLocationsCount = props.showLocations || !props.presetTaskType;
 
@@ -52,12 +52,17 @@ const errorMessages: Record<LeadApiError["reason"], string> = {
   agent: "Автоматические запросы отключены. Отправьте заявку вручную."
 };
 
-const errorMessage =
-  leadStatus === "error" && leadReason && leadReason in errorMessages
-    ? errorMessages[leadReason as LeadApiError["reason"]]
-    : leadStatus === "error"
-      ? errorMessages.validation
-      : "";
+const errorMessage = computed(() => {
+  if (leadStatus.value === "error" && leadReason.value && leadReason.value in errorMessages) {
+    return errorMessages[leadReason.value as LeadApiError["reason"]];
+  }
+
+  if (leadStatus.value === "error") {
+    return errorMessages.validation;
+  }
+
+  return "";
+});
 </script>
 
 <template>

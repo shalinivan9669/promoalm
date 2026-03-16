@@ -1,13 +1,26 @@
 <script setup lang="ts">
 import { footerNavigation } from "../../data/navigation";
 import { contactInfo } from "../../data/site";
+import { normalizePathForMatch } from "../../utils/routes";
 
+const route = useRoute();
 const currentYear = new Date().getFullYear();
+const currentPath = computed(() => normalizePathForMatch(route.path));
+
+function isCurrentPath(href: string) {
+  return currentPath.value === normalizePathForMatch(href);
+}
+
+function footerLinkClass(href: string) {
+  return isCurrentPath(href)
+    ? "text-sm text-white underline decoration-accent underline-offset-4"
+    : "text-sm text-muted transition hover:text-white";
+}
 </script>
 
 <template>
   <footer class="section-divider mt-20 pb-28 pt-12 lg:pb-12">
-    <Container class="grid gap-10 lg:grid-cols-[1.2fr_repeat(3,1fr)]">
+    <Container class="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.1fr_repeat(4,minmax(0,1fr))]">
       <div class="max-w-sm">
         <p class="text-xl font-semibold text-white">Neon Market</p>
         <p class="mt-4 text-sm leading-6 text-muted">
@@ -30,7 +43,8 @@ const currentYear = new Date().getFullYear();
           >
             <a
               :href="item.href"
-              class="text-sm text-muted transition hover:text-white"
+              :aria-current="isCurrentPath(item.href) ? 'page' : undefined"
+              :class="footerLinkClass(item.href)"
             >
               {{ item.label }}
             </a>
@@ -47,7 +61,8 @@ const currentYear = new Date().getFullYear();
           >
             <a
               :href="item.href"
-              class="text-sm text-muted transition hover:text-white"
+              :aria-current="isCurrentPath(item.href) ? 'page' : undefined"
+              :class="footerLinkClass(item.href)"
             >
               {{ item.label }}
             </a>
@@ -64,7 +79,26 @@ const currentYear = new Date().getFullYear();
           >
             <a
               :href="item.href"
-              class="text-sm text-muted transition hover:text-white"
+              :aria-current="isCurrentPath(item.href) ? 'page' : undefined"
+              :class="footerLinkClass(item.href)"
+            >
+              {{ item.label }}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.18em] text-white">Компания</p>
+        <ul class="mt-4 space-y-3">
+          <li
+            v-for="item in footerNavigation.company"
+            :key="item.href"
+          >
+            <a
+              :href="item.href"
+              :aria-current="isCurrentPath(item.href) ? 'page' : undefined"
+              :class="footerLinkClass(item.href)"
             >
               {{ item.label }}
             </a>

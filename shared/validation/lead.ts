@@ -8,7 +8,10 @@ export const leadFormSchema = z.object({
   city: z.string().trim().max(80).optional().or(z.literal("")),
   message: z.string().trim().min(12, "Коротко опишите задачу.").max(2000),
   preferredChannel: z.enum(["phone", "whatsapp"]).optional(),
-  locationsCount: z.coerce.number().int().min(2).max(500).optional(),
+  locationsCount: z.preprocess(
+    (value) => (value === "" || value === null || value === undefined ? undefined : value),
+    z.coerce.number().int().min(2).max(500).optional()
+  ),
   needsInstallation: z.coerce.boolean().optional(),
   taskType: z.string().trim().min(2).max(120),
   sourcePage: z.string().trim().min(1).max(240),

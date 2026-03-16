@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { cities } from "../app/data/cities";
-import { footerNavigation, primaryNavigation } from "../app/data/navigation";
+import { flattenPrimaryNavigation, footerNavigation, homeCityNavigation, primaryNavigation } from "../app/data/navigation";
 import { services } from "../app/data/services";
 import { supportPages } from "../app/data/support-pages";
 import { getSitemapPaths } from "../server/utils/sitemap";
@@ -15,8 +15,10 @@ describe("route contract", () => {
 
   it("keeps planned routes out of navigation", () => {
     const navPaths = [
-      ...primaryNavigation.map((item) => item.href),
+      ...flattenPrimaryNavigation(primaryNavigation).map((item) => item.href),
       ...footerNavigation.services.map((item) => item.href),
+      ...footerNavigation.support.map((item) => item.href),
+      ...footerNavigation.company.map((item) => item.href),
       ...footerNavigation.cities.map((item) => item.href)
     ];
 
@@ -45,5 +47,16 @@ describe("route contract", () => {
         expect(plannedPaths).not.toContain(link.href);
       }
     }
+  });
+
+  it("keeps key published city and support links in navigation surfaces", () => {
+    const primaryLeafPaths = flattenPrimaryNavigation(primaryNavigation).map((item) => item.href);
+    const homeCityPaths = homeCityNavigation.map((item) => item.href);
+
+    expect(primaryLeafPaths).toContain("/faq/");
+    expect(primaryLeafPaths).toContain("/goroda/almaty/");
+    expect(primaryLeafPaths).toContain("/goroda/astana/");
+    expect(primaryLeafPaths).toContain("/goroda/shymkent/");
+    expect(homeCityPaths).toEqual(["/goroda/almaty/", "/goroda/astana/", "/goroda/shymkent/"]);
   });
 });

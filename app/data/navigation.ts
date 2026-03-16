@@ -5,32 +5,84 @@ import { publishedCityNavigation } from "./city-summaries";
 import { publishedServiceNavigation } from "./service-summaries";
 import { supportPages } from "./support-pages";
 
-const publishedSupportPages = getPublishedSupportPages(supportPages).filter(
-  (page) => !["faq", "politika-konfidentsialnosti"].includes(page.slug)
-);
+export interface PrimaryNavigationLink extends NavItem {
+  kind: "link";
+}
 
-export const primaryNavigation: NavItem[] = [
-  { label: "Услуги", href: "#services", description: "Основные коммерческие направления" },
-  { label: "Кейсы", href: staticPagePaths.cases, description: "Типовые сценарии и proof layer" },
-  ...publishedSupportPages.map((page) => ({
-    label: page.navLabel,
-    href: page.meta.path,
-    description: page.h1
-  })),
-  { label: "О компании", href: staticPagePaths.about, description: "Как работает подрядчик" },
-  { label: "Контакты", href: staticPagePaths.contacts, description: "Форма заявки и каналы связи" }
-];
+export interface PrimaryNavigationGroup {
+  kind: "group";
+  label: string;
+  description: string;
+  items: NavItem[];
+}
+
+export type PrimaryNavigationItem = PrimaryNavigationLink | PrimaryNavigationGroup;
 
 export const serviceNavigation: NavItem[] = publishedServiceNavigation;
 
 export const cityNavigation: NavItem[] = publishedCityNavigation;
 
+export const supportNavigation: NavItem[] = getPublishedSupportPages(supportPages)
+  .filter((page) => page.slug !== "politika-konfidentsialnosti")
+  .map((page) => ({
+    label: page.navLabel,
+    href: page.meta.path,
+    description: page.h1
+  }));
+
+export const homeCityNavigation: NavItem[] = cityNavigation;
+
+export const primaryNavigation: PrimaryNavigationItem[] = [
+  {
+    kind: "group",
+    label: "Услуги",
+    description: "Основные коммерческие направления",
+    items: serviceNavigation
+  },
+  {
+    kind: "group",
+    label: "Города",
+    description: "Опубликованные city pages по Казахстану",
+    items: cityNavigation
+  },
+  {
+    kind: "link",
+    label: "Кейсы",
+    href: staticPagePaths.cases,
+    description: "Типовые сценарии и proof layer"
+  },
+  {
+    kind: "group",
+    label: "Условия",
+    description: "Доставка, оплата, гарантия и FAQ",
+    items: supportNavigation
+  },
+  {
+    kind: "link",
+    label: "О компании",
+    href: staticPagePaths.about,
+    description: "Как работает подрядчик"
+  },
+  {
+    kind: "link",
+    label: "Контакты",
+    href: staticPagePaths.contacts,
+    description: "Форма заявки и каналы связи"
+  }
+];
+
+export function flattenPrimaryNavigation(items: PrimaryNavigationItem[] = primaryNavigation): NavItem[] {
+  return items.flatMap((item) =>
+    item.kind === "link"
+      ? [{ label: item.label, href: item.href, description: item.description }]
+      : item.items
+  );
+}
+
 export const footerNavigation = {
   services: serviceNavigation,
   support: [
-    { label: "Доставка", href: staticPagePaths.delivery, description: "Удалённые заказы по Казахстану" },
-    { label: "Оплата и гарантия", href: staticPagePaths.payment, description: "Коммерческие условия" },
-    { label: "FAQ", href: staticPagePaths.faq, description: "Частые вопросы" },
+    ...supportNavigation,
     { label: "Политика конфиденциальности", href: staticPagePaths.privacy, description: "Обработка данных из формы" }
   ] satisfies NavItem[],
   company: [

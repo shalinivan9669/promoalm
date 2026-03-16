@@ -11,7 +11,7 @@ defineProps<{
 <template>
   <section
     id="services"
-    class="section-divider section-space"
+    class="section-divider section-space scroll-mt-32"
   >
     <Container>
       <SectionHeader

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { cases } from "../data/cases";
+import { homeCityNavigation } from "../data/navigation";
 import { homeFaqs } from "../data/faqs";
 import { serviceCards } from "../data/service-summaries";
 import { aboutPageData, contactInfo, globalTrustStats, homePageData, staticPageMeta } from "../data/site";
@@ -29,6 +30,20 @@ usePageSeo({
       <p class="max-w-3xl text-lg leading-8 text-muted">
         {{ homePageData.intro }}
       </p>
+      <nav
+        aria-label="Города обслуживания"
+        class="mt-6 flex flex-wrap items-center gap-3"
+      >
+        <span class="text-xs font-semibold uppercase tracking-[0.18em] text-white">Города</span>
+        <a
+          v-for="item in homeCityNavigation"
+          :key="item.href"
+          :href="item.href"
+          class="chip text-white transition hover:border-accent hover:text-white"
+        >
+          {{ item.label }}
+        </a>
+      </nav>
     </Container>
 
     <TrustStrip

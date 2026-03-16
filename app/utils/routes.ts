@@ -8,6 +8,11 @@ export function withTrailingSlash(path: string) {
   return path.endsWith("/") ? path : `${path}/`;
 }
 
+export function normalizePathForMatch(path: string) {
+  const pathname = path.split("#")[0] || "/";
+  return withTrailingSlash(pathname);
+}
+
 export function servicePath(slug: ServiceSlug) {
   return withTrailingSlash(`/uslugi/${slug}`);
 }

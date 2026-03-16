@@ -37,6 +37,23 @@ describe("lead schema", () => {
     expect(normalizeContactValue("7011112233")).toBe("+7011112233");
   });
 
+  it("accepts an empty optional locationsCount", () => {
+    const result = leadFormSchema.safeParse({
+      name: "Арман",
+      contact: "+7 (701) 111-22-33",
+      city: "Алматы",
+      message: "Нужна фасадная вывеска для кафе, монтаж нужен.",
+      preferredChannel: "whatsapp",
+      locationsCount: "",
+      taskType: "Фасадные вывески",
+      sourcePage: "/kontakty/",
+      startedAt: Date.now() - 10_000,
+      hp: ""
+    });
+
+    expect(result.success).toBe(true);
+  });
+
   it("returns normalized payload", () => {
     const payload = normalizeLeadPayload({
       name: " Арман ",
