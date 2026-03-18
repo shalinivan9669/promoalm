@@ -28,9 +28,6 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-03-01",
   srcDir: "app/",
   modules: [],
-  features: {
-    noScripts: true
-  },
   components: [
     {
       path: "~/components",
