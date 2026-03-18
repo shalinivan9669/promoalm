@@ -48,7 +48,7 @@ function bulletClass(index: number) {
     <Container>
       <div :class="gridClass">
         <SectionHeader
-          eyebrow="Почему это работает"
+          eyebrow="Как идёт работа, если объект не рядом"
           :title="title"
           :description="description"
           :variant="headerVariant"

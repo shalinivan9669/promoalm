@@ -25,19 +25,19 @@ const rootClass = computed(() => {
 
 const titleClass = computed(() =>
   props.variant === "default"
-    ? "mt-4 text-3xl font-semibold text-white sm:text-4xl"
+    ? "section-header__title"
     : "page-section-header__title"
 );
 
 const descriptionClass = computed(() =>
   props.variant === "default"
-    ? "mt-4 text-base leading-7 text-muted sm:text-lg"
+    ? "section-header__description"
     : "page-section-header__description"
 );
 </script>
 
 <template>
-  <div :class="rootClass">
+  <div :class="props.variant === 'default' ? `section-header ${rootClass}` : rootClass">
     <p
       v-if="props.eyebrow"
       class="eyebrow"

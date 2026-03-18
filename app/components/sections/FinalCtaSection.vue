@@ -24,10 +24,10 @@ const isInternal = computed(() => props.variant !== "default" && props.variant !
         <div :class="props.variant === 'home' ? 'home-final-cta__grid' : isInternal ? 'page-terminal-cta__grid' : 'grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end'">
           <div>
             <p class="eyebrow">{{ eyebrow || "Следующий шаг" }}</p>
-            <h2 :class="props.variant === 'home' ? 'home-final-cta__title' : isInternal ? 'page-terminal-cta__title' : 'mt-4 text-3xl font-semibold text-white sm:text-4xl'">
+            <h2 :class="props.variant === 'home' ? 'home-final-cta__title' : isInternal ? 'page-terminal-cta__title' : 'section-header__title'">
               {{ title }}
             </h2>
-            <p :class="props.variant === 'home' ? 'home-final-cta__description' : isInternal ? 'page-terminal-cta__description' : 'mt-4 max-w-3xl text-base leading-7 text-muted'">
+            <p :class="props.variant === 'home' ? 'home-final-cta__description' : isInternal ? 'page-terminal-cta__description' : 'section-header__description'">
               {{ description }}
             </p>
           </div>

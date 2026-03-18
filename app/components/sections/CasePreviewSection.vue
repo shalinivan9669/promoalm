@@ -101,10 +101,10 @@ function homeCaseDockClass() {
 
             <div class="home-case-card__panel-grid">
               <div class="home-case-card__narrative">
-                <h3 class="home-case-card__title text-2xl font-semibold text-white">
+                <h3 class="home-case-card__title">
                   {{ item.title }}
                 </h3>
-                <p class="home-case-card__summary text-sm leading-7 text-muted sm:text-[15px]">
+                <p class="home-case-card__summary">
                   {{ item.summary }}
                 </p>
               </div>
@@ -160,8 +160,8 @@ function homeCaseDockClass() {
             <span class="chip">{{ item.proofMode === "scenario" ? "Типовой сценарий" : "Кейс" }}</span>
             <span class="text-xs text-muted">{{ item.cityLabel }}</span>
           </div>
-          <h3 class="text-xl font-semibold text-white">{{ item.title }}</h3>
-          <p class="text-sm leading-6 text-muted">{{ item.summary }}</p>
+          <h3 class="page-card__title">{{ item.title }}</h3>
+          <p class="page-card__summary">{{ item.summary }}</p>
           <div class="rounded-3xl border border-line bg-canvas-soft p-4 text-sm leading-6 text-muted">
             <p class="font-semibold text-white">Задача</p>
             <p class="mt-2">{{ item.challenge }}</p>

@@ -11,7 +11,7 @@ withDefaults(
     eyebrow?: string;
   }>(),
   {
-    eyebrow: "Видимость, масштаб и контроль"
+    eyebrow: "Вывески для бизнеса"
   }
 );
 </script>
@@ -33,7 +33,7 @@ withDefaults(
               v-if="note"
               class="home-statement__aside"
             >
-              <p class="home-statement__label">Коммерческий контекст</p>
+              <p class="home-statement__label">Подходим, когда нужно оформить фасад, собрать заметную вывеску для точки, запустить брендовый объект или сделать тираж для нескольких адресов.</p>
               <p class="mt-3 text-sm leading-7 text-muted sm:text-base">
                 {{ note }}
               </p>

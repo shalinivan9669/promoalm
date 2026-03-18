@@ -1,9 +1,24 @@
-@import url("https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap");
+@import "@fontsource/manrope/latin-400.css";
+@import "@fontsource/manrope/latin-500.css";
+@import "@fontsource/manrope/latin-600.css";
+@import "@fontsource/manrope/latin-700.css";
+@import "@fontsource/manrope/cyrillic-400.css";
+@import "@fontsource/manrope/cyrillic-500.css";
+@import "@fontsource/manrope/cyrillic-600.css";
+@import "@fontsource/manrope/cyrillic-700.css";
+@import "@fontsource/unbounded/latin-600.css";
+@import "@fontsource/unbounded/latin-700.css";
+@import "@fontsource/unbounded/latin-800.css";
+@import "@fontsource/unbounded/cyrillic-600.css";
+@import "@fontsource/unbounded/cyrillic-700.css";
+@import "@fontsource/unbounded/cyrillic-800.css";
 @import "tailwindcss";
 
 @theme {
   --font-sans:
-    "Onest", "Segoe UI", "Segoe UI Variable", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    "Manrope", "Inter", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --font-display:
+    "Unbounded", "Arial Nova", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
   --font-mono:
     "Cascadia Mono", "SFMono-Regular", "Consolas", "Liberation Mono", "Courier New", monospace;
 
@@ -34,9 +49,34 @@
     color-scheme: dark;
   }
 
+  :root {
+    --type-hero: clamp(3rem, 5.6vw, 5.5rem);
+    --type-h1: clamp(2.7rem, 4.9vw, 4.9rem);
+    --type-h2: clamp(2rem, 3.4vw, 3.25rem);
+    --type-h3: clamp(1.3rem, 1.9vw, 1.72rem);
+    --type-h4: clamp(1.05rem, 1.25vw, 1.18rem);
+    --type-intro: clamp(1rem, 1.35vw, 1.14rem);
+    --type-body: 0.98rem;
+    --type-body-sm: 0.92rem;
+    --type-meta: 0.76rem;
+    --type-button: 0.95rem;
+    --leading-display: 0.94;
+    --leading-heading: 1.04;
+    --leading-intro: 1.72;
+    --leading-body: 1.74;
+    --tracking-display-tight: -0.05em;
+    --tracking-display: -0.035em;
+    --tracking-ui: 0.012em;
+    --tracking-meta: 0.16em;
+  }
+
   body {
     @apply bg-canvas font-sans text-ink;
     overflow-x: hidden;
+    font-size: var(--type-body);
+    line-height: var(--leading-body);
+    font-weight: 500;
+    letter-spacing: -0.01em;
     background-image:
       radial-gradient(circle at top, rgba(140, 200, 255, 0.06), transparent 24%),
       linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent 22%);
@@ -45,7 +85,38 @@
   h1,
   h2,
   h3 {
+    font-family: var(--font-display);
     text-wrap: balance;
+    letter-spacing: var(--tracking-display);
+    color: #ffffff;
+  }
+
+  h1 {
+    font-size: var(--type-h1);
+    line-height: var(--leading-display);
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: var(--type-h2);
+    line-height: var(--leading-heading);
+    font-weight: 700;
+  }
+
+  h3 {
+    font-size: var(--type-h3);
+    line-height: 1.1;
+    font-weight: 600;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans);
+    line-height: 1.25;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: #ffffff;
   }
 
   p {
@@ -63,6 +134,7 @@
   textarea,
   select {
     @apply outline-none;
+    font-family: var(--font-sans);
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
@@ -95,11 +167,20 @@
   }
 
   .chip {
-    @apply inline-flex items-center rounded-full border border-line bg-white/3 px-3 py-1 text-xs font-medium tracking-[0.02em] text-muted;
+    @apply inline-flex items-center rounded-full border border-line bg-white/3 px-3 py-1 text-muted;
+    font-size: var(--type-meta);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: 0.04em;
   }
 
   .eyebrow {
-    @apply font-mono text-[11px] uppercase tracking-[0.28em] text-accent;
+    @apply uppercase text-accent;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.18em;
   }
 
   .home-hero {
@@ -178,26 +259,29 @@
   .home-hero__title {
     margin-top: 1.25rem;
     max-width: 12ch;
-    font-size: clamp(3rem, 7vw, 5.85rem);
-    line-height: 0.92;
-    font-weight: 650;
+    font-family: var(--font-display);
+    font-size: var(--type-hero);
+    line-height: 0.9;
+    font-weight: 700;
     color: #ffffff;
-    letter-spacing: -0.05em;
+    letter-spacing: var(--tracking-display-tight);
   }
 
   .home-hero__description {
     margin-top: 1.5rem;
     max-width: 38rem;
-    font-size: clamp(1rem, 1.8vw, 1.125rem);
-    line-height: 1.9;
+    font-size: var(--type-intro);
+    line-height: var(--leading-intro);
+    font-weight: 500;
     color: rgba(237, 241, 246, 0.76);
   }
 
   .home-hero__note {
     margin-top: 1.25rem;
     max-width: 34rem;
-    font-size: 0.925rem;
-    line-height: 1.8;
+    font-size: var(--type-body-sm);
+    line-height: 1.72;
+    font-weight: 500;
     color: rgba(158, 168, 183, 0.92);
   }
 
@@ -468,10 +552,11 @@
   .home-statement__title {
     margin-top: 1rem;
     max-width: 18ch;
-    font-size: clamp(2.2rem, 5vw, 4.4rem);
-    line-height: 0.96;
-    font-weight: 650;
-    letter-spacing: -0.045em;
+    font-family: var(--font-display);
+    font-size: clamp(2.15rem, 4.5vw, 4.1rem);
+    line-height: 0.97;
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
     color: #ffffff;
   }
 
@@ -483,11 +568,11 @@
   }
 
   .home-statement__label {
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     font-weight: 700;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(237, 241, 246, 0.88);
+    color: rgba(237, 241, 246, 0.8);
   }
 
   .home-statement__city-link,
@@ -537,9 +622,11 @@
   }
 
   .home-statement__stat-value {
-    font-size: clamp(1.45rem, 3vw, 2.25rem);
+    font-family: var(--font-display);
+    font-size: clamp(1.55rem, 2.8vw, 2.4rem);
     line-height: 1;
-    font-weight: 650;
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
     color: #ffffff;
     font-variant-numeric: tabular-nums;
   }
@@ -708,7 +795,28 @@
   }
 
   .home-service-card__title {
+    font-family: var(--font-display);
+    font-size: var(--type-h3);
+    line-height: 1.08;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: #ffffff;
     transition: color 220ms ease;
+  }
+
+  .home-service-card__title--featured {
+    font-size: clamp(1.9rem, 3.1vw, 2.6rem);
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  .home-service-card__title--promoted {
+    font-size: clamp(1.32rem, 1.7vw, 1.55rem);
+  }
+
+  .home-service-card__title--compact {
+    font-size: clamp(1.14rem, 1.35vw, 1.26rem);
+    line-height: 1.14;
   }
 
   .home-service-card__summary--compact {
@@ -742,8 +850,9 @@
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(255, 255, 255, 0.04);
     color: #ffffff;
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-size: var(--type-button);
+    font-weight: 700;
+    letter-spacing: var(--tracking-ui);
     transition:
       border-color 220ms ease,
       background-color 220ms ease,
@@ -751,9 +860,9 @@
   }
 
   .home-service-card__cta {
-    font-size: 0.76rem;
+    font-size: 0.78rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: rgba(237, 241, 246, 0.8);
   }
@@ -1049,8 +1158,8 @@
     border: 1px solid rgba(255, 255, 255, 0.07);
     background: rgba(255, 255, 255, 0.03);
     padding: 0.35rem 0.75rem;
-    font-size: 0.74rem;
-    font-weight: 500;
+    font-size: 0.78rem;
+    font-weight: 600;
     letter-spacing: 0.03em;
     color: rgba(237, 241, 246, 0.84);
   }
@@ -1077,11 +1186,20 @@
 
   .home-case-card__title {
     max-width: 24ch;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2vw, 2.15rem);
+    line-height: 1.05;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    color: #ffffff;
     transition: color 220ms ease;
   }
 
   .home-case-card__summary {
     max-width: 40rem;
+    font-size: var(--type-body-sm);
+    line-height: 1.74;
+    font-weight: 500;
   }
 
   .home-case-card__operations {
@@ -1108,9 +1226,9 @@
   .home-case-card__label {
     font-size: 0.74rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(237, 241, 246, 0.9);
+    color: rgba(237, 241, 246, 0.82);
   }
 
   .home-case-card__text {
@@ -1134,9 +1252,9 @@
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    font-size: 0.76rem;
+    font-size: 0.78rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: rgba(237, 241, 246, 0.82);
   }
@@ -1208,8 +1326,10 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 1.2rem 1.25rem;
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 1.04rem;
+    line-height: 1.4;
+    font-weight: 700;
+    letter-spacing: -0.015em;
     color: #ffffff;
   }
 
@@ -1247,8 +1367,9 @@
 
   .home-faq__answer {
     padding: 0 1.25rem 1.2rem;
-    font-size: 0.94rem;
-    line-height: 1.8;
+    font-size: var(--type-body-sm);
+    line-height: 1.74;
+    font-weight: 500;
     color: rgba(158, 168, 183, 0.96);
   }
 
@@ -1291,18 +1412,20 @@
   .home-final-cta__title {
     margin-top: 1rem;
     max-width: 15ch;
-    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-family: var(--font-display);
+    font-size: clamp(2.15rem, 4.1vw, 3.75rem);
     line-height: 0.98;
-    font-weight: 650;
-    letter-spacing: -0.04em;
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
     color: #ffffff;
   }
 
   .home-final-cta__description {
     margin-top: 1.25rem;
     max-width: 40rem;
-    font-size: 1rem;
-    line-height: 1.85;
+    font-size: var(--type-intro);
+    line-height: 1.7;
+    font-weight: 500;
     color: rgba(237, 241, 246, 0.78);
   }
 
@@ -1363,18 +1486,20 @@
   .page-hero__title {
     margin-top: 1rem;
     max-width: 12ch;
-    font-size: clamp(2.55rem, 5.5vw, 4.95rem);
-    line-height: 0.94;
-    font-weight: 650;
-    letter-spacing: -0.05em;
+    font-family: var(--font-display);
+    font-size: var(--type-h1);
+    line-height: 0.93;
+    font-weight: 700;
+    letter-spacing: var(--tracking-display-tight);
     color: #ffffff;
   }
 
   .page-hero__description {
     margin-top: 1.4rem;
     max-width: 42rem;
-    font-size: clamp(1rem, 1.8vw, 1.1rem);
-    line-height: 1.82;
+    font-size: var(--type-intro);
+    line-height: 1.72;
+    font-weight: 500;
     color: rgba(237, 241, 246, 0.78);
   }
 
@@ -1518,10 +1643,10 @@
     align-items: center;
     justify-content: center;
     min-width: 2.2rem;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     color: rgba(140, 200, 255, 0.86);
   }
 
@@ -1598,8 +1723,9 @@
 
   .page-lead__intro {
     max-width: 44rem;
-    font-size: clamp(1.02rem, 1.8vw, 1.18rem);
-    line-height: 1.92;
+    font-size: clamp(1.02rem, 1.55vw, 1.16rem);
+    line-height: 1.78;
+    font-weight: 500;
     color: rgba(237, 241, 246, 0.82);
   }
 
@@ -1616,17 +1742,19 @@
   }
 
   .page-lead__stat-label {
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: rgba(140, 200, 255, 0.84);
   }
 
   .page-lead__stat-value {
     margin-top: 0.45rem;
-    font-size: 1.25rem;
-    font-weight: 650;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 1.6vw, 1.55rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
     color: #ffffff;
   }
 
@@ -1643,6 +1771,30 @@
     gap: 0.75rem;
   }
 
+  .section-header {
+    max-width: 44rem;
+  }
+
+  .section-header__title {
+    margin-top: 0.95rem;
+    max-width: 18ch;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.6vw, 3rem);
+    line-height: 1.02;
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
+    color: #ffffff;
+  }
+
+  .section-header__description {
+    margin-top: 1rem;
+    max-width: 40rem;
+    font-size: var(--type-intro);
+    line-height: 1.7;
+    font-weight: 500;
+    color: rgba(158, 168, 183, 0.96);
+  }
+
   .page-section-header {
     max-width: 44rem;
   }
@@ -1650,18 +1802,20 @@
   .page-section-header__title {
     margin-top: 0.9rem;
     max-width: 18ch;
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    line-height: 0.98;
-    font-weight: 650;
-    letter-spacing: -0.04em;
+    font-family: var(--font-display);
+    font-size: var(--type-h2);
+    line-height: 1.01;
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
     color: #ffffff;
   }
 
   .page-section-header__description {
     margin-top: 1rem;
     max-width: 40rem;
-    font-size: 1rem;
-    line-height: 1.85;
+    font-size: var(--type-intro);
+    line-height: 1.7;
+    font-weight: 500;
     color: rgba(158, 168, 183, 0.96);
   }
 
@@ -1746,17 +1900,29 @@
 
   .page-card__value {
     margin-top: 0.1rem;
-    font-size: clamp(1.4rem, 2.7vw, 2.1rem);
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 2.5vw, 2.15rem);
     line-height: 1;
-    font-weight: 650;
+    font-weight: 700;
+    letter-spacing: -0.03em;
     color: #ffffff;
     font-variant-numeric: tabular-nums;
   }
 
   .page-card__title {
-    font-size: 1.05rem;
-    font-weight: 650;
+    font-family: var(--font-display);
+    font-size: clamp(1.18rem, 1.5vw, 1.4rem);
+    line-height: 1.12;
+    font-weight: 600;
+    letter-spacing: -0.025em;
     color: #ffffff;
+  }
+
+  .page-card__summary {
+    font-size: var(--type-body-sm);
+    line-height: 1.72;
+    font-weight: 500;
+    color: rgba(158, 168, 183, 0.96);
   }
 
   .page-card__description {
@@ -1816,8 +1982,10 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 1.15rem 1.2rem;
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 1.02rem;
+    line-height: 1.38;
+    font-weight: 700;
+    letter-spacing: -0.015em;
     color: #ffffff;
   }
 
@@ -1855,8 +2023,9 @@
 
   .page-faq__answer {
     padding: 0 1.2rem 1.15rem;
-    font-size: 0.94rem;
-    line-height: 1.82;
+    font-size: var(--type-body-sm);
+    line-height: 1.74;
+    font-weight: 500;
     color: rgba(158, 168, 183, 0.96);
   }
 
@@ -1883,18 +2052,20 @@
   .page-terminal-cta__title {
     margin-top: 0.9rem;
     max-width: 16ch;
-    font-size: clamp(2rem, 4vw, 3.4rem);
-    line-height: 0.98;
-    font-weight: 650;
-    letter-spacing: -0.04em;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.9vw, 3.25rem);
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
     color: #ffffff;
   }
 
   .page-terminal-cta__description {
     margin-top: 1rem;
     max-width: 42rem;
-    font-size: 1rem;
-    line-height: 1.82;
+    font-size: var(--type-intro);
+    line-height: 1.7;
+    font-weight: 500;
     color: rgba(237, 241, 246, 0.78);
   }
 
@@ -2037,10 +2208,10 @@
 
   .contact-intake-group__legend {
     padding: 0 0.45rem;
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: rgba(140, 200, 255, 0.72);
   }
@@ -2059,8 +2230,9 @@
   }
 
   .contact-intake-form .form-field__label {
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     line-height: 1.35;
     color: rgba(237, 241, 246, 0.96);
   }
@@ -2074,6 +2246,9 @@
     min-height: 3.35rem;
     border-color: rgba(255, 255, 255, 0.08);
     background: rgba(13, 17, 22, 0.84);
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
     transition:
       border-color 180ms ease,
@@ -2123,7 +2298,7 @@
   }
 
   .contact-intake-suggestions__label {
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -2165,8 +2340,10 @@
   }
 
   .contact-intake-cta__title {
-    font-size: 0.96rem;
-    font-weight: 650;
+    font-size: 1rem;
+    line-height: 1.35;
+    font-weight: 700;
+    letter-spacing: -0.015em;
     color: #ffffff;
   }
 
@@ -2185,8 +2362,9 @@
     border-radius: 999px;
     background: linear-gradient(180deg, rgba(166, 213, 255, 1), rgba(140, 200, 255, 0.9));
     padding: 0.98rem 1.3rem;
-    font-size: 0.96rem;
+    font-size: var(--type-button);
     font-weight: 700;
+    letter-spacing: var(--tracking-ui);
     color: #111317;
     box-shadow: 0 18px 36px rgba(0, 0, 0, 0.26);
     transition:
@@ -2217,10 +2395,11 @@
 
   .contact-intake-state__title {
     max-width: 18ch;
-    font-size: clamp(2rem, 4vw, 2.8rem);
-    line-height: 1;
-    font-weight: 650;
-    letter-spacing: -0.04em;
+    font-family: var(--font-display);
+    font-size: clamp(1.95rem, 3.5vw, 2.75rem);
+    line-height: 1.03;
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
     color: #ffffff;
   }
 

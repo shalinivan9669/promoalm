@@ -7,7 +7,7 @@ export const cases: CaseStudy[] = [
     proofMode: "scenario",
     evidenceLevel: "placeholder",
     slug: "cyber-club-facade-rollout",
-    title: "Типовой сценарий: фасадный комплект для сети компьютерных клубов",
+    title: "Фасадный комплект для сети компьютерных клубов",
     summary:
       "Сценарий для сети, которой нужна единая фасадная подача на нескольких точках без ручного переизобретения каждой вывески.",
     challenge:
@@ -27,7 +27,7 @@ export const cases: CaseStudy[] = [
     proofMode: "scenario",
     evidenceLevel: "placeholder",
     slug: "coffee-lightbox-entry",
-    title: "Типовой сценарий: световой короб для точки общепита",
+    title: "Световой короб для точки общепита",
     summary:
       "Сценарий для кафе или кофейни, где нужна читаемая вывеска с улицы и быстрый запуск без сложной крышной конструкции.",
     challenge:
@@ -47,7 +47,7 @@ export const cases: CaseStudy[] = [
     proofMode: "scenario",
     evidenceLevel: "placeholder",
     slug: "roof-sign-retail",
-    title: "Типовой сценарий: крышная установка для заметного retail-объекта",
+    title: "Крышная установка для заметного retail-объекта",
     summary:
       "Сценарий для объекта, которому нужна видимость с расстояния и отдельный расчёт по несущей части, доступу и монтажу.",
     challenge:
@@ -67,7 +67,7 @@ export const cases: CaseStudy[] = [
     proofMode: "scenario",
     evidenceLevel: "placeholder",
     slug: "interior-logo-showroom",
-    title: "Типовой сценарий: интерьерный логотип для коммерческого пространства",
+    title: "Интерьерный логотип для коммерческого пространства",
     summary:
       "Сценарий для шоурума, офиса продаж или студии, где нужен чистый световой акцент внутри помещения без попытки вынести интерьерный неон на улицу.",
     challenge:
@@ -87,7 +87,7 @@ export const cases: CaseStudy[] = [
     proofMode: "scenario",
     evidenceLevel: "placeholder",
     slug: "letters-for-clinic",
-    title: "Типовой сценарий: объёмные буквы для клиники или сервисной компании",
+    title: "Объёмные буквы для клиники или сервисной компании",
     summary:
       "Сценарий для объекта, которому нужна строгая подача бренда без перегруза и с понятной читаемостью с улицы.",
     challenge:
@@ -107,7 +107,7 @@ export const cases: CaseStudy[] = [
     proofMode: "scenario",
     evidenceLevel: "placeholder",
     slug: "regional-delivery-pack",
-    title: "Типовой сценарий: удалённый заказ с доставкой по Казахстану",
+    title: "Удалённый заказ с доставкой по Казахстану",
     summary:
       "Сценарий для бизнеса вне базового города, когда согласование проходит дистанционно, а логистика и монтаж считаются отдельно.",
     challenge:

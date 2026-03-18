@@ -161,7 +161,7 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
                 {{ tag }}
               </span>
             </div>
-            <h3 class="text-2xl font-semibold text-white sm:text-[2rem]">
+            <h3 class="home-service-card__title home-service-card__title--featured">
               {{ featuredCard.title }}
             </h3>
             <p class="max-w-2xl text-base leading-7 text-muted">
@@ -192,7 +192,7 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
                   {{ tag }}
                 </span>
               </div>
-              <h3 class="text-xl font-semibold text-white">
+              <h3 class="home-service-card__title home-service-card__title--promoted">
                 {{ card.title }}
               </h3>
               <p class="text-sm leading-6 text-muted">
@@ -229,7 +229,7 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
               </span>
             </div>
             <div class="home-service-card__body home-service-card__body--feature">
-              <h3 class="home-service-card__title text-2xl font-semibold text-white sm:text-[2rem]">
+              <h3 class="home-service-card__title home-service-card__title--featured">
                 {{ lowerFeaturedCard.title }}
               </h3>
               <p class="text-base leading-7 text-muted">
@@ -274,7 +274,7 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
                 </span>
               </div>
               <div class="home-service-card__body">
-                <h3 class="home-service-card__title text-lg font-semibold text-white sm:text-[1.15rem]">
+                <h3 class="home-service-card__title home-service-card__title--compact">
                   {{ card.title }}
                 </h3>
                 <p class="home-service-card__summary home-service-card__summary--compact text-sm leading-6 text-muted">
@@ -319,10 +319,10 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
               {{ tag }}
             </span>
           </div>
-          <h3 class="text-xl font-semibold text-white">
+          <h3 class="page-card__title">
             {{ card.title }}
           </h3>
-          <p class="text-sm leading-6 text-muted">
+          <p class="page-card__summary">
             {{ card.summary }}
           </p>
           <div class="mt-auto pt-2">
