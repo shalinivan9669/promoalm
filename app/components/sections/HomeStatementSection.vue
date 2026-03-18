@@ -5,6 +5,7 @@ withDefaults(
   defineProps<{
     statement: string;
     note?: string;
+    quickLinks: NavItem[];
     cityNavigation: NavItem[];
     trustItems: TrustStat[];
     industries: string[];
@@ -18,44 +19,69 @@ withDefaults(
 
 <template>
   <section class="home-statement section-divider">
+    <div
+      v-if="quickLinks.length"
+      class="home-statement__quick-links-wrap"
+    >
+      <nav
+        aria-label="Быстрые входы"
+        class="home-statement__quick-links"
+      >
+        <a
+          v-for="item in quickLinks"
+          :key="item.href + item.label"
+          :href="item.href"
+          class="home-statement__quick-link"
+        >
+          {{ item.label }}
+        </a>
+      </nav>
+    </div>
+
     <Container>
       <div class="home-statement__frame">
         <div class="home-statement__grid">
-          <div>
+          <div class="home-statement__lead">
             <p class="eyebrow">{{ eyebrow }}</p>
             <h2 class="home-statement__title">
               {{ statement }}
             </h2>
           </div>
+        </div>
 
-          <div class="space-y-5">
-            <article
-              v-if="note"
-              class="home-statement__aside"
+        <div
+          v-if="note || cityNavigation.length"
+          class="home-statement__aside-band"
+        >
+          <article
+            v-if="note"
+            class="home-statement__aside home-statement__aside--brief"
+          >
+            <p class="home-statement__label">Подходит, когда нужно</p>
+            <p class="mt-3 text-sm leading-7 text-muted sm:text-base">
+              Оформить фасад, собрать заметную вывеску для точки, обновить объект или подготовить тираж для нескольких адресов.
+            </p>
+            <p class="mt-3 text-sm leading-7 text-muted/95 sm:text-base">
+              {{ note }}
+            </p>
+          </article>
+
+          <article class="home-statement__aside home-statement__aside--cities">
+            <p class="home-statement__label">Города обслуживания</p>
+            <nav
+              aria-label="Города обслуживания"
+              class="mt-4 flex flex-wrap gap-3"
             >
-              <p class="home-statement__label">Подходим, когда нужно оформить фасад, собрать заметную вывеску для точки, запустить брендовый объект или сделать тираж для нескольких адресов.</p>
-              <p class="mt-3 text-sm leading-7 text-muted sm:text-base">
-                {{ note }}
-              </p>
-            </article>
-
-            <article class="home-statement__aside">
-              <p class="home-statement__label">Города обслуживания</p>
-              <nav
-                aria-label="Города обслуживания"
-                class="mt-4 flex flex-wrap gap-3"
+              <a
+                v-for="item in cityNavigation"
+                :key="item.href"
+                :href="item.href"
+                class="home-statement__city-link"
               >
-                <a
-                  v-for="item in cityNavigation"
-                  :key="item.href"
-                  :href="item.href"
-                  class="home-statement__city-link"
-                >
-                  {{ item.label }}
-                </a>
-              </nav>
-            </article>
-          </div>
+                {{ item.label }}
+              </a>
+            </nav>
+          </article>
         </div>
 
         <div class="home-statement__rail">

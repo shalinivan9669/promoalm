@@ -38,7 +38,7 @@ export default defineNuxtConfig({
     }
   ],
   css: ["~/assets/css/main.css"],
-  devtools: { enabled: false },
+  devtools: { enabled: true  },
   typescript: {
     strict: true,
     // `nuxt dev` uses vite-plugin-checker here, which is unstable on pnpm + Windows.

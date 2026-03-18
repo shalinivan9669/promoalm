@@ -61,7 +61,7 @@ const isInternal = computed(() => props.variant !== "default");
         <span
           v-for="highlight in props.highlights"
           :key="highlight"
-          :class="isInternal ? 'page-chip' : 'chip'"
+          :class="`${isInternal ? 'page-chip' : 'chip'} section-signage-label`"
         >
           {{ highlight }}
         </span>

@@ -28,7 +28,7 @@ const headerVariant = computed(() => (props.variant === "support" ? "support" : 
         <span
           v-for="material in props.materials"
           :key="material"
-          :class="isInternal ? 'page-chip' : 'chip'"
+          :class="`${isInternal ? 'page-chip' : 'chip'} section-signage-label`"
         >
           {{ material }}
         </span>

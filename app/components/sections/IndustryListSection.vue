@@ -30,7 +30,7 @@ const eyebrow = computed(() => props.eyebrow);
         <span
           v-for="item in props.items"
           :key="item"
-          :class="isInternal ? 'page-chip' : 'chip'"
+          :class="`${isInternal ? 'page-chip' : 'chip'} section-signage-label`"
         >
           {{ item }}
         </span>

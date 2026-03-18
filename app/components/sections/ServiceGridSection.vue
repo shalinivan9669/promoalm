@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { ServiceCard } from "../../../shared/types/content";
 
+interface DescriptionHighlightConfig {
+  text: string;
+  tone?: "warm" | "gas" | "berry";
+}
+
 const FEATURED_SLUG = "fasadnye-vyveski";
 const PROMOTED_SLUGS = ["svetovye-koroba", "vyveski-dlya-seti"];
 const LOWER_FEATURED_SLUG = "vyveski-pod-klyuch";
@@ -17,11 +22,15 @@ const props = withDefaults(
   defineProps<{
     title: string;
     description: string;
+    descriptionHighlight?: string;
+    descriptionHighlightTone?: "warm" | "gas" | "berry";
+    descriptionHighlights?: DescriptionHighlightConfig[];
     cards: ServiceCard[];
     variant?: "default" | "home" | "city" | "service" | "support" | "about" | "cases" | "contact";
   }>(),
   {
-    variant: "default"
+    variant: "default",
+    descriptionHighlightTone: "warm"
   }
 );
 
@@ -146,6 +155,10 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
         eyebrow="Услуги"
         :title="title"
         :description="description"
+        :description-highlight="props.descriptionHighlight"
+        :description-highlight-tone="props.descriptionHighlightTone"
+        :description-highlights="props.descriptionHighlights"
+        eyebrow-style="plain"
         :variant="headerVariant"
       />
 
@@ -156,7 +169,7 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
               <span
                 v-for="tag in featuredCard.tags"
                 :key="tag"
-                class="chip"
+                class="home-service-card__chip"
               >
                 {{ tag }}
               </span>
@@ -187,7 +200,7 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
                 <span
                   v-for="tag in card.tags"
                   :key="tag"
-                  class="chip"
+                  class="home-service-card__chip"
                 >
                   {{ tag }}
                 </span>
@@ -262,13 +275,13 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
                 <span
                   v-for="tag in getVisibleTags(card, 2)"
                   :key="tag"
-                  class="home-service-card__chip"
+                   class="home-service-card__chip"
                 >
                   {{ tag }}
                 </span>
                 <span
                   v-if="getHiddenTagCount(card, 2)"
-                  class="home-service-card__chip home-service-card__chip--more"
+                   class="home-service-card__chip home-service-card__chip--more"
                 >
                   +{{ getHiddenTagCount(card, 2) }}
                 </span>
@@ -314,7 +327,7 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
             <span
               v-for="tag in card.tags"
               :key="tag"
-              :class="isInternal ? 'page-chip' : 'chip'"
+              :class="`${isInternal ? 'page-chip' : 'chip'} section-signage-label`"
             >
               {{ tag }}
             </span>

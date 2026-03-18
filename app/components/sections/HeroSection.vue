@@ -14,16 +14,11 @@ const props = withDefaults(
     variant?: "default" | "home" | "service" | "city" | "support" | "about" | "cases" | "contact";
     mediaMode?: "abstract" | "image";
     mediaFrames?: HeroMediaFrame[];
-    quickLinks?: Array<{
-      label: string;
-      href: string;
-    }>;
   }>(),
   {
     variant: "default",
     mediaMode: "abstract",
-    mediaFrames: () => [],
-    quickLinks: () => []
+    mediaFrames: () => []
   }
 );
 
@@ -46,7 +41,7 @@ const internalVariant = computed(() => (props.variant === "home" ? "default" : p
     </div>
 
     <Container class="relative">
-      <div class="home-hero__grid">
+      <div class="home-hero__grid home-hero__grid--copy-only">
         <div class="home-hero__copy">
           <p class="eyebrow">{{ hero.eyebrow }}</p>
           <h1 class="home-hero__title">
@@ -73,71 +68,7 @@ const internalVariant = computed(() => (props.variant === "home" ? "default" : p
             {{ hero.note }}
           </p>
         </div>
-
-        <div class="home-hero__signal">
-          <div class="home-hero__signal-frame">
-            <div
-              v-if="isImageMode"
-              class="home-hero__media-stack"
-            >
-              <img
-                v-for="(frame, index) in mediaFrames.slice(0, 3)"
-                :key="frame.src + index"
-                :src="frame.src"
-                :alt="frame.alt"
-                :width="960"
-                :height="920"
-                :fetchpriority="frame.fetchPriority || (index === 0 ? 'high' : 'auto')"
-                :loading="frame.loading || (index === 0 ? 'eager' : 'lazy')"
-                class="home-hero__media-frame"
-              >
-            </div>
-
-            <div
-              v-else
-              aria-hidden="true"
-              class="home-hero__abstract-scene"
-            >
-              <div class="home-hero__plate home-hero__plate--one" />
-              <div class="home-hero__plate home-hero__plate--two" />
-              <div class="home-hero__plate home-hero__plate--three" />
-              <div class="home-hero__geometry home-hero__geometry--grid" />
-              <div class="home-hero__geometry home-hero__geometry--facade" />
-              <div class="home-hero__signal-beam home-hero__signal-beam--one" />
-              <div class="home-hero__signal-beam home-hero__signal-beam--two" />
-              <div class="home-hero__signal-node home-hero__signal-node--one" />
-              <div class="home-hero__signal-node home-hero__signal-node--two" />
-              <div class="home-hero__signal-node home-hero__signal-node--three" />
-            </div>
-          </div>
-
-          <div class="home-hero__facts">
-            <article
-              v-for="fact in hero.facts"
-              :key="fact"
-              class="home-hero__fact-plate"
-            >
-              <span class="home-hero__fact-mark" />
-              <span class="min-w-0">{{ fact }}</span>
-            </article>
-          </div>
-        </div>
       </div>
-
-      <nav
-        v-if="quickLinks.length"
-        aria-label="Быстрые входы"
-        class="home-hero__quick-links"
-      >
-        <a
-          v-for="item in quickLinks"
-          :key="item.href + item.label"
-          :href="item.href"
-          class="home-hero__quick-link"
-        >
-          {{ item.label }}
-        </a>
-      </nav>
     </Container>
   </section>
 

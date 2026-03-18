@@ -23,17 +23,27 @@ const sectionClass = computed(() =>
 );
 const headerVariant = computed(() => (props.variant === "support" ? "support" : isInternal.value ? "page" : "default"));
 
+const CASE_CATEGORY_LABELS: Partial<Record<CaseStudy["relatedServiceSlugs"][number], string>> = {
+  "fasadnye-vyveski": "Фасадный кейс",
+  "svetovye-koroba": "Кейс: лайтбокс",
+  "kryshnye-ustanovki": "Кейс: крышная установка",
+  "interernye-vyveski-dlya-biznesa": "Интерьерный кейс",
+  "obemnye-bukvy": "Кейс: объёмные буквы",
+  "vyveski-pod-klyuch": "Кейс под ключ",
+  "vyveski-dlya-seti": "Сетевой кейс",
+  "montazh-vyvesok": "Монтажный кейс"
+};
+
 function cardClass(index: number) {
-  if (props.variant === "home") {
-    return "home-case-card";
-  }
+  const layoutClass = isInternal.value && index === 0 ? "lg:col-span-2" : "";
+  const rowClass = props.variant === "cases" && index === 0 ? "lg:row-span-2" : "";
 
-  if (isInternal.value) {
-    const featured = index === 0 ? "page-card page-card--feature lg:col-span-2" : "page-card";
-    return props.variant === "cases" && index === 0 ? `${featured} lg:row-span-2` : featured;
-  }
-
-  return "surface flex h-full flex-col gap-4 p-6";
+  return [
+    "case-preview-card",
+    index === 0 ? "case-preview-card--featured" : "",
+    layoutClass,
+    rowClass
+  ].join(" ");
 }
 
 function isVisualLeading(index: number) {
@@ -50,13 +60,30 @@ function homeCasePanelClass(index: number) {
 }
 
 function homeCaseVisualClass(index: number) {
-  const themeClass = index === 0 ? "home-case-card__visual--rollout" : index === 1 ? "home-case-card__visual--lightbox" : "home-case-card__visual--roof";
+  const themeClass =
+    index === 0
+      ? "home-case-card__visual--rollout"
+      : index === 1
+        ? "home-case-card__visual--lightbox"
+        : "home-case-card__visual--roof";
 
   return ["home-case-card__visual", themeClass].join(" ");
 }
 
 function homeCaseDockClass() {
   return ["home-case-card__dock"].join(" ");
+}
+
+function getCaseCategoryLabel(item: CaseStudy) {
+  for (const slug of item.relatedServiceSlugs) {
+    const label = CASE_CATEGORY_LABELS[slug];
+
+    if (label) {
+      return label;
+    }
+  }
+
+  return item.proofMode === "real" ? "Реальный кейс" : "Категориальный кейс";
 }
 </script>
 
@@ -85,18 +112,13 @@ function homeCaseDockClass() {
             :class="homeCaseVisualClass(index)"
             aria-hidden="true"
           >
-            <span class="home-case-card__visual-vignette"></span>
-            <span class="home-case-card__visual-grid"></span>
-            <span class="home-case-card__visual-frame"></span>
-            <span class="home-case-card__visual-object home-case-card__visual-object--primary"></span>
-            <span class="home-case-card__visual-object home-case-card__visual-object--secondary"></span>
-            <span class="home-case-card__visual-line"></span>
+          
           </div>
 
           <div :class="homeCaseDockClass()">
             <div class="home-case-card__meta-rail">
-              <span class="home-case-card__meta-chip">{{ item.proofMode === "scenario" ? "Типовой сценарий" : "Кейс" }}</span>
-              <span class="home-case-card__city">{{ item.cityLabel }}</span>
+              <span class="home-case-card__meta-chip section-signage-label">{{ getCaseCategoryLabel(item) }}</span>
+              <span class="home-case-card__city section-signage-label section-signage-label--ghost">{{ item.cityLabel }}</span>
             </div>
 
             <div class="home-case-card__panel-grid">
@@ -126,7 +148,7 @@ function homeCaseDockClass() {
                 <span
                   v-for="metric in item.metrics.slice(0, 2)"
                   :key="metric"
-                  class="home-case-card__metric"
+                  class="home-case-card__metric section-signage-label section-signage-label--ghost"
                 >
                   {{ metric }}
                 </span>
@@ -156,19 +178,27 @@ function homeCaseDockClass() {
           :key="item.id"
           :class="cardClass(index)"
         >
-          <div class="flex items-center justify-between gap-3">
-            <span class="chip">{{ item.proofMode === "scenario" ? "Типовой сценарий" : "Кейс" }}</span>
-            <span class="text-xs text-muted">{{ item.cityLabel }}</span>
+          <div class="case-preview-card__meta-rail">
+            <span class="section-signage-label">{{ getCaseCategoryLabel(item) }}</span>
+            <span class="section-signage-label section-signage-label--ghost">{{ item.cityLabel }}</span>
           </div>
-          <h3 class="page-card__title">{{ item.title }}</h3>
-          <p class="page-card__summary">{{ item.summary }}</p>
-          <div class="rounded-3xl border border-line bg-canvas-soft p-4 text-sm leading-6 text-muted">
-            <p class="font-semibold text-white">Задача</p>
-            <p class="mt-2">{{ item.challenge }}</p>
+          <div
+            class="case-preview-card__visual"
+            aria-hidden="true"
+          />
+          <div class="case-preview-card__narrative">
+            <h3 class="case-preview-card__title">{{ item.title }}</h3>
+            <p class="case-preview-card__summary">{{ item.summary }}</p>
           </div>
-          <div class="rounded-3xl border border-line bg-canvas-soft p-4 text-sm leading-6 text-muted">
-            <p class="font-semibold text-white">Решение</p>
-            <p class="mt-2">{{ item.solution }}</p>
+          <div class="case-preview-card__operations">
+            <div class="case-preview-card__operation">
+              <p class="case-preview-card__label">Задача</p>
+              <p class="case-preview-card__text">{{ item.challenge }}</p>
+            </div>
+            <div class="case-preview-card__operation">
+              <p class="case-preview-card__label">Решение</p>
+              <p class="case-preview-card__text">{{ item.solution }}</p>
+            </div>
           </div>
           <ButtonLink
             :href="`/cases/#${item.slug}`"

@@ -24,15 +24,15 @@ const sectionClass = computed(() =>
 const headerVariant = computed(() => (props.variant === "support" ? "support" : isInternal.value ? "page" : "default"));
 
 function stepClass(index: number) {
-  if (props.variant === "home") {
-    return "home-process-step";
-  }
-
-  if (isInternal.value) {
-    return index === 0 ? "page-card page-card--feature" : "page-card";
-  }
-
-  return "surface p-6";
+  return [
+    "process-panel",
+    props.variant === "home"
+      ? "process-panel--home"
+      : isInternal.value
+        ? "process-panel--page"
+        : "process-panel--default",
+    index === 0 ? "process-panel--featured" : ""
+  ].join(" ");
 }
 </script>
 
@@ -52,16 +52,25 @@ function stepClass(index: number) {
           :key="step.title"
           :class="stepClass(index)"
         >
-          <p class="eyebrow">Шаг {{ index + 1 }}</p>
-          <h3 class="mt-4 text-lg font-semibold text-white">
-            {{ step.title }}
-          </h3>
-          <p class="mt-3 text-sm leading-6 text-muted">
-            {{ step.description }}
-          </p>
+          <div class="process-panel__topline">
+            <p class="process-panel__eyebrow">Шаг</p>
+            <p class="process-panel__index">
+              {{ String(index + 1).padStart(2, "0") }}
+            </p>
+          </div>
+
+          <div class="process-panel__body">
+            <h3 class="process-panel__title">
+              {{ step.title }}
+            </h3>
+            <p class="process-panel__description">
+              {{ step.description }}
+            </p>
+          </div>
+
           <p
             v-if="step.note"
-            class="mt-3 text-xs leading-5 text-muted"
+            class="process-panel__note"
           >
             {{ step.note }}
           </p>
