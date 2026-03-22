@@ -10,7 +10,7 @@ interface PageSeoInput {
 export function usePageSeo(input: PageSeoInput) {
   const config = useRuntimeConfig();
   const siteUrl = config.public.siteUrl as string;
-  const canonical = absoluteUrl(siteUrl, input.meta.path);
+  const canonical = absoluteUrl(siteUrl, input.meta.canonical || input.meta.path);
   const image = absoluteUrl(siteUrl, input.meta.image || (config.public.defaultOgImage as string));
 
   useSeoMeta({

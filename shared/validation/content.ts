@@ -73,10 +73,106 @@ const seoSchema = z.object({
   title: z.string().min(15),
   description: z.string().min(40),
   path: z.string().min(1),
+  canonical: z.string().optional(),
   ogType: z.enum(["website", "article"]).optional(),
   image: z.string().optional(),
   noindex: z.boolean().optional()
 });
+
+const supportSchemaTypeSchema = z.enum([
+  "WebPage",
+  "BreadcrumbList",
+  "FAQPage",
+  "Service",
+  "Organization",
+  "LocalBusiness"
+]);
+const supportSchemaConfigSchema = z.object({
+  types: z.array(supportSchemaTypeSchema).min(2),
+  service: z
+    .object({
+      areaServed: z.string().min(2),
+      serviceType: z.string().min(2).optional()
+    })
+    .optional(),
+  organizationReference: z.boolean().optional(),
+  localBusinessReference: z.boolean().optional()
+});
+const supportFaqGroupSchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(2),
+  description: z.string().min(10),
+  items: z.array(faqSchema).min(1)
+});
+const supportRichSectionSchema = z.object({
+  kind: z.literal("rich"),
+  id: z.string().min(1),
+  title: z.string().min(2),
+  description: z.string().min(10).optional(),
+  body: z.string().min(25),
+  bullets: z.array(z.string().min(4)).optional(),
+  note: z.string().min(10).optional(),
+  relatedLinks: z.array(relatedLinkSchema).optional()
+});
+const supportStepsSectionSchema = z.object({
+  kind: z.literal("steps"),
+  id: z.string().min(1),
+  title: z.string().min(2),
+  description: z.string().min(10).optional(),
+  steps: z.array(processStepSchema).min(2),
+  note: z.string().min(10).optional()
+});
+const supportGeoSectionSchema = z.object({
+  kind: z.literal("geo"),
+  id: z.string().min(1),
+  title: z.string().min(2),
+  description: z.string().min(10).optional(),
+  primaryCity: z.string().min(2),
+  areaServed: z.string().min(2),
+  notes: z.array(z.string().min(10)).min(2),
+  serviceModel: z.string().min(2).optional()
+});
+const supportRiskSectionSchema = z.object({
+  kind: z.literal("risk"),
+  id: z.string().min(1),
+  title: z.string().min(2),
+  description: z.string().min(10).optional(),
+  risks: z.array(z.string().min(8)).min(2),
+  note: z.string().min(10).optional()
+});
+const supportB2BSectionSchema = z.object({
+  kind: z.literal("b2b"),
+  id: z.string().min(1),
+  title: z.string().min(2),
+  description: z.string().min(10).optional(),
+  bullets: z.array(z.string().min(8)).min(2),
+  note: z.string().min(10).optional(),
+  relatedLinks: z.array(relatedLinkSchema).optional()
+});
+const supportLegalSectionSchema = z.object({
+  kind: z.literal("legal"),
+  id: z.string().min(1),
+  title: z.string().min(2),
+  description: z.string().min(10).optional(),
+  items: z
+    .array(
+      z.object({
+        label: z.string().min(2),
+        value: z.string().min(2),
+        note: z.string().min(10).optional()
+      })
+    )
+    .min(2),
+  note: z.string().min(10).optional()
+});
+const supportSectionSchema = z.discriminatedUnion("kind", [
+  supportRichSectionSchema,
+  supportStepsSectionSchema,
+  supportGeoSectionSchema,
+  supportRiskSectionSchema,
+  supportB2BSectionSchema,
+  supportLegalSectionSchema
+]);
 
 const serviceSchema = z.object({
   slug: z.enum(SERVICE_SLUGS),
@@ -155,19 +251,38 @@ const supportSchema = z.object({
   h1: z.string().min(10),
   navLabel: z.string().min(2),
   meta: seoSchema,
+  supportIntent: z.enum(["faq-hub", "delivery", "payment", "privacy"]),
+  primaryCity: z.string().min(2),
+  areaServed: z.string().min(2),
+  serviceModel: z.enum(["remote-first", "hybrid", "legal-support"]),
+  claimsLocalOffice: z.boolean(),
+  hasPublicAddress: z.boolean(),
+  hasLegalRequisites: z.boolean(),
+  hasRealRegionalInstall: z.boolean(),
+  minimumOrderApplies: z.boolean(),
+  supportsUrgent: z.boolean(),
+  supportsMultiLocation: z.boolean(),
+  installationMode: z.enum(["available", "by-agreement", "not-offered"]),
+  guaranteeMode: z.enum(["standard", "project", "custom"]),
+  paymentMode: z.enum(["prepayment", "stage-based", "mixed"]),
+  evidenceLevel: evidenceLevelSchema,
+  intro: z.string().min(30),
   hero: heroSchema,
-  sections: z.array(
-    z.object({
-      title: z.string().min(2),
-      body: z.string().min(25),
-      bullets: z.array(z.string().min(4)).optional()
+  quickFacts: z.array(trustItemSchema).min(3),
+  sections: z.array(supportSectionSchema).min(4),
+  faqGroups: z.array(supportFaqGroupSchema).min(1),
+  relatedLinks: z.array(relatedLinkSchema).min(3),
+  cta: ctaSchema,
+  secondaryCta: ctaSchema.optional(),
+  schema: supportSchemaConfigSchema,
+  legalPlaceholders: z
+    .object({
+      requisitesNote: z.string().min(10).optional(),
+      deletionContact: z.string().min(10).optional(),
+      retentionNote: z.string().min(10).optional(),
+      updateNote: z.string().min(10).optional()
     })
-  ).min(1),
-  highlights: z.array(z.string().min(4)).min(2),
-  trustItems: z.array(trustItemSchema).min(1),
-  faq: z.array(faqSchema).optional(),
-  relatedLinks: z.array(relatedLinkSchema).min(1),
-  cta: ctaSchema
+    .optional()
 }) satisfies z.ZodType<SupportPageData>;
 
 interface ContentBundle {
@@ -208,7 +323,7 @@ export function validateContentOrThrow(bundle: ContentBundle) {
 
   assertUnique(pageMetas.map((item) => item.title), "meta title");
   assertUnique(pageMetas.map((item) => item.description), "meta description");
-  assertUnique(pageMetas.map((item) => item.path), "canonical path");
+  assertUnique(pageMetas.map((item) => item.canonical ?? item.path), "canonical path");
   assertUnique(
     [...publishedServices.map((item) => item.h1), ...publishedCities.map((item) => item.h1), ...publishedSupportPages.map((item) => item.h1)],
     "h1"
@@ -216,6 +331,15 @@ export function validateContentOrThrow(bundle: ContentBundle) {
 
   const publishedServiceSlugs = new Set(publishedServices.map((item) => item.slug));
   const publishedCaseIds = new Set(publishedCases.map((item) => item.id));
+
+  assertUnique(publishedCities.map((item) => item.hero.title), "city hero title");
+  assertUnique(publishedCities.map((item) => item.hero.description), "city hero description");
+  assertUnique(publishedCities.map((item) => item.hero.note ?? ""), "city hero note");
+  assertUnique(publishedCities.map((item) => item.intro), "city intro");
+  assertUnique(publishedCities.map((item) => item.localAngle), "city local angle");
+  assertUnique(publishedCities.map((item) => item.logisticsNote), "city logistics note");
+  assertUnique(publishedCities.map((item) => item.cta.label), "city CTA label");
+  assertUnique(publishedCities.map((item) => item.hero.actions[0]?.label ?? ""), "city hero action label");
 
   for (const service of publishedServices) {
     if (service.priceNotes.length < 1) {
@@ -246,16 +370,72 @@ export function validateContentOrThrow(bundle: ContentBundle) {
   }
 
   for (const city of publishedCities) {
+    if (city.meta.noindex) {
+      throw new Error(`Published city "${city.slug}" must not be noindex.`);
+    }
+
+    if (city.hasLocalAddress) {
+      throw new Error(`Published city "${city.slug}" must not claim a local address.`);
+    }
+
+    if (!city.hero.note?.trim()) {
+      throw new Error(`Published city "${city.slug}" must include a service-area hero note.`);
+    }
+
+    if (city.hero.facts.length < 3) {
+      throw new Error(`Published city "${city.slug}" must have at least three hero facts.`);
+    }
+
     if (!city.localAngle || !city.logisticsNote) {
       throw new Error(`Published city "${city.slug}" must have local angle and logistics note.`);
+    }
+
+    if (city.serviceHighlights.length < 3) {
+      throw new Error(`Published city "${city.slug}" must have at least three service highlights.`);
+    }
+
+    if (city.trustItems.length < 2) {
+      throw new Error(`Published city "${city.slug}" must have at least two trust items.`);
     }
 
     if (city.faq.length < 4) {
       throw new Error(`Published city "${city.slug}" must have at least four FAQ items.`);
     }
 
-    if (city.relatedServiceSlugs.length < 1 || city.relatedCaseIds.length < 1) {
-      throw new Error(`Published city "${city.slug}" must reference services and cases.`);
+    if (city.relatedServiceSlugs.length < 2) {
+      throw new Error(`Published city "${city.slug}" must reference at least two related services.`);
+    }
+
+    if (city.relatedCaseIds.length < 1 || city.relatedCaseIds.length > 2) {
+      throw new Error(`Published city "${city.slug}" must reference one or two cases.`);
+    }
+
+    if (city.relatedLinks.length < 3) {
+      throw new Error(`Published city "${city.slug}" must reference at least three related links.`);
+    }
+
+    if (city.sections.length !== 7) {
+      throw new Error(`Published city "${city.slug}" must keep the lean seven-section contract.`);
+    }
+
+    const requiredSections = ["hero", "trust", "proof", "delivery", "faq", "related", "cta"] as const;
+
+    for (const section of requiredSections) {
+      if (!city.sections.includes(section)) {
+        throw new Error(`Published city "${city.slug}" must include "${section}" in sections.`);
+      }
+    }
+
+    if (!city.cta.label.trim()) {
+      throw new Error(`Published city "${city.slug}" must have a CTA label.`);
+    }
+
+    if (city.cta.intent !== "primary") {
+      throw new Error(`Published city "${city.slug}" must use a primary CTA.`);
+    }
+
+    if (!city.hero.actions.length || city.hero.actions[0]!.intent !== "primary") {
+      throw new Error(`Published city "${city.slug}" must start with a primary hero action.`);
     }
 
     for (const serviceSlug of city.relatedServiceSlugs) {
@@ -268,6 +448,56 @@ export function validateContentOrThrow(bundle: ContentBundle) {
       if (!publishedCaseIds.has(caseId)) {
         throw new Error(`City "${city.slug}" references missing published case "${caseId}".`);
       }
+    }
+  }
+
+  for (const page of publishedSupportPages) {
+    if (page.quickFacts.length < 3) {
+      throw new Error(`Published support page "${page.slug}" must have at least three quick facts.`);
+    }
+
+    if (page.sections.length < 4) {
+      throw new Error(`Published support page "${page.slug}" must have at least four content sections.`);
+    }
+
+    if (page.faqGroups.length < 1) {
+      throw new Error(`Published support page "${page.slug}" must have at least one FAQ group.`);
+    }
+
+    if (page.relatedLinks.length < 3) {
+      throw new Error(`Published support page "${page.slug}" must have at least three related links.`);
+    }
+
+    if (page.claimsLocalOffice && !page.hasPublicAddress) {
+      throw new Error(`Support page "${page.slug}" claims a local office but has no public address.`);
+    }
+
+    if (page.schema.localBusinessReference && (!page.hasPublicAddress || !page.hasLegalRequisites)) {
+      throw new Error(`Support page "${page.slug}" cannot reference LocalBusiness without public address and legal requisites.`);
+    }
+
+    if (page.supportIntent === "delivery" && !page.schema.types.includes("Service")) {
+      throw new Error(`Support page "${page.slug}" must declare Service schema.`);
+    }
+
+    if ((page.supportIntent === "faq-hub" || page.supportIntent === "delivery" || page.supportIntent === "payment") && !page.schema.types.includes("FAQPage")) {
+      throw new Error(`Support page "${page.slug}" must declare FAQ schema.`);
+    }
+
+    if (page.supportIntent === "privacy" && page.schema.types.includes("Service")) {
+      throw new Error(`Privacy page "${page.slug}" must not declare Service schema.`);
+    }
+
+    for (const section of page.sections) {
+      if (section.kind === "rich") {
+        if (section.relatedLinks?.length) {
+          assertUnique(section.relatedLinks.map((link) => link.href), `support section related link (${page.slug}/${section.id})`);
+        }
+      }
+    }
+
+    for (const group of page.faqGroups) {
+      assertUnique(group.items.map((item) => item.id), `FAQ item id in support page ${page.slug}`);
     }
   }
 

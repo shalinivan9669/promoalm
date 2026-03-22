@@ -4,7 +4,7 @@ import { cities } from "../../data/cities";
 import { serviceCards } from "../../data/service-summaries";
 import { contactInfo } from "../../data/site";
 import { getCasesByIds, getServiceCardsBySlugs } from "../../utils/links";
-import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationSchema, buildServiceSchema } from "../../utils/schema";
+import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationSchema, buildWebPageSchema } from "../../utils/schema";
 
 const route = useRoute();
 const slug = route.params.slug as string;
@@ -22,7 +22,7 @@ const relatedServiceCards = getServiceCardsBySlugs(serviceCards.filter((item) =>
 const schemas = [
   buildOrganizationSchema(siteUrl, contactInfo),
   buildBreadcrumbSchema(siteUrl, breadcrumbs),
-  buildServiceSchema(siteUrl, page),
+  buildWebPageSchema(siteUrl, page.h1, page.meta.description, page.meta.path),
   buildFaqSchema(page.faq)
 ].filter(Boolean) as Record<string, unknown>[];
 

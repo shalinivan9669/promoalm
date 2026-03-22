@@ -9,6 +9,7 @@ const shouldPrecompressPublicAssets = nitroPreset !== "vercel";
 const staticRoutes = [
   "/",
   "/o-kompanii/",
+  "/kontakty/",
   "/faq/",
   "/dostavka-po-kazahstanu/",
   "/oplata-i-garantiya/",
@@ -82,6 +83,7 @@ export default defineNuxtConfig({
   routeRules: {
     "/": { prerender: true },
     "/o-kompanii/": { prerender: true },
+    "/kontakty/": { prerender: true },
     "/faq/": { prerender: true },
     "/dostavka-po-kazahstanu/": { prerender: true },
     "/oplata-i-garantiya/": { prerender: true },

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { LeadApiError } from "~~/shared/types/lead";
+import { contactInfo } from "../../data/site";
 import { serviceCards } from "../../data/service-summaries";
 
 const props = withDefaults(
@@ -24,7 +25,9 @@ const leadStatus = computed(() => (Array.isArray(route.query.leadStatus) ? route
 const leadReason = computed(() => (Array.isArray(route.query.leadReason) ? route.query.leadReason[0] : route.query.leadReason));
 const isSuccess = computed(() => leadStatus.value === "success");
 const showTaskType = !props.presetTaskType;
-const showLocationsCount = props.showLocations || !props.presetTaskType;
+const showLocationsCount = props.variant === "contact" ? true : props.showLocations || !props.presetTaskType;
+const whatsappChannel = contactInfo.channels.find((item) => item.type === "whatsapp");
+const whatsappHref = whatsappChannel?.href || "/kontakty/";
 
 const taskOptions = [
   { label: "Общий запрос", value: "Общий запрос" },
@@ -36,6 +39,36 @@ const taskOptions = [
     }))
 ];
 
+const contactTaskOptions = [
+  { label: "Общий запрос", value: "Общий запрос" },
+  { label: "Световая вывеска", value: "Световая вывеска" },
+  { label: "Лайтбокс / световой короб", value: "Лайтбокс / световой короб" },
+  { label: "Объёмные буквы", value: "Объёмные буквы" },
+  { label: "Неоновая вывеска", value: "Неоновая вывеска" },
+  { label: "Фасадная вывеска", value: "Фасадная вывеска" },
+  { label: "Входная группа", value: "Входная группа" },
+  { label: "Вывески для сети", value: "Вывески для сети" },
+  { label: "Нестандартная конструкция", value: "Нестандартная конструкция" }
+];
+
+const objectTypeOptions = [
+  { label: "Не указывать", value: "" },
+  { label: "Фасад / street retail", value: "Фасад / street retail" },
+  { label: "Входная группа", value: "Входная группа" },
+  { label: "Торговый зал / интерьер", value: "Торговый зал / интерьер" },
+  { label: "Офис / шоурум", value: "Офис / шоурум" },
+  { label: "Несколько точек", value: "Несколько точек" },
+  { label: "Другое", value: "Другое" }
+];
+
+const deadlineOptions = [
+  { label: "Срок пока не определён", value: "" },
+  { label: "Срочно", value: "Срочно" },
+  { label: "1–2 недели", value: "1–2 недели" },
+  { label: "2–4 недели", value: "2–4 недели" },
+  { label: "Планируем позже", value: "Планируем позже" }
+];
+
 const cityOptions = [
   { label: "Не указывать", value: "" },
   { label: "Алматы", value: "Алматы" },
@@ -44,7 +77,14 @@ const cityOptions = [
   { label: "Другой город", value: "Другой город" }
 ];
 
-const messageSuggestions = ["Фасад", "Лайтбокс", "Объёмные буквы", "Интерьер", "Несколько точек", "Нужен монтаж"];
+const messageSuggestions = [
+  "Фото фасада",
+  "Адрес объекта",
+  "Размеры или ориентир",
+  "Ссылка на референс",
+  "Брендбук",
+  "Несколько точек"
+];
 
 const errorMessages: Record<LeadApiError["reason"], string> = {
   validation: "Проверьте поля формы и попробуйте ещё раз.",
@@ -87,21 +127,34 @@ const wrapperClass = computed(() =>
         Заявка принята. Следующий шаг: уточнение проекта и расчёт.
       </h3>
       <p :class="props.variant === 'contact' ? 'contact-intake-state__description' : 'text-sm leading-6 text-muted'">
-        Если прямой номер для WhatsApp и телефона ещё не подключён, ответ придёт по рабочему каналу,
-        который владелец добавит перед запуском. Для боевого запуска замените placeholder-контакты в
-        `app/data/site.ts`.
+        Мы вернёмся в выбранный канал и уточним следующий шаг по проекту.
       </p>
       <div :class="props.variant === 'contact' ? 'contact-intake-state__actions' : 'flex flex-wrap gap-3 pt-2'">
-        <ButtonLink
-          href="/cases/"
-          label="Смотреть кейсы"
-          intent="secondary"
-        />
-        <ButtonLink
-          href="/kontakty/#lead-form"
-          label="Отправить ещё одну заявку"
-          intent="primary"
-        />
+        <template v-if="props.variant === 'contact'">
+          <ButtonLink
+            :href="whatsappHref"
+            label="Написать в WhatsApp"
+            intent="whatsapp"
+            external
+          />
+          <ButtonLink
+            href="/cases/"
+            label="Смотреть кейсы"
+            intent="secondary"
+          />
+        </template>
+        <template v-else>
+          <ButtonLink
+            href="/cases/"
+            label="Смотреть кейсы"
+            intent="secondary"
+          />
+          <ButtonLink
+            href="/kontakty/#lead-form"
+            label="Отправить ещё одну заявку"
+            intent="primary"
+          />
+        </template>
       </div>
     </div>
 
@@ -135,7 +188,7 @@ const wrapperClass = computed(() =>
               <InputField
                 name="name"
                 autocomplete="name"
-                placeholder="Например, Арман / Coffee Point"
+                placeholder="Имя, компания или бренд"
                 required
                 minlength="2"
                 maxlength="120"
@@ -156,17 +209,9 @@ const wrapperClass = computed(() =>
                 maxlength="40"
               />
             </FormField>
-          </div>
-        </fieldset>
-
-        <fieldset class="contact-intake-group">
-          <legend class="contact-intake-group__legend">
-            Контекст
-          </legend>
-          <div class="contact-intake-group__grid contact-intake-group__grid--two">
             <FormField
               label="Город"
-              hint="Можно не указывать, если вы уже на странице города."
+              hint="Можно оставить Алматы или выбрать свой город."
             >
               <SelectField
                 name="city"
@@ -186,23 +231,124 @@ const wrapperClass = computed(() =>
               />
             </FormField>
           </div>
+        </fieldset>
 
-          <FormField
-            v-if="showTaskType"
-            label="Тип задачи"
-          >
-            <SelectField
+        <fieldset class="contact-intake-group">
+          <legend class="contact-intake-group__legend">
+            Проект
+          </legend>
+
+          <div class="contact-intake-group__grid contact-intake-group__grid--two">
+            <FormField
+              label="Тип объекта"
+              hint="Помогает сразу понять формат фасада или помещения."
+            >
+              <SelectField
+                name="objectType"
+                :options="objectTypeOptions"
+              />
+            </FormField>
+
+            <FormField
+              label="Срок"
+              hint="Можно оставить пустым, если пока без дедлайна."
+            >
+              <SelectField
+                name="deadline"
+                :options="deadlineOptions"
+              />
+            </FormField>
+          </div>
+
+          <div class="contact-intake-group__grid contact-intake-group__grid--two">
+            <FormField
+              v-if="showTaskType"
+              label="Что нужно изготовить"
+              required
+            >
+              <SelectField
+                name="taskType"
+                model-value="Общий запрос"
+                :options="contactTaskOptions"
+              />
+            </FormField>
+            <input
+              v-else
+              type="hidden"
               name="taskType"
-              model-value="Общий запрос"
-              :options="taskOptions"
-            />
-          </FormField>
-          <input
-            v-else
-            type="hidden"
-            name="taskType"
-            :value="presetTaskType"
-          >
+              :value="presetTaskType"
+            >
+
+            <FormField
+              label="Ориентир бюджета"
+              hint="Можно указать диапазон, если он уже есть."
+            >
+              <InputField
+                name="budget"
+                placeholder="Например, до 300 000 ₸"
+                maxlength="80"
+              />
+            </FormField>
+          </div>
+        </fieldset>
+
+        <fieldset class="contact-intake-group contact-intake-group--brief">
+          <legend class="contact-intake-group__legend">
+            Материалы
+          </legend>
+
+          <div class="contact-intake-group__grid contact-intake-group__grid--two">
+            <FormField
+              label="Адрес точки"
+              hint="Город, улица, ТРЦ, БЦ или любой понятный ориентир."
+            >
+              <InputField
+                name="address"
+                placeholder="Например, Алматы, пр. Абая, 10"
+                maxlength="180"
+              />
+            </FormField>
+
+            <FormField
+              label="Ссылка на материалы"
+              hint="Фото, папка, референс или брендбук."
+            >
+              <InputField
+                name="referenceLink"
+                placeholder="Ссылка на Drive, файл или референс"
+                maxlength="500"
+              />
+            </FormField>
+          </div>
+
+          <div class="grid gap-3 sm:grid-cols-3">
+            <label class="contact-intake-installation">
+              <input
+                type="checkbox"
+                name="hasFacadePhoto"
+                class="contact-intake-installation__control"
+              >
+              <span>Есть фото фасада</span>
+            </label>
+
+            <label class="contact-intake-installation">
+              <input
+                type="checkbox"
+                name="hasDimensions"
+                class="contact-intake-installation__control"
+              >
+              <span>Есть размеры</span>
+            </label>
+
+            <label class="contact-intake-installation">
+              <input
+                type="checkbox"
+                name="hasBrandbook"
+                class="contact-intake-installation__control"
+              >
+              <span>Есть брендбук</span>
+            </label>
+          </div>
         </fieldset>
 
         <fieldset class="contact-intake-group contact-intake-group--brief">
@@ -213,12 +359,12 @@ const wrapperClass = computed(() =>
           <div class="contact-intake-brief">
             <FormField
               label="Коротко о задаче"
-              hint="Достаточно фото объекта, масштаба и короткого описания. Этого хватит для следующего коммерческого шага."
+              hint="Опишите, что нужно сделать, для какого объекта и нужен ли монтаж. Этого уже хватает для следующего шага."
               required
             >
               <div class="contact-intake-suggestions">
                 <p class="contact-intake-suggestions__label">
-                  Примеры запроса
+                  Что можно указать
                 </p>
                 <div class="contact-intake-suggestions__list">
                   <span
@@ -232,7 +378,7 @@ const wrapperClass = computed(() =>
               </div>
               <TextareaField
                 name="message"
-                placeholder="Что нужно сделать, для какого объекта, какой город и нужен ли монтаж."
+                placeholder="Что нужно изготовить, для какого объекта, какой город, нужен ли монтаж и есть ли несколько адресов."
                 required
                 minlength="12"
                 maxlength="2000"
@@ -244,7 +390,7 @@ const wrapperClass = computed(() =>
               <FormField
                 v-if="showLocationsCount"
                 label="Количество точек"
-                hint="Заполните, только если проект сетевой или адресов несколько."
+                hint="Укажите, если проект сетевой или адресов несколько."
               >
                 <InputField
                   name="locationsCount"
@@ -266,6 +412,24 @@ const wrapperClass = computed(() =>
               </label>
             </div>
           </div>
+
+          <label class="contact-intake-installation mt-1">
+            <input
+              type="checkbox"
+              name="consent"
+              required
+              class="contact-intake-installation__control"
+            >
+            <span>
+              Соглашаюсь с
+              <a
+                href="/politika-konfidentsialnosti/"
+                class="underline decoration-line underline-offset-4 transition hover:text-[color:var(--color-accent)]"
+              >
+                политикой обработки данных
+              </a>
+            </span>
+          </label>
         </fieldset>
       </template>
 
@@ -378,6 +542,24 @@ const wrapperClass = computed(() =>
           >
           <span>Нужен монтаж или установка по объекту</span>
         </label>
+
+        <label class="flex items-start gap-3 rounded-3xl border border-line bg-canvas-soft px-4 py-3 text-sm text-ink">
+          <input
+            type="checkbox"
+            name="consent"
+            required
+            class="mt-1 h-4 w-4 rounded border-line bg-canvas-soft"
+          >
+          <span>
+            Соглашаюсь с
+            <a
+              href="/politika-konfidentsialnosti/"
+              class="text-ink underline decoration-line underline-offset-4 transition hover:text-[color:var(--color-accent)]"
+            >
+              политикой обработки данных
+            </a>
+          </span>
+        </label>
       </template>
 
       <input
@@ -401,13 +583,7 @@ const wrapperClass = computed(() =>
             Ответим в выбранный канал и предложим следующий шаг по проекту.
           </p>
           <p class="contact-intake-cta__policy">
-            Отправляя заявку, вы соглашаетесь с
-            <a
-              href="/politika-konfidentsialnosti/"
-              class="text-ink underline decoration-line underline-offset-4 transition hover:text-[color:var(--color-accent)]"
-            >
-              политикой обработки данных
-            </a>.
+            Фото фасада, адрес точки и ссылка на материалы ускоряют расчёт.
           </p>
         </div>
 

@@ -2,7 +2,7 @@
 import { supportPages } from "../data/support-pages";
 import { contactInfo } from "../data/site";
 import { getSupportPage } from "../utils/links";
-import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationSchema } from "../utils/schema";
+import { buildSupportPageSchemas } from "../utils/schema";
 
 const page = getSupportPage(supportPages, "dostavka-po-kazahstanu");
 
@@ -13,11 +13,7 @@ if (!page || page.status !== "published") {
 const config = useRuntimeConfig();
 const siteUrl = config.public.siteUrl as string;
 const breadcrumbs = useBreadcrumbs([{ label: "Доставка", href: page.meta.path, current: true }]);
-const schemas = [
-  buildOrganizationSchema(siteUrl, contactInfo),
-  buildBreadcrumbSchema(siteUrl, breadcrumbs),
-  page.faq?.length ? buildFaqSchema(page.faq) : null
-].filter(Boolean) as Record<string, unknown>[];
+const schemas = buildSupportPageSchemas(siteUrl, page, breadcrumbs, contactInfo);
 
 usePageSeo({
   meta: page.meta,

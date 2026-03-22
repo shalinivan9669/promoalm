@@ -65,6 +65,7 @@ export interface SeoMetaInput {
   title: string;
   description: string;
   path: string;
+  canonical?: string;
   ogType?: "website" | "article";
   image?: string;
   noindex?: boolean;
@@ -214,19 +215,124 @@ export interface SupportBodySection {
   bullets?: string[];
 }
 
+export type SupportIntent = "faq-hub" | "delivery" | "payment" | "privacy";
+export type SupportServiceModel = "remote-first" | "hybrid" | "legal-support";
+export type SupportSchemaType = "WebPage" | "BreadcrumbList" | "FAQPage" | "Service" | "Organization" | "LocalBusiness";
+
+export interface SupportSchemaConfig {
+  types: SupportSchemaType[];
+  service?: {
+    areaServed: string;
+    serviceType?: string;
+  };
+  organizationReference?: boolean;
+  localBusinessReference?: boolean;
+}
+
+export interface SupportFaqGroup {
+  id: string;
+  title: string;
+  description: string;
+  items: FAQItem[];
+}
+
+export interface SupportSectionBase {
+  id: string;
+  title: string;
+  description?: string;
+}
+
+export interface SupportRichSection extends SupportSectionBase {
+  kind: "rich";
+  body: string;
+  bullets?: string[];
+  note?: string;
+  relatedLinks?: RelatedLink[];
+}
+
+export interface SupportStepsSection extends SupportSectionBase {
+  kind: "steps";
+  steps: ProcessStep[];
+  note?: string;
+}
+
+export interface SupportGeoSection extends SupportSectionBase {
+  kind: "geo";
+  primaryCity: string;
+  areaServed: string;
+  notes: string[];
+  serviceModel?: string;
+}
+
+export interface SupportRiskSection extends SupportSectionBase {
+  kind: "risk";
+  risks: string[];
+  note?: string;
+}
+
+export interface SupportB2BSection extends SupportSectionBase {
+  kind: "b2b";
+  bullets: string[];
+  note?: string;
+  relatedLinks?: RelatedLink[];
+}
+
+export interface SupportLegalItem {
+  label: string;
+  value: string;
+  note?: string;
+}
+
+export interface SupportLegalSection extends SupportSectionBase {
+  kind: "legal";
+  items: SupportLegalItem[];
+  note?: string;
+}
+
+export type SupportSection =
+  | SupportRichSection
+  | SupportStepsSection
+  | SupportGeoSection
+  | SupportRiskSection
+  | SupportB2BSection
+  | SupportLegalSection;
+
 export interface SupportPageData {
   slug: SupportPageSlug;
   status: PublicationStatus;
   h1: string;
   navLabel: string;
   meta: SeoMetaInput;
+  supportIntent: SupportIntent;
+  primaryCity: string;
+  areaServed: string;
+  serviceModel: SupportServiceModel;
+  claimsLocalOffice: boolean;
+  hasPublicAddress: boolean;
+  hasLegalRequisites: boolean;
+  hasRealRegionalInstall: boolean;
+  minimumOrderApplies: boolean;
+  supportsUrgent: boolean;
+  supportsMultiLocation: boolean;
+  installationMode: InstallationMode;
+  guaranteeMode: "standard" | "project" | "custom";
+  paymentMode: "prepayment" | "stage-based" | "mixed";
+  evidenceLevel: EvidenceLevel;
+  intro: string;
   hero: HeroBlock;
-  sections: SupportBodySection[];
-  highlights: string[];
-  trustItems: TrustItem[];
-  faq?: FAQItem[];
+  quickFacts: TrustItem[];
+  sections: SupportSection[];
+  faqGroups: SupportFaqGroup[];
   relatedLinks: RelatedLink[];
   cta: CTAConfig;
+  secondaryCta?: CTAConfig;
+  schema: SupportSchemaConfig;
+  legalPlaceholders?: {
+    requisitesNote?: string;
+    deletionContact?: string;
+    retentionNote?: string;
+    updateNote?: string;
+  };
 }
 
 export interface ContactChannel {
@@ -243,6 +349,8 @@ export interface ContactInfo {
   brandName: string;
   publicName: string;
   shortDescription: string;
+  primaryCity?: string;
+  coverage?: string;
   serviceArea: string;
   minOrder: string;
   leadTime: string;
@@ -253,6 +361,7 @@ export interface ContactInfo {
   address?: string;
   addressEvidenceLevel: EvidenceLevel;
   workingHours?: string;
+  sameAs?: string[];
   legalNote: string;
 }
 

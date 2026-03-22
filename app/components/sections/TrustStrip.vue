@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
+    anchorId?: string;
     eyebrow?: string;
     title?: string;
     description?: string;
@@ -25,7 +26,10 @@ const headerVariant = computed(() => (props.variant === "support" ? "support" : 
 </script>
 
 <template>
-  <section :class="sectionClass">
+  <section
+    :id="props.anchorId"
+    :class="sectionClass"
+  >
     <Container>
       <SectionHeader
         v-if="props.title"

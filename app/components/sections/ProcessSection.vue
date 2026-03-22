@@ -3,6 +3,7 @@ import type { ProcessStep } from "../../../shared/types/content";
 
 const props = withDefaults(
   defineProps<{
+    eyebrow?: string;
     title: string;
     description: string;
     steps: ProcessStep[];
@@ -40,7 +41,7 @@ function stepClass(index: number) {
   <section :class="sectionClass">
     <Container>
       <SectionHeader
-        eyebrow="Процесс"
+        :eyebrow="props.eyebrow || 'Процесс'"
         :title="title"
         :description="description"
         :variant="headerVariant"

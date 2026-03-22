@@ -2,7 +2,7 @@
 import { supportPages } from "../data/support-pages";
 import { contactInfo } from "../data/site";
 import { getSupportPage } from "../utils/links";
-import { buildBreadcrumbSchema, buildOrganizationSchema } from "../utils/schema";
+import { buildSupportPageSchemas } from "../utils/schema";
 
 const page = getSupportPage(supportPages, "politika-konfidentsialnosti");
 
@@ -13,10 +13,7 @@ if (!page || page.status !== "published") {
 const config = useRuntimeConfig();
 const siteUrl = config.public.siteUrl as string;
 const breadcrumbs = useBreadcrumbs([{ label: "Политика конфиденциальности", href: page.meta.path, current: true }]);
-const schemas = [
-  buildOrganizationSchema(siteUrl, contactInfo),
-  buildBreadcrumbSchema(siteUrl, breadcrumbs)
-];
+const schemas = buildSupportPageSchemas(siteUrl, page, breadcrumbs, contactInfo);
 
 usePageSeo({
   meta: page.meta,

@@ -7,6 +7,7 @@ const props = withDefaults(
     title: string;
     description: string;
     cta: CTAConfig;
+    secondaryCta?: CTAConfig;
     variant?: "default" | "home" | "service" | "city" | "support" | "about" | "cases" | "contact";
     companionZone?: "lead" | "none";
   }>(),
@@ -48,6 +49,15 @@ const isInternal = computed(() => props.variant !== "default" && props.variant !
               :label="cta.label"
               :intent="cta.intent"
               :tracking-event="cta.trackingEvent"
+              :block="props.variant !== 'home'"
+            />
+            <ButtonLink
+              v-if="secondaryCta"
+              :href="secondaryCta.href"
+              :label="secondaryCta.label"
+              :intent="secondaryCta.intent"
+              :tracking-event="secondaryCta.trackingEvent"
+              :external="secondaryCta.external"
               :block="props.variant !== 'home'"
             />
           </div>

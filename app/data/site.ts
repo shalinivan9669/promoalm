@@ -11,9 +11,9 @@ export const siteConfig: SiteConfig = {
   brandName: "Neon Market",
   publicName: "Neon Market",
   defaultTitleSuffix: "Neon Market",
-  baseDescription: "Световые и фасадные вывески для бизнеса по Казахстану: макет, производство, доставка и монтаж.",
-  primaryCity: "Казахстан",
-  coverage: "Работаем по всему Казахстану",
+  baseDescription: "Базируемся в Алматы и ведём проекты по всему Казахстану: вывески, лайтбоксы, объёмные буквы, неон и фасадные конструкции.",
+  primaryCity: "Алматы",
+  coverage: "Весь Казахстан",
   minOrder: "от 100 000 ₸",
   leadTime: "3–7 дней",
   warranty: "1 год",
@@ -25,8 +25,10 @@ export const siteConfig: SiteConfig = {
 export const contactInfo: ContactInfo = {
   brandName: "Neon Market",
   publicName: "Neon Market",
-  shortDescription: "Производитель световых и фасадных вывесок для бизнеса по Казахстану.",
-  serviceArea: "Казахстан",
+  shortDescription: "Базируемся в Алматы и ведём проекты по всему Казахстану: вывески, лайтбоксы, объёмные буквы, неон и фасадные конструкции.",
+  primaryCity: "Алматы",
+  coverage: "Весь Казахстан",
+  serviceArea: "Алматы и Казахстан",
   minOrder: "Минимальный заказ от 100 000 ₸",
   leadTime: "Стандартный срок 3–7 дней",
   warranty: "Гарантия 1 год",
@@ -36,39 +38,40 @@ export const contactInfo: ContactInfo = {
     {
       type: "whatsapp",
       label: "WhatsApp",
-      value: " ",
-      note: "До подключения номера используйте форму расчёта.",
-      available: false,
-      evidenceLevel: "placeholder"
+      value: "+7 747 096 69 00",
+      href: "https://wa.me/77470966900",
+      note: "Быстрый старт: фото объекта, адрес точки или короткое ТЗ.",
+      available: true,
+      evidenceLevel: "confirmed"
     },
     {
       type: "phone",
       label: "Телефон",
-      value: " ",
-      note: "Колл-трекинг и финальный номер подключаются перед запуском.",
+      value: "Номер не опубликован",
+      note: "Рабочий телефон подключим перед публичным запуском.",
       available: false,
       evidenceLevel: "placeholder"
     },
     {
       type: "email",
       label: "Email",
-      value: " ",
-      note: "Используйте для входящих запросов и документов.",
+      value: "Почта не опубликована",
+      note: "Для документов и длинных вводных канал добавим отдельно.",
       available: false,
       evidenceLevel: "placeholder"
     },
     {
       type: "form",
       label: "Форма расчёта",
-      value: "Самый короткий путь на старте",
+      value: "Фото / адрес / ТЗ",
       href: "/kontakty/#lead-form",
-      note: "Подходит для новых проектов, сетей и удалённых заказов.",
+      note: "Самый короткий путь, если нужно быстро оценить проект и формат конструкции.",
       available: true,
       evidenceLevel: "confirmed"
     }
   ],
   addressEvidenceLevel: "hidden",
-  legalNote: "Реквизиты, рабочее время и юридический блок ."
+  legalNote: "Реквизиты, график и точные рабочие контакты можно запросить через WhatsApp или форму."
 };
 
 export const globalTrustStats: TrustStat[] = [
@@ -114,8 +117,8 @@ export const staticPageMeta: Record<"home" | "about" | "contacts" | "cases", Seo
     path: "/o-kompanii/"
   },
   contacts: {
-    title: "Контакты и заявка на расчёт | Neon Market",
-    description: "Контакты, каналы связи и короткая форма заявки на фасадные и световые вывески для бизнеса по Казахстану.",
+    title: "Контакты для заказа вывесок в Алматы и Казахстане | Neon Market",
+    description: "Базируемся в Алматы и работаем по всему Казахстану. Напишите в WhatsApp или через форму, если нужны вывески, лайтбоксы, объёмные буквы, неон или фасадные конструкции.",
     path: "/kontakty/"
   },
   cases: {

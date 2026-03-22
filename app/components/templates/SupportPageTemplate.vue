@@ -1,60 +1,75 @@
 <script setup lang="ts">
 import type { BreadcrumbItem, SupportPageData } from "../../../shared/types/content";
+import { getSupportPageCopy } from "../../utils/support-copy";
 
-defineProps<{
+const props = defineProps<{
   page: SupportPageData;
   breadcrumbs: BreadcrumbItem[];
 }>();
+
+const copy = computed(() => getSupportPageCopy(props.page.supportIntent));
+
+const tocItems = computed(() => [
+  {
+    label: copy.value.quickFactsTitle,
+    href: "#quick-facts"
+  },
+  ...props.page.sections.map((section) => ({
+    label: section.title,
+    href: `#${section.id}`
+  })),
+  {
+    label: copy.value.faqTitle,
+    href: "#faq-hub"
+  },
+  ...props.page.faqGroups.map((group) => ({
+    label: group.title,
+    href: `#${group.id}`
+  }))
+]);
 </script>
 
 <template>
   <div>
-    <HeroSection
-      :hero="page.hero"
-      variant="support"
+    <SupportHero
+      :page="props.page"
+      :breadcrumbs="props.breadcrumbs"
     />
 
-    <PageLeadSection
-      :breadcrumbs="breadcrumbs"
-      :chips="page.highlights"
-      variant="support"
+    <SupportQuickFacts
+      anchor-id="quick-facts"
+      :title="copy.quickFactsTitle"
+      :description="copy.quickFactsDescription"
+      :facts="props.page.quickFacts"
     />
 
-    <SupportContentSection
-      title="Что нужно знать"
-      description="Коротко и по делу: без длинных юридических простыней и без пустого SEO-текста."
-      :sections="page.sections"
-      :highlights="page.highlights"
-      variant="support"
+    <SupportTOC
+      anchor-id="support-toc"
+      :title="copy.tocTitle"
+      :description="copy.tocDescription"
+      :items="tocItems"
     />
 
-    <TrustStrip
-      title="Короткие факты"
-      description="Только то, что влияет на решение и ожидания по проекту."
-      :items="page.trustItems"
-      variant="support"
+    <SupportSections :sections="props.page.sections" />
+
+    <SupportFaqGroups
+      anchor-id="faq-hub"
+      :title="copy.faqTitle"
+      :description="copy.faqDescription"
+      :groups="props.page.faqGroups"
     />
 
-    <FaqSection
-      v-if="page.faq?.length"
-      title="Частые вопросы"
-      description="Дополнительные ответы по странице."
-      :items="page.faq"
-      variant="support"
+    <SupportRelatedLinks
+      :title="copy.relatedLinksTitle"
+      :description="copy.relatedLinksDescription"
+      :links="props.page.relatedLinks"
     />
 
-    <RelatedLinksSection
-      title="Связанные разделы"
-      description="Переходите туда, где продолжение маршрута логично, а не случайно."
-      :links="page.relatedLinks"
-      variant="support"
-    />
-
-    <FinalCtaSection
-      title="Если нужна конкретика по вашему проекту"
-      description="Лучше не гадать по абстрактной странице, а сразу отправить фото объекта и короткое описание задачи."
-      :cta="page.cta"
-      variant="support"
+    <SupportCTA
+      :title="copy.ctaTitle"
+      :description="copy.ctaDescription"
+      :cta="props.page.cta"
+      :secondary-cta="props.page.secondaryCta"
     />
   </div>
 </template>

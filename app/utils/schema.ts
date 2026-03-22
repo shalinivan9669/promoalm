@@ -1,4 +1,4 @@
-import type { BreadcrumbItem, CaseStudy, CityPageData, ContactInfo, FAQItem, ServicePageData } from "../../shared/types/content";
+import type { BreadcrumbItem, CaseStudy, ContactInfo, FAQItem, SupportFaqGroup, SupportPageData } from "../../shared/types/content";
 import { absoluteUrl } from "./seo";
 
 export function buildBreadcrumbSchema(siteUrl: string, items: BreadcrumbItem[]) {
@@ -15,13 +15,57 @@ export function buildBreadcrumbSchema(siteUrl: string, items: BreadcrumbItem[]) 
 }
 
 export function buildOrganizationSchema(siteUrl: string, contact: ContactInfo) {
+  const contactPoints = contact.channels
+    .filter((channel) => channel.available && channel.href)
+    .map((channel) => {
+      if (channel.type === "email") {
+        return {
+          "@type": "ContactPoint",
+          contactType: channel.label,
+          email: channel.value,
+          availableLanguage: ["ru"]
+        };
+      }
+
+      if (channel.type === "phone") {
+        return {
+          "@type": "ContactPoint",
+          contactType: channel.label,
+          telephone: channel.value,
+          availableLanguage: ["ru"]
+        };
+      }
+
+      return {
+        "@type": "ContactPoint",
+        contactType: channel.label,
+        url: absoluteUrl(siteUrl, channel.href!),
+        availableLanguage: ["ru"]
+      };
+    });
+
+  const areaServed = [contact.primaryCity, contact.coverage].filter((item): item is string => Boolean(item));
+
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: contact.publicName,
     url: siteUrl,
     description: contact.shortDescription,
-    areaServed: contact.serviceArea
+    areaServed,
+    contactPoint: contactPoints,
+    sameAs: contact.sameAs?.length ? contact.sameAs : undefined
+  };
+}
+
+export function buildWebPageSchema(siteUrl: string, title: string, description: string, path: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: title,
+    description,
+    url: absoluteUrl(siteUrl, path),
+    inLanguage: "ru"
   };
 }
 
@@ -40,8 +84,11 @@ export function buildLocalBusinessSchema(siteUrl: string, contact: ContactInfo) 
   };
 }
 
-export function buildServiceSchema(siteUrl: string, page: ServicePageData | CityPageData) {
-  const areaServed = "city" in page ? page.city : "Казахстан";
+export function buildServiceSchema(
+  siteUrl: string,
+  page: { h1: string; meta: { description: string; path: string }; city?: string; areaServed?: string }
+) {
+  const areaServed = page.city || page.areaServed || "Казахстан";
 
   return {
     "@context": "https://schema.org",
@@ -76,6 +123,56 @@ export function buildFaqSchema(faq: FAQItem[]) {
   };
 }
 
+function flattenSupportFaqGroups(groups: SupportFaqGroup[]) {
+  return groups.flatMap((group) => group.items);
+}
+
+export function buildSupportPageSchemas(siteUrl: string, page: SupportPageData, breadcrumbs: BreadcrumbItem[], contact: ContactInfo) {
+  const schemas: Record<string, unknown>[] = [
+    buildWebPageSchema(siteUrl, page.h1, page.meta.description, page.meta.canonical || page.meta.path),
+    buildBreadcrumbSchema(siteUrl, breadcrumbs)
+  ];
+
+  if (page.schema.organizationReference !== false) {
+    schemas.push(buildOrganizationSchema(siteUrl, contact));
+  }
+
+  if (page.schema.types.includes("Service")) {
+    schemas.push(
+      buildServiceSchema(siteUrl, {
+        h1: page.h1,
+        meta: {
+          description: page.meta.description,
+          path: page.meta.canonical || page.meta.path
+        },
+        areaServed: page.schema.service?.areaServed || page.areaServed
+      })
+    );
+  }
+
+  if (page.schema.types.includes("FAQPage")) {
+    const faqItems = flattenSupportFaqGroups(page.faqGroups);
+
+    if (faqItems.length) {
+      const faqSchema = buildFaqSchema(faqItems);
+
+      if (faqSchema) {
+        schemas.push(faqSchema);
+      }
+    }
+  }
+
+  if (page.schema.types.includes("LocalBusiness")) {
+    const localBusiness = buildLocalBusinessSchema(siteUrl, contact);
+
+    if (localBusiness) {
+      schemas.push(localBusiness);
+    }
+  }
+
+  return schemas.filter(Boolean) as Record<string, unknown>[];
+}
+
 export function buildCollectionPageSchema(siteUrl: string, title: string, description: string, items: CaseStudy[]) {
   return {
     "@context": "https://schema.org",
@@ -99,8 +196,13 @@ export function buildContactPageSchema(siteUrl: string, contact: ContactInfo) {
   return {
     "@context": "https://schema.org",
     "@type": "ContactPage",
-    name: "Контакты",
+    name: `Контакты ${contact.publicName}`,
     description: contact.shortDescription,
-    url: absoluteUrl(siteUrl, "/kontakty/")
+    url: absoluteUrl(siteUrl, "/kontakty/"),
+    about: {
+      "@type": "Organization",
+      name: contact.publicName,
+      url: siteUrl
+    }
   };
 }

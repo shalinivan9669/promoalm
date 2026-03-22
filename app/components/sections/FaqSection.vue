@@ -3,6 +3,7 @@ import type { FAQItem } from "../../../shared/types/content";
 
 const props = withDefaults(
   defineProps<{
+    anchorId?: string;
     title: string;
     description: string;
     items: FAQItem[];
@@ -18,7 +19,10 @@ const headerVariant = computed(() => (props.variant === "support" ? "support" : 
 </script>
 
 <template>
-  <section :class="props.variant === 'home' ? 'home-faq section-divider' : isInternal ? `section-divider section-space page-section page-section--${props.variant}` : 'section-divider section-space'">
+  <section
+    :id="props.anchorId"
+    :class="props.variant === 'home' ? 'home-faq section-divider' : isInternal ? `section-divider section-space page-section page-section--${props.variant}` : 'section-divider section-space'"
+  >
     <Container>
       <SectionHeader
         eyebrow="FAQ"
