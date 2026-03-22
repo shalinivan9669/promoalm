@@ -36,23 +36,10 @@ const badges = computed(() => {
 
 <template>
   <div>
-    <Container>
-      <div class="pt-4 sm:pt-6">
-        <Breadcrumbs
-          :items="props.breadcrumbs"
-          compact
-        />
-        <div class="mt-4 flex flex-wrap gap-3">
-          <span
-            v-for="badge in badges"
-            :key="badge"
-            class="page-chip"
-          >
-            {{ badge }}
-          </span>
-        </div>
-      </div>
-    </Container>
+    <PageTopStrip
+      :breadcrumbs="props.breadcrumbs"
+      :chips="badges"
+    />
 
     <HeroSection
       :hero="hero"

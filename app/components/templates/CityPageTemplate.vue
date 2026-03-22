@@ -90,15 +90,18 @@ const leadStats = computed(() =>
 
 <template>
   <div>
+    <PageTopStrip
+      :breadcrumbs="props.breadcrumbs"
+      :chips="props.page.serviceHighlights"
+    />
+
     <HeroSection
       :hero="props.page.hero"
       variant="city"
     />
 
     <PageLeadSection
-      :breadcrumbs="props.breadcrumbs"
       :intro="props.page.intro"
-      :chips="props.page.serviceHighlights"
       :stats="leadStats"
       variant="city"
     />

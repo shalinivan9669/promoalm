@@ -21,15 +21,18 @@ usePageSeo({
 
 <template>
   <div>
+    <PageTopStrip
+      :breadcrumbs="breadcrumbs"
+      :chips="aboutPageData.strengths"
+    />
+
     <HeroSection
       :hero="aboutPageData.hero"
       variant="about"
     />
 
     <PageLeadSection
-      :breadcrumbs="breadcrumbs"
       :intro="aboutPageData.summary"
-      :chips="aboutPageData.strengths"
       variant="about"
     />
 

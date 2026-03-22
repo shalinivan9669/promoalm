@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { BreadcrumbItem } from "../../../shared/types/content";
-
 interface LeadStat {
   label: string;
   value?: string;
@@ -9,21 +7,18 @@ interface LeadStat {
 
 const props = withDefaults(
   defineProps<{
-    breadcrumbs: BreadcrumbItem[];
     intro?: string;
-    chips?: string[];
     stats?: LeadStat[];
     variant?: "default" | "service" | "city" | "support" | "about" | "cases" | "contact";
   }>(),
   {
     intro: "",
-    chips: () => [],
     stats: () => [],
     variant: "default"
   }
 );
 
-const hasRail = computed(() => props.chips.length > 0 || props.stats.length > 0);
+const hasRail = computed(() => props.stats.length > 0);
 const slots = useSlots();
 const hasIntro = computed(() => Boolean(props.intro) || Boolean(slots.default));
 </script>
@@ -34,12 +29,11 @@ const hasIntro = computed(() => Boolean(props.intro) || Boolean(slots.default));
     :class="`page-lead--${props.variant}`"
   >
     <Container>
-      <div class="page-lead__frame">
+      <div
+        class="page-lead__frame"
+        :class="{ 'page-lead__frame--single': !hasRail }"
+      >
         <div class="page-lead__copy">
-          <Breadcrumbs
-            :items="breadcrumbs"
-            compact
-          />
           <p
             v-if="intro"
             class="page-lead__intro"
@@ -79,19 +73,6 @@ const hasIntro = computed(() => Boolean(props.intro) || Boolean(slots.default));
               {{ stat.note }}
             </p>
           </article>
-
-          <div
-            v-if="chips.length"
-            class="page-lead__chips"
-          >
-            <span
-              v-for="chip in chips"
-              :key="chip"
-              class="page-chip"
-            >
-              {{ chip }}
-            </span>
-          </div>
         </div>
       </div>
     </Container>

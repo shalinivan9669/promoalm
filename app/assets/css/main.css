@@ -3301,6 +3301,10 @@
     padding-top: 1.5rem;
   }
 
+  .page-lead__frame--single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .home-hero__grid,
   .home-statement__grid,
   .home-final-cta__grid {

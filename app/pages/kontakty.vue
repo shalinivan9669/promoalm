@@ -77,15 +77,18 @@ usePageSeo({
 
 <template>
   <div>
+    <PageTopStrip
+      :breadcrumbs="breadcrumbs"
+      :chips="lead.chips"
+    />
+
     <HeroSection
       :hero="hero"
       variant="contact"
     />
 
     <PageLeadSection
-      :breadcrumbs="breadcrumbs"
       :intro="lead.intro"
-      :chips="lead.chips"
       :stats="lead.stats"
       variant="contact"
     />

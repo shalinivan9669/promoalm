@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import type { BreadcrumbItem, CaseStudy, ServicePageData } from "../../../shared/types/content";
+import { serviceCards } from "../../data/service-summaries";
 
-defineProps<{
+const props = defineProps<{
   page: ServicePageData;
   breadcrumbs: BreadcrumbItem[];
   caseStudies: CaseStudy[];
 }>();
+
+const page = computed(() => props.page);
+const breadcrumbs = computed(() => props.breadcrumbs);
+const caseStudies = computed(() => props.caseStudies);
+const topChips = computed(() => serviceCards.find((item) => item.slug === page.value.slug)?.tags ?? []);
 
 function priceDescription(mode: ServicePageData["priceMode"]) {
   if (mode === "request-only") {
@@ -22,13 +28,17 @@ function priceDescription(mode: ServicePageData["priceMode"]) {
 
 <template>
   <div>
+    <PageTopStrip
+      :breadcrumbs="breadcrumbs"
+      :chips="topChips"
+    />
+
     <HeroSection
       :hero="page.hero"
       variant="service"
     />
 
     <PageLeadSection
-      :breadcrumbs="breadcrumbs"
       :intro="page.intro"
       :stats="page.trustItems.slice(0, 2)"
       variant="service"

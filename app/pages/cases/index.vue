@@ -38,14 +38,17 @@ usePageSeo({
 
 <template>
   <div>
+    <PageTopStrip
+      :breadcrumbs="breadcrumbs"
+      :chips="hero.facts"
+    />
+
     <HeroSection
       :hero="hero"
       variant="cases"
     />
 
     <PageLeadSection
-      :breadcrumbs="breadcrumbs"
-      :chips="hero.facts"
       variant="cases"
     >
       <p class="max-w-3xl text-lg leading-8 text-muted">
