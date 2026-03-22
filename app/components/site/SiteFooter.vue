@@ -19,7 +19,10 @@ function footerLinkClass(href: string) {
 </script>
 
 <template>
-  <footer class="section-divider mt-20 bg-[color:var(--color-surface-dark)] pb-28 pt-12 text-[color:var(--color-surface)] lg:pb-12">
+  <footer
+    class="section-divider mt-20 bg-[color:var(--color-surface-dark)] pb-28 pt-12 text-[color:var(--color-surface)] lg:pb-12"
+    data-companion-footer-zone
+  >
     <Container class="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.1fr_repeat(4,minmax(0,1fr))]">
       <div class="max-w-sm">
         <p class="text-xl font-semibold text-[color:var(--color-surface)]">Neon Market</p>

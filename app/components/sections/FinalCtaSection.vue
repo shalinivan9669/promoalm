@@ -8,9 +8,11 @@ const props = withDefaults(
     description: string;
     cta: CTAConfig;
     variant?: "default" | "home" | "service" | "city" | "support" | "about" | "cases" | "contact";
+    companionZone?: "lead" | "none";
   }>(),
   {
-    variant: "default"
+    variant: "default",
+    companionZone: "lead"
   }
 );
 
@@ -18,7 +20,10 @@ const isInternal = computed(() => props.variant !== "default" && props.variant !
 </script>
 
 <template>
-  <section :class="props.variant === 'home' ? 'home-final-cta section-divider' : isInternal ? `section-divider section-space page-section page-section--${props.variant}` : 'section-divider section-space'">
+  <section
+    :class="props.variant === 'home' ? 'home-final-cta section-divider' : isInternal ? `section-divider section-space page-section page-section--${props.variant}` : 'section-divider section-space'"
+    :data-companion-lead-zone="props.companionZone === 'lead' ? '' : undefined"
+  >
     <Container>
       <div :class="props.variant === 'home' ? 'home-final-cta__frame' : isInternal ? 'page-terminal-cta' : 'surface p-8 sm:p-10 lg:p-12'">
         <div :class="props.variant === 'home' ? 'home-final-cta__grid' : isInternal ? 'page-terminal-cta__grid' : 'grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end'">

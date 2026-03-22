@@ -18,7 +18,10 @@ withDefaults(
 </script>
 
 <template>
-  <section class="home-statement section-divider">
+  <section
+    class="home-statement section-divider"
+    data-companion-home-start
+  >
     <div
       v-if="quickLinks.length"
       class="home-statement__quick-links-wrap"

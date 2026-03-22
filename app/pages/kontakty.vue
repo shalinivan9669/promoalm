@@ -54,7 +54,10 @@ usePageSeo({
       variant="contact"
     />
 
-    <section class="section-divider section-space page-section page-section--contact">
+    <section
+      class="section-divider section-space page-section page-section--contact"
+      data-companion-lead-zone
+    >
       <Container>
         <SectionHeader
           eyebrow="Форма расчёта"

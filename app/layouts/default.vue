@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const projectCompanionHref = "https://wa.me/77470966900";
+</script>
+
 <template>
   <div class="min-h-screen bg-canvas text-ink">
     <a
@@ -10,6 +14,7 @@
     <main id="main-content">
       <slot />
     </main>
+    <SiteProjectCompanion :href="projectCompanionHref" />
     <SiteFooter />
     <MobileStickyCtaBar />
   </div>
