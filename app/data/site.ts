@@ -36,7 +36,7 @@ export const contactInfo: ContactInfo = {
     {
       type: "whatsapp",
       label: "WhatsApp",
-      value: "Подставьте номер в app/data/site.ts",
+      value: " ",
       note: "До подключения номера используйте форму расчёта.",
       available: false,
       evidenceLevel: "placeholder"
@@ -44,7 +44,7 @@ export const contactInfo: ContactInfo = {
     {
       type: "phone",
       label: "Телефон",
-      value: "Подставьте номер в app/data/site.ts",
+      value: " ",
       note: "Колл-трекинг и финальный номер подключаются перед запуском.",
       available: false,
       evidenceLevel: "placeholder"
@@ -52,7 +52,7 @@ export const contactInfo: ContactInfo = {
     {
       type: "email",
       label: "Email",
-      value: "Подставьте email в app/data/site.ts",
+      value: " ",
       note: "Используйте для входящих запросов и документов.",
       available: false,
       evidenceLevel: "placeholder"
