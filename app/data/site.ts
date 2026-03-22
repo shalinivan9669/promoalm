@@ -47,7 +47,7 @@ export const contactInfo: ContactInfo = {
     {
       type: "phone",
       label: "Телефон для звонка",
-      value: "По запросу",
+      value: "Нужно предоставить",
       note: "Для быстрого старта удобнее WhatsApp. Если нужен звонок, согласуем номер и время связи после заявки.",
       available: false,
       evidenceLevel: "placeholder"
@@ -55,7 +55,7 @@ export const contactInfo: ContactInfo = {
     {
       type: "email",
       label: "Email для документов",
-      value: "По запросу",
+      value: "Нужно предоставить",
       note: "Если нужен обмен документами или развёрнутое ТЗ, отправим рабочий email после первичного обращения.",
       available: false,
       evidenceLevel: "placeholder"

@@ -127,13 +127,13 @@ export const contactPageData = {
       },
       {
         label: "Телефон",
-        value: phoneChannel?.value || "По запросу",
+        value: phoneChannel?.value || "Нужно предоставить",
         note: phoneChannel?.note || "Для быстрого старта удобнее WhatsApp. Если нужен звонок, согласуем номер и время связи после заявки.",
         available: Boolean(phoneChannel?.available)
       },
       {
         label: "Email",
-        value: emailChannel?.value || "По запросу",
+        value: emailChannel?.value || "Нужно предоставить",
         note: emailChannel?.note || "Если нужен обмен документами или развёрнутое ТЗ, отправим рабочий email после первичного обращения.",
         available: Boolean(emailChannel?.available)
       }
