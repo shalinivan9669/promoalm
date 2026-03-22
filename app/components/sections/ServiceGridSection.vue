@@ -19,10 +19,11 @@ const LOWER_SUPPORTING_ORDER = [
   "obemnye-bukvy",
   "kryshnye-ustanovki",
   "interernye-vyveski-dlya-biznesa",
+  "neonovye-vyveski",
   "montazh-vyvesok"
 ] as const;
 const LOWER_WIDE_SLUGS = ["obemnye-bukvy", "interernye-vyveski-dlya-biznesa"] as const;
-const LOWER_SERVICE_SLUGS = ["interernye-vyveski-dlya-biznesa", "montazh-vyvesok"] as const;
+const LOWER_SERVICE_SLUGS = ["interernye-vyveski-dlya-biznesa", "neonovye-vyveski", "montazh-vyvesok"] as const;
 const HOME_SERVICE_IMAGES: Partial<Record<ServiceCard["slug"], HomeServiceImageConfig>> = {
   "fasadnye-vyveski": {
     src: "/images/type/700x611.avif",

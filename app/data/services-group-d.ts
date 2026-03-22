@@ -1,6 +1,6 @@
 import type { ServicePageData } from "../../shared/types/content";
 import { servicePath, staticPagePaths } from "../utils/routes";
-import { makeFinalCta, makeHeroActions } from "./services-helpers";
+import { baseMaterials, makeFinalCta, makeHeroActions } from "./services-helpers";
 
 export const servicesGroupD: ServicePageData[] = [
   {
@@ -118,6 +118,11 @@ export const servicesGroupD: ServicePageData[] = [
     ],
     relatedLinks: [
       {
+        label: "Неоновые вывески",
+        href: servicePath("neonovye-vyveski"),
+        description: "Если нужен отдельный сценарий для светового акцента, витрин и ресепшн-зон."
+      },
+      {
         label: "Вывески под ключ",
         href: servicePath("vyveski-pod-klyuch"),
         description: "Если у проекта есть и фасадный, и интерьерный контур."
@@ -133,8 +138,147 @@ export const servicesGroupD: ServicePageData[] = [
         description: "Опишите помещение и задачу для расчёта."
       }
     ],
-    caseIds: ["interior-logo-showroom"],
+    caseIds: ["interior-logo-showroom", "neon-signage-showroom"],
     cta: makeFinalCta("Обсудить интерьерную вывеску")
+  },
+  {
+    slug: "neonovye-vyveski",
+    status: "published",
+    name: "Неоновые вывески",
+    navLabel: "Неон",
+    h1: "Неоновые вывески для бизнеса",
+    meta: {
+      title: "Неоновые вывески для бизнеса | Neon Market",
+      description: "Неоновые вывески для интерьеров, витрин и шоурумов: макет, производство, доставка и монтаж по Казахстану.",
+      path: servicePath("neonovye-vyveski")
+    },
+    hero: {
+      eyebrow: "Неон для коммерческих помещений",
+      title: "Неоновая вывеска должна усиливать бренд, а не спорить с помещением",
+      description:
+        "Делаем неоновые вывески для шоурумов, ресепшн-зон, витрин и клиентских пространств: подбираем форму, цвет, подложку и крепление под конкретный объект.",
+      facts: ["Для помещений и витрин", "Подходит для фото и видео", "Монтаж по согласованию"],
+      actions: makeHeroActions("Рассчитать неоновую вывеску"),
+      note: "Для улицы такой формат обсуждаем отдельно: там уже другие условия эксплуатации, крепления и защита."
+    },
+    intro:
+      "Неон нужен там, где важен световой акцент и чистая подача бренда внутри помещения. Для шоурума, витрины, ресепшн-зоны или фотофона он часто работает лучше тяжёлой фасадной конструкции.",
+    sections: ["hero", "materials", "pricing", "proof", "installation", "faq", "cta", "related"],
+    useCases: ["Шоурумы", "Ресепшн-зоны", "Витрины", "Кафе и бары"],
+    industries: ["Retail", "Общепит", "Шоурумы", "Клиентские зоны"],
+    materials: [...baseMaterials, "Гибкий неон"],
+    proofHighlights: [
+      "Подбираем цвет и толщину контура под фон, а не по шаблону.",
+      "Для сетей можно зафиксировать единый неоновый стандарт и повторить его на нескольких точках."
+    ],
+    priceMode: "range",
+    minimumOrderApplies: true,
+    installationMode: "available",
+    isOutdoor: false,
+    isIndoorOnly: true,
+    supportsUrgent: true,
+    supportsMultiLocation: true,
+    priceNotes: [
+      {
+        title: "Из чего складывается стоимость",
+        text: "Цена зависит от длины контура, формы, подложки, цвета свечения, крепления и монтажной ситуации на объекте.",
+        emphasis: "Один и тот же эскиз может стоить по-разному из-за длины и конструкции."
+      },
+      {
+        title: "Когда неон особенно уместен",
+        text: "Когда нужен акцент в ресепшн-зоне, на витрине, в шоуруме, в фотофоне или внутри кафе и бара.",
+        emphasis: "Если нужен простой входной сигнал с улицы, иногда честнее взять более прямой формат."
+      }
+    ],
+    processSteps: [
+      {
+        title: "Собираем вводные по объекту",
+        description: "Смотрим фото, размеры, фон, место установки и задачу по визуальному акценту."
+      },
+      {
+        title: "Показываем макет и цвет",
+        description: "Так проще согласовать форму, толщину контура и общую читаемость."
+      },
+      {
+        title: "Считаем производство и монтаж",
+        description: "После согласования фиксируем сроки и закладываем монтажный сценарий."
+      },
+      {
+        title: "Запускаем изделие в работу",
+        description: "Производство идёт после подтверждения макета и предоплаты."
+      }
+    ],
+    trustItems: [
+      {
+        label: "Фокус",
+        value: "Коммерческие интерьеры",
+        description: "Не смешиваем страницу с домашним декоративным неоном.",
+        evidenceLevel: "confirmed"
+      },
+      {
+        label: "Тип",
+        value: "Гибкий LED-неон",
+        description: "Подбираем конкретный формат под объект, а не под общий шаблон.",
+        evidenceLevel: "confirmed"
+      },
+      {
+        label: "Сети",
+        value: "Поддерживаются",
+        description: "Можно повторить неоновый стандарт на нескольких точках.",
+        evidenceLevel: "confirmed"
+      },
+      {
+        label: "Монтаж",
+        value: "Есть",
+        description: "Внутренний монтаж считаем по условиям помещения и доступа.",
+        evidenceLevel: "confirmed"
+      }
+    ],
+    faq: [
+      {
+        id: "neon-indoor",
+        question: "Неоновые вывески делаете только для помещений?",
+        answer:
+          "Основной сценарий страницы - коммерческие интерьеры. Уличные решения тоже обсуждаем, но для них отдельно проверяем условия эксплуатации и монтаж."
+      },
+      {
+        id: "neon-vs-letters",
+        question: "Чем неон отличается от объёмных букв?",
+        answer:
+          "Неон даёт линию и световой контур, а объёмные буквы - более материальный и строгий силуэт. Для акцента и фото неон часто легче, для фасада буквы могут быть уместнее."
+      },
+      {
+        id: "neon-networks",
+        question: "Можно ли сделать неон для нескольких точек?",
+        answer:
+          "Да, если зафиксировать цвет, толщину, подложку и крепление. Тогда решение повторяется без ручной пересборки."
+      },
+      {
+        id: "neon-urgent",
+        question: "Можно ли сделать срочно?",
+        answer:
+          "Если есть фото, размеры и понятный объект, можно быстро оценить. Но срок всегда зависит от сложности контура и очереди производства."
+      }
+    ],
+    relatedLinks: [
+      {
+        label: "Интерьерные вывески",
+        href: servicePath("interernye-vyveski-dlya-biznesa"),
+        description: "Если нужен не только неон, а более широкий интерьерный набор."
+      },
+      {
+        label: "Объёмные буквы",
+        href: servicePath("obemnye-bukvy"),
+        description: "Когда знак нужен в более строгой и собранной форме."
+      },
+      {
+        label: "Вывески под ключ",
+        href: servicePath("vyveski-pod-klyuch"),
+        description: "Если нужен полный маршрут от макета до монтажа."
+      }
+    ],
+    caseIds: ["neon-signage-showroom", "interior-logo-showroom"],
+    cta: makeFinalCta("Получить расчёт по неону")
   },
   {
     slug: "montazh-vyvesok",

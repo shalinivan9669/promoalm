@@ -1,3 +1,4 @@
+import "lenis/dist/lenis.css";
 import Lenis from "lenis";
 
 declare global {
@@ -25,6 +26,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const lenis = new Lenis({
     autoRaf: false,
     anchors: true,
+    prevent: (node) => node.closest("[data-lenis-prevent]") !== null,
     smoothWheel: true,
     syncTouch: false,
     lerp: 0.075,

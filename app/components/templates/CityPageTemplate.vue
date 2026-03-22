@@ -97,6 +97,8 @@ const leadStats = computed(() =>
 
     <HeroSection
       :hero="props.page.hero"
+      :city-name="props.page.city"
+      :city-slug="props.page.slug"
       variant="city"
     />
 
@@ -119,6 +121,7 @@ const leadStats = computed(() =>
       :title="copy.trustTitle"
       :description="copy.trustDescription"
       :items="props.page.trustItems"
+      :city-slug="props.page.slug"
       variant="city"
     />
 

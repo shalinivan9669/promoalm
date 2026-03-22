@@ -6,6 +6,7 @@ export const SERVICE_SLUGS = [
   "vyveski-dlya-seti",
   "vyveski-pod-klyuch",
   "interernye-vyveski-dlya-biznesa",
+  "neonovye-vyveski",
   "montazh-vyvesok",
   "zamena-vyveski",
   "remont-vyvesok"

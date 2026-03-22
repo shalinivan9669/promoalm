@@ -33,6 +33,7 @@ const heroQuickLinks = [
   ...[
     { slug: "fasadnye-vyveski", label: "Фасадные" },
     { slug: "svetovye-koroba", label: "Световые короба" },
+    { slug: "neonovye-vyveski", label: "Неон" },
     { slug: "vyveski-dlya-seti", label: "Для сети" },
     { slug: "vyveski-pod-klyuch", label: "Под ключ" },
     { slug: "montazh-vyvesok", label: "Монтаж" }

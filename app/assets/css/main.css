@@ -230,6 +230,10 @@
     @apply mx-auto w-full max-w-[1200px] px-5 sm:px-6 lg:px-8;
   }
 
+  .site-shell--wide {
+    max-width: 1500px;
+  }
+
   .section-space {
     @apply py-16 sm:py-20 lg:py-28;
   }
@@ -2250,10 +2254,275 @@
   }
 
   .page-hero--city .page-hero__frame {
+    min-height: clamp(39rem, 76svh, 49rem);
     background:
-      radial-gradient(circle at 18% 20%, rgba(140, 200, 255, 0.1), transparent 22%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)),
-      linear-gradient(145deg, rgba(21, 25, 31, 0.98), rgba(14, 17, 22, 0.98));
+      radial-gradient(circle at 16% 18%, rgba(198, 90, 58, 0.1), transparent 24%),
+      radial-gradient(circle at 84% 18%, rgba(142, 218, 228, 0.08), transparent 22%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(248, 246, 240, 0.94)),
+      linear-gradient(180deg, rgba(251, 250, 247, 1), rgba(242, 240, 234, 1));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.82),
+      0 22px 42px rgba(17, 22, 28, 0.08);
+  }
+
+  .page-hero--city .page-hero__frame::before {
+    inset: 1rem;
+    border-color: color-mix(in srgb, var(--color-divider) 68%, transparent);
+    opacity: 0.82;
+  }
+
+  .page-hero--city .page-hero__grid {
+    align-items: start;
+    gap: clamp(1.5rem, 2.8vw, 2.7rem);
+  }
+
+  .page-hero__grid--city {
+    grid-template-columns: minmax(0, 1.08fr) minmax(18.5rem, 0.92fr);
+  }
+
+  .page-hero__copy--city {
+    display: grid;
+    min-width: 0;
+    gap: 0.95rem;
+    align-content: start;
+    max-width: 48rem;
+    padding-top: clamp(0.15rem, 0.8vw, 0.65rem);
+  }
+
+  .page-hero__kicker {
+    margin-bottom: 0;
+  }
+
+  .page-hero__city {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.08rem, 1.85vw, 1.7rem);
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .page-hero--city .page-hero__title {
+    margin-top: 0.05rem;
+    max-width: 20ch;
+    color: var(--color-text);
+    font-size: clamp(2.2rem, 3.8vw, 4rem);
+    line-height: 0.98;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  .page-hero--city .page-hero__description {
+    max-width: 34rem;
+    color: var(--color-text-secondary);
+    font-size: clamp(1rem, 1.15vw, 1.1rem);
+    line-height: 1.72;
+  }
+
+  .page-hero--city .page-hero__note {
+    max-width: 31rem;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.62;
+  }
+
+  .page-hero--city .page-hero__aside--city {
+    position: relative;
+    display: flex;
+    min-height: 100%;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: clamp(1.2rem, 2.8vw, 2.6rem);
+  }
+
+  .page-hero__context {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 18% 20%, rgba(198, 90, 58, 0.08), transparent 26%),
+      radial-gradient(circle at 84% 18%, rgba(142, 218, 228, 0.08), transparent 20%),
+      linear-gradient(135deg, rgba(17, 22, 28, 0.02), transparent 42%);
+    opacity: 0.92;
+  }
+
+  .page-hero__context::before {
+    content: "";
+    position: absolute;
+    inset: -8%;
+    border-radius: 999px;
+    background:
+      repeating-linear-gradient(135deg, rgba(17, 22, 28, 0.045) 0 1px, transparent 1px 24px),
+      repeating-linear-gradient(90deg, rgba(17, 22, 28, 0.025) 0 1px, transparent 1px 36px);
+    opacity: 0.45;
+    transform: rotate(-3deg);
+  }
+
+  .page-hero__proof-card {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 26rem);
+    margin-top: clamp(0.2rem, 1vw, 0.7rem);
+    border-radius: 1.55rem;
+    border: 1px solid color-mix(in srgb, var(--color-stroke) 80%, transparent);
+    background:
+      radial-gradient(circle at 84% 16%, rgba(198, 90, 58, 0.05), transparent 24%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(249, 247, 241, 0.88));
+    padding: clamp(1.1rem, 2vw, 1.35rem);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.78),
+      0 18px 34px rgba(17, 22, 28, 0.08);
+  }
+
+  .page-hero__proof-label {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .page-hero__proof-list {
+    display: grid;
+    gap: 0.8rem;
+    margin: 0.95rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .page-hero__proof-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: start;
+    padding-top: 0.8rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-divider) 68%, transparent);
+  }
+
+  .page-hero__proof-item:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .page-hero__proof-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--color-accent);
+  }
+
+  .page-hero__proof-text {
+    color: var(--color-text);
+    font-size: 0.98rem;
+    line-height: 1.6;
+    font-weight: 600;
+    text-wrap: pretty;
+  }
+
+  .page-hero--city-almaty .page-hero__context {
+    background:
+      radial-gradient(circle at 20% 26%, rgba(198, 90, 58, 0.12), transparent 24%),
+      radial-gradient(circle at 82% 20%, rgba(142, 218, 228, 0.06), transparent 20%),
+      linear-gradient(135deg, rgba(17, 22, 28, 0.015), transparent 46%);
+  }
+
+  .page-hero--city-almaty .page-hero__context::before {
+    background:
+      repeating-linear-gradient(135deg, rgba(17, 22, 28, 0.055) 0 1px, transparent 1px 18px),
+      linear-gradient(90deg, transparent 0 18%, rgba(198, 90, 58, 0.06) 18.5% 19.5%, transparent 20%);
+    opacity: 0.52;
+  }
+
+  .page-hero--city-astana .page-hero__context {
+    background:
+      radial-gradient(circle at 74% 18%, rgba(142, 218, 228, 0.1), transparent 22%),
+      radial-gradient(circle at 24% 74%, rgba(198, 90, 58, 0.04), transparent 18%),
+      linear-gradient(180deg, rgba(17, 22, 28, 0.012), transparent 40%);
+  }
+
+  .page-hero--city-astana .page-hero__context::before {
+    background:
+      repeating-linear-gradient(180deg, rgba(17, 22, 28, 0.045) 0 1px, transparent 1px 28px),
+      linear-gradient(180deg, transparent 0 42%, rgba(142, 218, 228, 0.05) 42.5% 43.5%, transparent 44%);
+    opacity: 0.48;
+    transform: rotate(0deg);
+  }
+
+  .page-hero--city-shymkent .page-hero__context {
+    background:
+      radial-gradient(circle at 18% 22%, rgba(198, 90, 58, 0.11), transparent 24%),
+      radial-gradient(circle at 78% 18%, rgba(142, 218, 228, 0.05), transparent 18%),
+      linear-gradient(135deg, rgba(17, 22, 28, 0.016), transparent 42%);
+  }
+
+  .page-hero--city-shymkent .page-hero__context::before {
+    background:
+      repeating-linear-gradient(135deg, rgba(17, 22, 28, 0.05) 0 1px, transparent 1px 16px),
+      linear-gradient(135deg, transparent 0 38%, rgba(198, 90, 58, 0.06) 38.5% 39.5%, transparent 40%);
+    opacity: 0.5;
+    transform: rotate(-6deg);
+  }
+
+  @media (max-width: 1023px) {
+    .page-hero--city .page-hero__grid--city {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .page-hero--city .page-hero__aside--city {
+      min-height: 0;
+      padding-top: 0;
+    }
+
+    .page-hero--city .page-hero__proof-card {
+      max-width: 32rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .page-hero--city .page-hero__frame {
+      min-height: auto;
+    }
+
+    .page-hero--city .page-hero__grid {
+      gap: 1.25rem;
+    }
+
+    .page-hero--city .page-hero__title {
+      max-width: 100%;
+      font-size: clamp(2rem, 8vw, 3.25rem);
+    }
+
+    .page-hero--city .page-hero__city {
+      font-size: 0.92rem;
+      letter-spacing: 0.16em;
+    }
+
+    .page-hero--city .page-hero__description {
+      max-width: 100%;
+    }
+
+    .page-hero--city .page-hero__proof-card {
+      width: 100%;
+      max-width: none;
+    }
+
+    .page-hero__context {
+      opacity: 0.42;
+    }
+
+    .page-hero__context::before {
+      opacity: 0.28;
+    }
   }
 
   .page-hero--support .page-hero__frame,
@@ -2636,6 +2905,60 @@
     font-size: 0.92rem;
     line-height: 1.75;
     color: rgba(158, 168, 183, 0.96);
+  }
+
+  .trust-strip--city .page-section-header {
+    max-width: 52rem;
+  }
+
+  .trust-strip--city .page-section-header__title {
+    max-width: 20ch;
+  }
+
+  .trust-strip--city .page-section-header__description {
+    max-width: 44rem;
+  }
+
+  .trust-strip__city-grid {
+    display: grid;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  @media (min-width: 768px) {
+    .trust-strip__city-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .trust-strip__city-grid {
+      grid-template-columns:
+        minmax(0, 0.92fr)
+        minmax(0, 1fr)
+        minmax(0, 1.12fr);
+    }
+  }
+
+  .trust-strip__city-card {
+    min-height: clamp(14rem, 18vw, 18rem);
+  }
+
+  .trust-strip__city-card .page-card__value {
+    max-width: 100%;
+    font-size: clamp(1.6rem, 2.35vw, 2.45rem);
+    line-height: 0.96;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  .trust-strip__city-card .page-card__title {
+    max-width: 100%;
+    text-wrap: balance;
+  }
+
+  .trust-strip__city-card .page-card__description {
+    max-width: 24rem;
   }
 
   .page-chip {
@@ -3708,7 +4031,8 @@
 
   .page-card__value,
   .home-statement__stat-value,
-  .page-lead__stat-value {
+  .page-lead__stat-value,
+  .trust-strip__city-card .page-card__value {
     color: var(--color-accent);
   }
 
@@ -3720,6 +4044,7 @@
   .case-preview-card__summary,
   .page-card__summary,
   .page-card__description,
+  .trust-strip__city-card .page-card__description,
   .process-panel__description,
   .page-hero__summary,
   .page-hero__description,
@@ -3754,6 +4079,7 @@
   .page-card,
   .page-card--feature,
   .page-card--quiet,
+  .trust-strip__city-card,
   .case-preview-card,
   .page-faq__item,
   .page-faq__item[open],

@@ -16,11 +16,13 @@ function plannedCity(slug: "karaganda" | "aktobe" | "atyrau", city: string): Cit
       noindex: true
     },
     hero: {
-      eyebrow: "Planned",
-      title: "Черновая страница города",
-      description: "Маршрут подготовлен для v2, но не должен появляться в индексе и навигации.",
-      facts: ["planned", "noindex", "needs city-specific content"],
-      actions: [{ label: "Открыть форму", href: leadFormHref, intent: "primary" }]
+      eyebrow: "Черновик города",
+      title: "Страница города готовится к публикации",
+      description:
+        "Когда появятся местный угол, подтвержденные кейсы и логистический контекст, здесь будет тот же двухслойный hero, что и на опубликованных городах.",
+      facts: ["Нужен local angle", "Нужны реальные кейсы", "Публикация после наполнения"],
+      actions: [{ label: "Оставить вводные", href: leadFormHref, intent: "calculate" }],
+      note: "Черновик города до наполнения контентом"
     },
     intro: "Черновая запись для расширения города.",
     sections: ["hero", "faq", "cta", "related"],

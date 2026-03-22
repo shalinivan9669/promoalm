@@ -104,6 +104,18 @@ const serviceSummaries: ServiceSummary[] = [
     installationMode: "available"
   },
   {
+    slug: "neonovye-vyveski",
+    status: "published",
+    name: "Неоновые вывески",
+    navLabel: "Неон",
+    intro:
+      "Неоновая вывеска нужна там, где нужен заметный световой акцент в помещении: ресепшн, витрина, шоурум или фотозона. Подбираем форму, цвет и монтаж под конкретный объект.",
+    path: "/uslugi/neonovye-vyveski/",
+    isOutdoor: false,
+    supportsMultiLocation: true,
+    installationMode: "available"
+  },
+  {
     slug: "montazh-vyvesok",
     status: "published",
     name: "Монтаж вывесок",

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HeroBlock } from "../../../shared/types/content";
+import type { CitySlug, HeroBlock } from "../../../shared/types/content";
 
 interface HeroMediaFrame {
   src: string;
@@ -14,6 +14,8 @@ const props = withDefaults(
     variant?: "default" | "home" | "service" | "city" | "support" | "about" | "cases" | "contact";
     mediaMode?: "abstract" | "image";
     mediaFrames?: HeroMediaFrame[];
+    cityName?: string;
+    citySlug?: CitySlug;
   }>(),
   {
     variant: "default",
@@ -238,11 +240,84 @@ onBeforeUnmount(() => {
   <section
     v-else
     class="page-hero"
-    :class="`page-hero--${internalVariant}`"
+    :class="[
+      `page-hero--${internalVariant}`,
+      props.variant === 'city' && props.citySlug ? `page-hero--city-${props.citySlug}` : ''
+    ]"
   >
     <Container>
       <div class="page-hero__frame">
-        <div class="page-hero__grid">
+        <div
+          v-if="props.variant === 'city'"
+          class="page-hero__grid page-hero__grid--city"
+        >
+          <div class="page-hero__copy page-hero__copy--city">
+            <p class="eyebrow section-signage-eyebrow page-hero__kicker">
+              {{ hero.eyebrow }}
+            </p>
+            <p
+              v-if="props.cityName"
+              class="page-hero__city"
+            >
+              {{ props.cityName }}
+            </p>
+            <h1 class="page-hero__title">
+              {{ hero.title }}
+            </h1>
+            <p class="page-hero__description">
+              {{ hero.description }}
+            </p>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <ButtonLink
+                v-for="action in hero.actions"
+                :key="action.href + action.label"
+                :href="action.href"
+                :label="action.label"
+                :intent="action.intent"
+                :tracking-event="action.trackingEvent"
+                :external="action.external"
+              />
+            </div>
+            <p
+              v-if="hero.note"
+              class="page-hero__note"
+            >
+              {{ hero.note }}
+            </p>
+          </div>
+
+          <div class="page-hero__aside page-hero__aside--city">
+            <div
+              aria-hidden="true"
+              class="page-hero__context"
+            />
+
+            <div class="page-hero__proof-card">
+              <p class="page-hero__proof-label">
+                3 аргумента
+              </p>
+              <ol class="page-hero__proof-list">
+                <li
+                  v-for="(fact, index) in hero.facts"
+                  :key="fact"
+                  class="page-hero__proof-item"
+                >
+                  <span class="page-hero__proof-index">
+                    {{ String(index + 1).padStart(2, "0") }}
+                  </span>
+                  <span class="page-hero__proof-text">
+                    {{ fact }}
+                  </span>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-else
+          class="page-hero__grid"
+        >
           <div class="page-hero__copy">
             <p class="eyebrow">{{ hero.eyebrow }}</p>
             <h1 class="page-hero__title">

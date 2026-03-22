@@ -82,6 +82,26 @@ export const cases: CaseStudy[] = [
     relatedCitySlugs: ["shymkent"]
   },
   {
+    id: "neon-signage-showroom",
+    status: "published",
+    proofMode: "scenario",
+    evidenceLevel: "placeholder",
+    slug: "neon-signage-showroom",
+    title: "Неоновая вывеска для шоурума и клиентской зоны",
+    summary:
+      "Сценарий для интерьера, где нужен заметный световой акцент, читаемый бренд-знак и аккуратный монтаж без уличной нагрузки.",
+    challenge:
+      "Клиенту нужен выразительный неоновый акцент внутри помещения, который хорошо смотрится в фото и не спорит с интерьером.",
+    solution:
+      "Проектируем неоновую вывеску под стену и сценарий света, подбираем цвет, толщину контура, крепление и комплект под безопасный монтаж.",
+    deliverables: ["Неоновая вывеска", "Макет под интерьер", "Схема крепления и подключения", "Монтажный комплект"],
+    metrics: ["Только для помещений", "Читается в кадре и вживую", "Не заменяет фасадную вывеску"],
+    industry: "Шоурумы и клиентские зоны",
+    cityLabel: "Алматы",
+    relatedServiceSlugs: ["neonovye-vyveski", "interernye-vyveski-dlya-biznesa"],
+    relatedCitySlugs: ["almaty"]
+  },
+  {
     id: "letters-for-clinic",
     status: "published",
     proofMode: "scenario",

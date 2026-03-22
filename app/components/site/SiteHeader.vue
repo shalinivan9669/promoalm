@@ -278,33 +278,38 @@ onBeforeUnmount(() => {
                     <div
                       v-if="openDesktopGroup === item.label"
                       class="site-header__panel"
-                      :class="{ 'is-scrollable': isDesktopPanelScrollable(item) }"
                     >
-                      <p class="site-header__panel-caption">
-                        {{ item.description }}
-                      </p>
-                      <ul class="site-header__panel-list">
-                        <li
-                          v-for="link in item.items"
-                          :key="link.href"
-                        >
-                          <a
-                            :href="link.href"
-                            :aria-current="isLinkActive(link.href) ? 'page' : undefined"
-                            class="site-header__panel-link"
-                            :class="{ 'is-active': isLinkActive(link.href) }"
-                            @click="closeAllMenus"
+                      <div
+                        class="site-header__panel-scroll"
+                        data-lenis-prevent
+                        :class="{ 'is-scrollable': isDesktopPanelScrollable(item) }"
+                      >
+                        <p class="site-header__panel-caption">
+                          {{ item.description }}
+                        </p>
+                        <ul class="site-header__panel-list">
+                          <li
+                            v-for="link in item.items"
+                            :key="link.href"
                           >
-                            <span class="site-header__panel-link-label">{{ link.label }}</span>
-                            <span
-                              v-if="link.description"
-                              class="site-header__panel-link-description"
+                            <a
+                              :href="link.href"
+                              :aria-current="isLinkActive(link.href) ? 'page' : undefined"
+                              class="site-header__panel-link"
+                              :class="{ 'is-active': isLinkActive(link.href) }"
+                              @click="closeAllMenus"
                             >
-                              {{ link.description }}
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
+                              <span class="site-header__panel-link-label">{{ link.label }}</span>
+                              <span
+                                v-if="link.description"
+                                class="site-header__panel-link-description"
+                              >
+                                {{ link.description }}
+                              </span>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </Transition>
                 </div>
@@ -1388,24 +1393,33 @@ onBeforeUnmount(() => {
     pointer-events: none;
   }
 
-  .site-header__panel.is-scrollable {
+  .site-header__panel-scroll {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 0.42rem;
+  }
+
+  .site-header__panel-scroll.is-scrollable {
     max-height: 50vh;
     overflow-y: auto;
     padding-right: 0.45rem;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     scrollbar-color: rgba(199, 193, 182, 0.88) rgba(19, 24, 29, 0.06);
     scrollbar-width: thin;
   }
 
-  .site-header__panel.is-scrollable::-webkit-scrollbar {
+  .site-header__panel-scroll.is-scrollable::-webkit-scrollbar {
     width: 12px;
   }
 
-  .site-header__panel.is-scrollable::-webkit-scrollbar-track {
+  .site-header__panel-scroll.is-scrollable::-webkit-scrollbar-track {
     background: rgba(19, 24, 29, 0.06);
     border-radius: 9999px;
   }
 
-  .site-header__panel.is-scrollable::-webkit-scrollbar-thumb {
+  .site-header__panel-scroll.is-scrollable::-webkit-scrollbar-thumb {
     background: rgba(199, 193, 182, 0.88);
     border: 2px solid rgba(251, 250, 247, 0.95);
     border-radius: 9999px;
