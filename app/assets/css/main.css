@@ -351,6 +351,10 @@
     letter-spacing: 0.18em;
   }
 
+  [class*="__frame"] .eyebrow {
+    margin-bottom: 20px;
+  }
+
   .section-signage-eyebrow,
   .section-signage-label {
     position: relative;
@@ -968,6 +972,7 @@
     letter-spacing: -0.04em;
     color: #ffffff;
     text-wrap: pretty;
+    text-align: center;
   }
 
   .home-statement__aside {
