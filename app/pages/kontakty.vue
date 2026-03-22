@@ -122,7 +122,7 @@ usePageSeo({
                 v-if="card.kind === 'method'"
                 class="page-chip shrink-0"
               >
-                {{ card.available ? "Активно" : "Пока не опубликовано" }}
+                {{ card.available ? "Активно" : "По запросу" }}
               </span>
             </div>
 
@@ -183,7 +183,7 @@ usePageSeo({
         <SectionHeader
           eyebrow="Алматы"
           :title="almaty.title"
-          description="Локальный блок нужен не для ключей, а для ясного сигнала: мы базируемся в Алматы и понимаем формат коммерческих объектов в городе."
+          description="Алматы — базовый город, откуда удобно запускать и координировать проекты. Мы хорошо понимаем специфику коммерческих фасадов, входных групп и объектов с плотным городским потоком."
           variant="page"
         />
 
@@ -411,7 +411,7 @@ usePageSeo({
     <section class="section-divider section-space page-section page-section--contact">
       <Container>
         <SectionHeader
-          eyebrow="SEO-текст"
+          eyebrow="Как быстро получить расчёт"
           :title="seo.title"
           :description="seo.description"
           variant="page"
@@ -430,7 +430,7 @@ usePageSeo({
 
           <article class="page-card page-card--feature">
             <p class="eyebrow">
-              Что покрывает страница
+              С какими задачами можно обратиться
             </p>
             <div class="mt-4 flex flex-wrap gap-2">
               <span
@@ -442,7 +442,7 @@ usePageSeo({
               </span>
             </div>
             <p class="page-card__description mt-4">
-              Текст ниже помогает охватить коммерческий и локальный интент без лишнего шума и без SEO-спама.
+              Для старта обычно достаточно фото фасада, адреса, размеров и короткого описания задачи. Если точек несколько, добавьте список адресов и города.
             </p>
           </article>
         </div>

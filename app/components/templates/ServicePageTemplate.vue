@@ -90,7 +90,7 @@ function priceDescription(mode: ServicePageData["priceMode"]) {
 
     <CasePreviewSection
       title="Релевантные сценарии"
-      description="Пока без вымышленных брендов и адресов. Только типовые задачи, близкие по формату."
+      description="Ниже — типовые сценарии, близкие к реальным задачам бизнеса. Они помогают понять, как мы подходим к объектам разного масштаба и формата."
       :cases="caseStudies"
       variant="service"
     />
@@ -104,7 +104,7 @@ function priceDescription(mode: ServicePageData["priceMode"]) {
 
     <RelatedLinksSection
       title="Куда смотреть дальше"
-      description="Связанные страницы, которые помогают дособрать решение без SEO-мусора."
+      description="Похожие разделы, которые помогут выбрать формат вывески, монтаж и сценарий запуска."
       :links="page.relatedLinks"
       variant="service"
     />

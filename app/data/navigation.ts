@@ -49,7 +49,7 @@ export const primaryNavigation: PrimaryNavigationItem[] = [
     kind: "link",
     label: "Кейсы",
     href: staticPagePaths.cases,
-    description: "Типовые сценарии и proof layer"
+    description: "Типовые сценарии по вывескам"
   },
   {
     kind: "group",

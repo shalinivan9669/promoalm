@@ -11,7 +11,7 @@ export const servicesGroupC: ServicePageData[] = [
     h1: "Вывески для сети и нескольких точек",
     meta: {
       title: "Вывески для сети и нескольких точек | Neon Market",
-      description: "Тиражные заказы и rollout по Казахстану: единый макет, repeatable quality, логистика по точкам и монтаж по согласованию.",
+      description: "Тиражные заказы и rollout по Казахстану: единый макет, повторяемое качество, логистика по точкам и монтаж по согласованию.",
       path: servicePath("vyveski-dlya-seti")
     },
     hero: {
@@ -73,7 +73,7 @@ export const servicesGroupC: ServicePageData[] = [
     trustItems: [
       {
         label: "Фокус",
-        value: "Repeatable quality",
+      value: "Повторяемое качество",
         description: "Сеть выигрывает не от креатива, а от повторяемости исполнения.",
         evidenceLevel: "confirmed"
       },

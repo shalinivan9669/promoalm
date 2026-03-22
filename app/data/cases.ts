@@ -15,7 +15,7 @@ export const cases: CaseStudy[] = [
     solution:
       "Собираем базовый комплект: объёмные буквы, световой короб для входной видимости, монтажную схему и пакет согласованных макетов по точкам.",
     deliverables: ["Макетная система для нескольких точек", "Производство партии", "Логистика по городам", "Монтаж по согласованию"],
-    metrics: ["Фокус на repeatable quality", "Подходит для rollout 3+ точек"],
+    metrics: ["Фокус на повторяемом качестве", "Подходит для rollout 3+ точек"],
     industry: "Компьютерные клубы",
     cityLabel: "Казахстан",
     relatedServiceSlugs: ["fasadnye-vyveski", "vyveski-dlya-seti", "montazh-vyvesok"],
