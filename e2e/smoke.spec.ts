@@ -1,4 +1,64 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function scrollToHomeStatement(page: Page) {
+  await page.locator(".home-statement").scrollIntoViewIfNeeded();
+  await page.evaluate(() => {
+    window.scrollBy(0, -window.innerHeight * 0.08);
+  });
+}
+
+function extractSecondMaskScale(maskSize: string) {
+  const secondLayerSize = maskSize.split(",").at(-1)?.trim() ?? "";
+  return Number.parseFloat(secondLayerSize);
+}
+
+function extractSecondMaskPosition(maskPosition: string) {
+  const secondLayerPosition = maskPosition.split(",").at(-1)?.trim() ?? "";
+  const [x = "", y = ""] = secondLayerPosition.split(/\s+/);
+  return {
+    x: Number.parseFloat(x),
+    y: Number.parseFloat(y)
+  };
+}
+
+function extractTranslateY(transform: string) {
+  if (transform === "none") {
+    return 0;
+  }
+
+  const match = transform.match(/matrix(3d)?\((.+)\)/);
+
+  if (!match) {
+    return 0;
+  }
+
+  const values = match[2]
+    .split(",")
+    .map((value) => Number.parseFloat(value.trim()))
+    .filter((value) => Number.isFinite(value));
+
+  return values.length === 16 ? values[13] ?? 0 : values[5] ?? 0;
+}
+
+async function readTransitionMaskState(page: Page) {
+  return page.locator(".think-big__overlay").evaluate((element) => {
+    const styles = getComputedStyle(element);
+    return {
+      rawMaskSize: styles.webkitMaskSize || styles.maskSize,
+      rawMaskPosition: styles.webkitMaskPosition || styles.maskPosition
+    };
+  });
+}
+
+async function scrollToTransitionOffset(page: Page, sceneTop: number, viewportHeights: number) {
+  await page.evaluate(
+    ({ top, offset }) => {
+      window.scrollTo(0, top + window.innerHeight * offset);
+    },
+    { top: sceneTop, offset: viewportHeights }
+  );
+  await page.waitForTimeout(1400);
+}
 
 test("internal page families keep single h1, breadcrumbs and lead band", async ({ page }) => {
   const routes = [
@@ -27,47 +87,156 @@ test("desktop navigation exposes key published sections", async ({ page }) => {
   const banner = page.getByRole("banner");
   const main = page.getByRole("main");
   const footer = page.getByRole("contentinfo");
-  const desktopNav = banner.locator("nav").first();
-  const quickEntry = main.getByRole("navigation", { name: "Р‘С‹СЃС‚СЂС‹Рµ РІС…РѕРґС‹" });
+  const desktopNav = banner.getByRole("navigation", { name: "Основная навигация" });
+  const transitionScene = main.locator(".think-big");
+  const sceneViewport = transitionScene.locator(".think-big__viewport");
+  const stage = transitionScene.locator(".think-big__stage-media");
+  const overlay = transitionScene.locator(".think-big__overlay");
+  const quickEntry = main.getByRole("navigation", { name: "Быстрые входы" });
+  const cityNav = main.getByRole("navigation", { name: /Города обслуживания/i });
+  const serviceGridHeading = main.getByRole("heading", { level: 2, name: /Какие вывески делаем/i });
 
+  await transitionScene.scrollIntoViewIfNeeded();
+  await expect(transitionScene).toBeVisible();
+  await expect(sceneViewport).toBeVisible();
+  await expect(stage).toBeVisible();
+  await expect(overlay).toBeVisible();
+  await expect(main.locator(".home-statement")).toHaveCount(1);
+  await expect(serviceGridHeading).toBeVisible();
+
+  const stageBackgroundImage = await stage.evaluate((element) => getComputedStyle(element).backgroundImage);
+  expect(stageBackgroundImage).toContain("/images/bg/bg.avif");
+
+  const overlayMaskImage = await overlay.evaluate((element) => {
+    const styles = getComputedStyle(element);
+    return styles.webkitMaskImage || styles.maskImage;
+  });
+  expect(overlayMaskImage).toContain("gorod-vidit-mask");
+
+  const scenePrecedesServiceGrid = await transitionScene.evaluate((scene, heading) => {
+    if (!(heading instanceof HTMLElement)) {
+      return false;
+    }
+
+    return Boolean(scene.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING);
+  }, await serviceGridHeading.elementHandle());
+  expect(scenePrecedesServiceGrid).toBe(true);
+
+  await scrollToHomeStatement(page);
   await expect(quickEntry).toBeVisible();
-  await expect(quickEntry.getByRole("link", { name: "РђР»РјР°С‚С‹" })).toHaveAttribute("href", "/goroda/almaty/");
-  await expect(quickEntry.getByRole("link", { name: "РђСЃС‚Р°РЅР°" })).toHaveAttribute("href", "/goroda/astana/");
-  await expect(quickEntry.getByRole("link", { name: "РЁС‹РјРєРµРЅС‚" })).toHaveAttribute("href", "/goroda/shymkent/");
-  await expect(quickEntry.getByRole("link", { name: "Р¤Р°СЃР°РґРЅС‹Рµ" })).toHaveAttribute("href", "/uslugi/fasadnye-vyveski/");
+  await expect(quickEntry.getByRole("link", { name: "Алматы" })).toHaveAttribute("href", "/goroda/almaty/");
+  await expect(quickEntry.getByRole("link", { name: "Астана" })).toHaveAttribute("href", "/goroda/astana/");
+  await expect(quickEntry.getByRole("link", { name: "Шымкент" })).toHaveAttribute("href", "/goroda/shymkent/");
+  await expect(quickEntry.getByRole("link", { name: "Фасадные" })).toHaveAttribute("href", "/uslugi/fasadnye-vyveski/");
 
-  const cityNav = main.getByRole("navigation", { name: /Р“РѕСЂРѕРґР° РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ/i });
   await expect(cityNav).toBeVisible();
-  await expect(cityNav.getByRole("link", { name: "РђР»РјР°С‚С‹" })).toBeVisible();
-  await expect(cityNav.getByRole("link", { name: "РђСЃС‚Р°РЅР°" })).toBeVisible();
-  await expect(cityNav.getByRole("link", { name: "РЁС‹РјРєРµРЅС‚" })).toBeVisible();
+  await expect(cityNav.getByRole("link", { name: "Алматы" })).toBeVisible();
+  await expect(cityNav.getByRole("link", { name: "Астана" })).toBeVisible();
+  await expect(cityNav.getByRole("link", { name: "Шымкент" })).toBeVisible();
 
   await page.goto("/uslugi/fasadnye-vyveski/");
-  await desktopNav.getByText("РЈСЃР»СѓРіРё", { exact: true }).click();
-  await expect(banner.getByRole("link", { name: "Р¤Р°СЃР°РґРЅС‹Рµ РІС‹РІРµСЃРєРё" })).toHaveAttribute("aria-current", "page");
+  await desktopNav.getByText("Услуги", { exact: true }).click();
+  await expect(banner.getByRole("link", { name: "Фасадные вывески" })).toHaveAttribute("aria-current", "page");
 
-  await desktopNav.getByText("Р“РѕСЂРѕРґР°", { exact: true }).click();
-  await banner.getByRole("link", { name: "РђР»РјР°С‚С‹" }).click();
+  await desktopNav.getByText("Города", { exact: true }).click();
+  await banner.getByRole("link", { name: "Алматы" }).click();
   await expect(page).toHaveURL(/\/goroda\/almaty\/$/);
 
-  await desktopNav.getByText("РЈСЃР»РѕРІРёСЏ", { exact: true }).click();
+  await desktopNav.getByText("Условия", { exact: true }).click();
   await banner.getByRole("link", { name: "FAQ" }).click();
   await expect(page).toHaveURL(/\/faq\/$/);
 
-  await expect(footer.getByRole("link", { name: "Рћ РєРѕРјРїР°РЅРёРё" })).toBeVisible();
-  await expect(footer.getByRole("link", { name: "РљРµР№СЃС‹" })).toBeVisible();
-  await expect(footer.getByRole("link", { name: "РљРѕРЅС‚Р°РєС‚С‹" })).toBeVisible();
+  await expect(footer.getByRole("link", { name: "О компании" })).toBeVisible();
+  await expect(footer.getByRole("link", { name: "Кейсы" })).toBeVisible();
+  await expect(footer.getByRole("link", { name: "Контакты" })).toBeVisible();
+});
+
+test("desktop home mask reveal holds before entering the late reveal", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/");
+
+  const transitionScene = page.locator(".think-big");
+  const sceneViewport = transitionScene.locator(".think-big__viewport");
+  const stage = transitionScene.locator(".think-big__stage-media");
+  await expect(transitionScene).toHaveCount(1);
+  await expect(sceneViewport).toBeVisible();
+  await expect(stage).toBeVisible();
+
+  const viewportSize = page.viewportSize();
+  const sceneHeight = await transitionScene.evaluate((element) => (element instanceof HTMLElement ? element.offsetHeight : 0));
+  const pinnedViewportHeight = await sceneViewport.evaluate((element) => (element instanceof HTMLElement ? element.offsetHeight : 0));
+  const stageHeight = await stage.evaluate((element) =>
+    element instanceof HTMLElement ? element.getBoundingClientRect().height : 0
+  );
+  expect(sceneHeight).toBeGreaterThanOrEqual((viewportSize?.height ?? 0) * 3.3);
+  expect(pinnedViewportHeight).toBeGreaterThanOrEqual((viewportSize?.height ?? 0) - 2);
+  expect(pinnedViewportHeight).toBeLessThanOrEqual((viewportSize?.height ?? 0) + 2);
+  expect(stageHeight).toBeGreaterThan((viewportSize?.height ?? 0));
+
+  const stageBackgroundImage = await stage.evaluate((element) => getComputedStyle(element).backgroundImage);
+  expect(stageBackgroundImage).toContain("/images/bg/bg.avif");
+
+  const sceneTop = await transitionScene.evaluate((element) => (element instanceof HTMLElement ? element.offsetTop : 0));
+
+  await page.evaluate(
+    ({ top, viewportHeight }) => {
+      window.scrollTo(0, Math.max(top - viewportHeight * 0.45, 0));
+    },
+    {
+      top: sceneTop,
+      viewportHeight: viewportSize?.height ?? 0
+    }
+  );
+  await page.waitForTimeout(900);
+  const prePinStageTransform = await stage.evaluate((element) => getComputedStyle(element).transform);
+  const prePinStageY = extractTranslateY(prePinStageTransform);
+  expect(prePinStageY).toBeLessThanOrEqual(-20);
+
+  await scrollToTransitionOffset(page, sceneTop, 0);
+  const pinStageTransform = await stage.evaluate((element) => getComputedStyle(element).transform);
+  const pinStageY = extractTranslateY(pinStageTransform);
+  const entryState = await readTransitionMaskState(page);
+  const entryScale = extractSecondMaskScale(entryState.rawMaskSize);
+  const entryPosition = extractSecondMaskPosition(entryState.rawMaskPosition);
+  expect(Math.abs(pinStageY)).toBeLessThanOrEqual(8);
+  expect(entryScale).toBeGreaterThanOrEqual(120);
+  expect(entryScale).toBeLessThan(140);
+  expect(entryPosition.x).toBeGreaterThanOrEqual(49.3);
+  expect(entryPosition.x).toBeLessThanOrEqual(50.1);
+
+  await scrollToTransitionOffset(page, sceneTop, 0.9);
+  const holdState = await readTransitionMaskState(page);
+  const holdScale = extractSecondMaskScale(holdState.rawMaskSize);
+  const holdPosition = extractSecondMaskPosition(holdState.rawMaskPosition);
+  expect(holdScale).toBeGreaterThanOrEqual(120);
+  expect(holdScale).toBeLessThan(220);
+  expect(holdPosition.x).toBeGreaterThanOrEqual(49.3);
+  expect(holdPosition.x).toBeLessThanOrEqual(50.1);
+
+  await scrollToTransitionOffset(page, sceneTop, 2.35);
+
+  const revealState = await readTransitionMaskState(page);
+  const revealStageTransform = await stage.evaluate((element) => getComputedStyle(element).transform);
+  const revealStageY = extractTranslateY(revealStageTransform);
+  const revealScale = extractSecondMaskScale(revealState.rawMaskSize);
+  const revealPosition = extractSecondMaskPosition(revealState.rawMaskPosition);
+  expect(Math.abs(revealStageY)).toBeLessThanOrEqual(8);
+  expect(revealScale).toBeGreaterThan(250);
+  expect(revealScale).toBeGreaterThan(holdScale);
+  expect(revealPosition.x).toBeGreaterThanOrEqual(49.3);
+  expect(revealPosition.x).toBeLessThanOrEqual(50.1);
+  expect(revealPosition.y).toBeGreaterThan(holdPosition.y);
 });
 
 test("desktop dropdown closes outside and when another opens", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/uslugi/fasadnye-vyveski/");
 
   const banner = page.getByRole("banner");
-  const desktopNav = banner.locator("nav").first();
-  const servicesButton = desktopNav.getByText("РЈСЃР»СѓРіРё", { exact: true });
-  const citiesButton = desktopNav.getByText("Р“РѕСЂРѕРґР°", { exact: true });
-  const servicesLink = banner.getByRole("link", { name: "Р¤Р°СЃР°РґРЅС‹Рµ РІС‹РІРµСЃРєРё" });
-  const cityLink = banner.getByRole("link", { name: "РђР»РјР°С‚С‹" });
+  const desktopNav = banner.getByRole("navigation", { name: "Основная навигация" });
+  const servicesButton = desktopNav.getByRole("button", { name: "Услуги" });
+  const citiesButton = desktopNav.getByRole("button", { name: "Города" });
+  const servicesLink = banner.getByRole("link", { name: "Фасадные вывески" });
+  const cityLink = banner.getByRole("link", { name: "Алматы" });
 
   await servicesButton.click();
   await expect(servicesLink).toBeVisible();
@@ -87,40 +256,45 @@ test("mobile navigation and sticky cta stay honest", async ({ page }) => {
   await page.goto("/faq/");
 
   const banner = page.getByRole("banner");
-  await banner.getByText("РћС‚РєСЂС‹С‚СЊ РјРµРЅСЋ", { exact: true }).click();
-  const mobileNav = banner.locator("nav").last();
-  await mobileNav.getByText("РЈСЃР»СѓРіРё", { exact: true }).click();
-  await banner.getByRole("link", { name: "Р¤Р°СЃР°РґРЅС‹Рµ РІС‹РІРµСЃРєРё" }).click();
+  await banner.getByRole("button", { name: /Открыть меню|Закрыть меню/i }).click();
+
+  const mobileNav = banner.getByRole("navigation", { name: "Мобильная навигация" });
+  await mobileNav.getByText("Услуги", { exact: true }).click();
+  await banner.getByRole("link", { name: "Фасадные вывески" }).click();
   await expect(page).toHaveURL(/\/uslugi\/fasadnye-vyveski\/$/);
 
-  const quickActions = page.getByRole("navigation", { name: "Р‘С‹СЃС‚СЂС‹Рµ РґРµР№СЃС‚РІРёСЏ" });
-  await expect(quickActions.getByRole("link", { name: "РљРѕРЅС‚Р°РєС‚С‹" })).toHaveAttribute("href", "/kontakty/");
-  await expect(quickActions.getByRole("link", { name: "РћСЃС‚Р°РІРёС‚СЊ Р·Р°СЏРІРєСѓ" })).toHaveAttribute("href", "/kontakty/#lead-form");
-  await expect(quickActions.getByRole("link", { name: "РџРѕР»СѓС‡РёС‚СЊ СЂР°СЃС‡С‘С‚" })).toHaveAttribute("href", "/kontakty/#lead-form");
+  const quickActions = page.getByRole("navigation", { name: "Быстрые действия" });
+  await expect(quickActions.getByRole("link", { name: "Контакты" })).toHaveAttribute("href", "/kontakty/");
+  await expect(quickActions.getByRole("link", { name: "Оставить заявку" })).toHaveAttribute("href", "/kontakty/#lead-form");
+  await expect(quickActions.getByRole("link", { name: "Получить расчёт" })).toHaveAttribute("href", "/kontakty/#lead-form");
 });
 
 test("home, faq keyboard path, cases and form smoke flow", async ({ page }) => {
   const runId = Date.now().toString().slice(-6);
 
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1, name: /РЎРІРµС‚РѕРІС‹Рµ Рё С„Р°СЃР°РґРЅС‹Рµ РІС‹РІРµСЃРєРё/i })).toBeVisible();
-  const quickEntry = page.getByRole("navigation", { name: "Р‘С‹СЃС‚СЂС‹Рµ РІС…РѕРґС‹" });
-  await expect(quickEntry.getByRole("link", { name: "РњРѕРЅС‚Р°Р¶" })).toHaveAttribute("href", "/uslugi/montazh-vyvesok/");
-  await page.getByRole("link", { name: "РЎРјРѕС‚СЂРµС‚СЊ РєРµР№СЃС‹" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.locator(".think-big")).toHaveCount(1);
+
+  const quickEntry = page.getByRole("navigation", { name: "Быстрые входы" });
+  await scrollToHomeStatement(page);
+  await expect(quickEntry.getByRole("link", { name: "Монтаж" })).toHaveAttribute("href", "/uslugi/montazh-vyvesok/");
+
+  await page.getByRole("link", { name: "Смотреть кейсы" }).click();
   await expect(page).toHaveURL(/\/cases\/$/);
-  await expect(page.getByRole("link", { name: "РћС‚РєСЂС‹С‚СЊ РЅР° СЃС‚СЂР°РЅРёС†Рµ РєРµР№СЃРѕРІ" }).first()).toHaveAttribute("href", /\/cases\/#/);
+  await expect(page.locator('a[href^="/cases/#"]').first()).toHaveAttribute("href", /\/cases\/#/);
 
   await page.goto("/");
   const faqSection = page.locator("section").filter({
-    has: page.getByRole("heading", { level: 2, name: "Р§Р°СЃС‚С‹Рµ РІРѕРїСЂРѕСЃС‹ РїРѕ СЃС‚Р°СЂС‚Сѓ РїСЂРѕРµРєС‚Р°" })
+    has: page.getByRole("heading", { level: 2, name: /Частые вопросы/i })
   });
   const faqSummary = faqSection.locator("details summary").first();
   await faqSummary.focus();
   await page.keyboard.press("Enter");
-  await expect(faqSection.getByText("Р¦РµРЅР° СЃС‡РёС‚Р°РµС‚СЃСЏ РїРѕ Р·Р°РґР°С‡Рµ")).toBeVisible();
+  await expect(faqSection.getByText(/Стоимость считаем по задаче/i)).toBeVisible();
 
   await page.goto("/uslugi/fasadnye-vyveski/");
-  await expect(page.getByRole("heading", { level: 1, name: /Р¤Р°СЃР°РґРЅР°СЏ РІС‹РІРµСЃРєР°/i })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: /Фасадная вывеска/i })).toBeVisible();
 
   await page.goto("/kontakty/");
   await expect(page.locator('input[name="sourcePage"]')).toHaveCount(1);
@@ -128,13 +302,14 @@ test("home, faq keyboard path, cases and form smoke flow", async ({ page }) => {
   await expect(page.locator('input[name="hp"]')).toHaveCount(1);
   await expect(page.locator('input[name="locationsCount"]')).toHaveCount(1);
   await expect(page.locator("#lead-form .contact-intake-suggestion").first()).toBeVisible();
-  await page.getByLabel("РРјСЏ РёР»Рё РєРѕРјРїР°РЅРёСЏ").fill(`РўРµСЃС‚РѕРІС‹Р№ РєР»РёРµРЅС‚ ${runId}`);
-  await page.getByLabel("РўРµР»РµС„РѕРЅ РёР»Рё WhatsApp").fill(`+7701${runId}`);
-  await page.getByLabel("РљРѕСЂРѕС‚РєРѕ Рѕ Р·Р°РґР°С‡Рµ").fill(
-    `РќСѓР¶РЅР° С„Р°СЃР°РґРЅР°СЏ РІС‹РІРµСЃРєР° РґР»СЏ РєР°С„Рµ РІ РђР»РјР°С‚С‹, РЅСѓР¶РµРЅ РјРѕРЅС‚Р°Р¶. РўРµСЃС‚ ${runId}.`
-  );
+
+  await page.locator('#lead-form [name="name"]').fill(`Тестовый клиент ${runId}`);
+  await page.locator('#lead-form [name="contact"]').fill(`+7701${runId}`);
+  await page
+    .locator('#lead-form [name="message"]')
+    .fill(`Нужна фасадная вывеска для кафе в Алматы, нужен монтаж. Тест ${runId}.`);
+
   await page.waitForTimeout(3200);
-  await page.getByRole("button", { name: "РџРѕР»СѓС‡РёС‚СЊ СЂР°СЃС‡С‘С‚" }).click();
+  await page.getByRole("button", { name: /Получить расчёт/i }).click();
   await expect(page).toHaveURL(/leadStatus=success/);
-  await expect(page.getByRole("link", { name: "РћС‚РїСЂР°РІРёС‚СЊ РµС‰С‘ РѕРґРЅСѓ Р·Р°СЏРІРєСѓ" })).toBeVisible();
 });

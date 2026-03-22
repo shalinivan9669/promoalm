@@ -18,19 +18,12 @@ const props = withDefaults(
 
 const classes = computed(() => {
   const base =
-    "inline-flex items-center justify-center rounded-full font-sans font-semibold tracking-[0.01em] transition focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas";
+    "button-link inline-flex items-center justify-center rounded-full border font-sans font-semibold tracking-[0.01em] focus-visible:ring-2 focus-visible:ring-[color:var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-canvas";
   const size = props.small ? "px-4 py-2.5 text-sm" : "px-5 py-3 text-sm sm:text-[15px]";
   const width = props.block ? " w-full" : "";
-  const intentMap = {
-    primary: "bg-accent text-canvas hover:bg-accent-soft",
-    calculate: "bg-accent text-canvas hover:bg-accent-soft",
-    secondary: "border border-line text-white hover:border-accent hover:text-accent",
-    ghost: "bg-white/5 text-white hover:bg-white/10",
-    whatsapp: "bg-success text-canvas hover:opacity-90",
-    call: "border border-line-strong text-white hover:border-accent hover:text-accent"
-  };
+  const intentClass = ` button-link--intent-${props.intent}`;
 
-  return `${base} ${size} ${intentMap[props.intent]}${width}`;
+  return `${base} ${size}${intentClass}${width}`;
 });
 </script>
 

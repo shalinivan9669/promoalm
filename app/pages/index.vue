@@ -14,6 +14,16 @@ const homeHero = {
   ...homePageData.hero,
   note: undefined
 };
+const homeHeroFrames = [
+  { src: "/images/hero/1.avif", alt: "", fetchPriority: "high" as const, loading: "eager" as const },
+  { src: "/images/hero/2.avif", alt: "", fetchPriority: "auto" as const, loading: "lazy" as const },
+  { src: "/images/hero/3.avif", alt: "", fetchPriority: "auto" as const, loading: "lazy" as const },
+  { src: "/images/hero/4.avif", alt: "", fetchPriority: "auto" as const, loading: "lazy" as const },
+  { src: "/images/hero/5.avif", alt: "", fetchPriority: "auto" as const, loading: "lazy" as const },
+  { src: "/images/hero/6.avif", alt: "", fetchPriority: "auto" as const, loading: "lazy" as const },
+ 
+];
+const homeTransitionImage = "/images/bg/bg.avif";
 
 const heroQuickLinks = [
   ...homeCityNavigation.slice(0, 3).map((item) => ({
@@ -50,6 +60,23 @@ usePageSeo({
   meta: staticPageMeta.home,
   schemas
 });
+
+useHead({
+  link: [
+    {
+      rel: "preload",
+      as: "image",
+      href: homeHeroFrames[0]!.src,
+      type: "image/avif"
+    },
+    {
+      rel: "preload",
+      as: "image",
+      href: homeTransitionImage,
+      type: "image/avif"
+    }
+  ]
+});
 </script>
 
 <template>
@@ -57,7 +84,15 @@ usePageSeo({
     <HeroSection
       :hero="homeHero"
       variant="home"
-      media-mode="abstract"
+      media-mode="image"
+      :media-frames="homeHeroFrames"
+    />
+
+    <HomeHeroTransitionScene :background-src="homeTransitionImage" />
+
+    <HomeAfterHeroTakeoverSection
+      first-line="По всему Казахстану"
+      second-line="Работаем"
     />
 
     <HomeStatementSection

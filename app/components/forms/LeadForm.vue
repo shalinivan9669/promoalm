@@ -83,7 +83,7 @@ const wrapperClass = computed(() =>
       :class="props.variant === 'contact' ? 'contact-intake-state' : 'flex flex-col gap-4'"
     >
       <p class="eyebrow">Заявка принята</p>
-      <h3 :class="props.variant === 'contact' ? 'contact-intake-state__title' : 'text-2xl font-semibold text-white'">
+      <h3 :class="props.variant === 'contact' ? 'contact-intake-state__title' : 'text-2xl font-semibold text-ink'">
         Заявка принята. Следующий шаг: уточнение проекта и расчёт.
       </h3>
       <p :class="props.variant === 'contact' ? 'contact-intake-state__description' : 'text-sm leading-6 text-muted'">
@@ -370,7 +370,7 @@ const wrapperClass = computed(() =>
           />
         </FormField>
 
-        <label class="flex items-start gap-3 rounded-3xl border border-line bg-canvas-soft px-4 py-3 text-sm text-white">
+        <label class="flex items-start gap-3 rounded-3xl border border-line bg-canvas-soft px-4 py-3 text-sm text-ink">
           <input
             type="checkbox"
             name="needsInstallation"
@@ -404,7 +404,7 @@ const wrapperClass = computed(() =>
             Отправляя заявку, вы соглашаетесь с
             <a
               href="/politika-konfidentsialnosti/"
-              class="text-white underline decoration-line underline-offset-4"
+              class="text-ink underline decoration-line underline-offset-4 transition hover:text-[color:var(--color-accent)]"
             >
               политикой обработки данных
             </a>.
@@ -415,8 +415,8 @@ const wrapperClass = computed(() =>
           type="submit"
           :class="
             props.variant === 'contact'
-              ? 'contact-intake-cta__button'
-              : 'inline-flex items-center justify-center rounded-full bg-accent px-5 py-3 text-sm font-semibold text-canvas transition hover:bg-accent-soft'
+              ? 'button-link contact-intake-cta__button'
+              : 'button-link button-link--intent-primary inline-flex items-center justify-center rounded-full border px-5 py-3 text-sm font-sans font-semibold tracking-[0.01em] focus-visible:ring-2 focus-visible:ring-[color:var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-canvas sm:text-[15px]'
           "
         >
           Получить расчёт
@@ -429,7 +429,7 @@ const wrapperClass = computed(() =>
           Отправляя заявку, вы соглашаетесь с
           <a
             href="/politika-konfidentsialnosti/"
-            class="text-white underline decoration-line underline-offset-4"
+            class="text-ink underline decoration-line underline-offset-4 transition hover:text-[color:var(--color-accent)]"
           >
             политикой обработки данных
           </a>.

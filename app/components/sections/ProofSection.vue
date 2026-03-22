@@ -67,7 +67,7 @@ function bulletClass(index: number) {
         v-if="secondaryItems?.length"
         :class="props.variant === 'home' ? 'mt-6' : 'mt-8'"
       >
-        <p class="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-white">
+        <p class="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-ink">
           {{ secondaryTitle || "Где это уместно" }}
         </p>
         <div class="flex flex-wrap gap-3">
@@ -83,3 +83,4 @@ function bulletClass(index: number) {
     </Container>
   </section>
 </template>
+

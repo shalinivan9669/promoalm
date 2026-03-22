@@ -35,11 +35,11 @@ const articleClass = computed(() => {
     </p>
     <p
       v-if="props.value"
-      :class="props.variant === 'default' ? 'mt-4 text-2xl font-semibold text-white' : 'page-card__value'"
+      :class="props.variant === 'default' ? 'mt-4 text-2xl font-semibold text-[color:var(--color-accent)]' : 'page-card__value'"
     >
       {{ props.value }}
     </p>
-    <h3 :class="props.variant === 'default' ? 'mt-2 text-lg font-semibold text-white' : 'page-card__title'">
+    <h3 :class="props.variant === 'default' ? 'mt-2 text-lg font-semibold text-ink' : 'page-card__title'">
       {{ props.title }}
     </h3>
     <p :class="props.variant === 'default' ? 'mt-3 text-sm leading-6 text-muted' : 'page-card__description'">

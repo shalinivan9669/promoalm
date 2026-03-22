@@ -32,7 +32,7 @@ const headerVariant = computed(() => (props.variant === "support" ? "support" : 
           :key="item.id"
           :class="props.variant === 'home' ? 'home-faq__item group' : isInternal ? 'page-faq__item group' : 'surface group p-6'"
         >
-          <summary :class="props.variant === 'home' ? 'home-faq__summary' : isInternal ? 'page-faq__summary' : 'cursor-pointer list-none text-base font-semibold text-white'">
+          <summary :class="props.variant === 'home' ? 'home-faq__summary' : isInternal ? 'page-faq__summary' : 'cursor-pointer list-none text-base font-semibold text-ink'">
             <span>{{ item.question }}</span>
             <span
               v-if="props.variant === 'home' || isInternal"

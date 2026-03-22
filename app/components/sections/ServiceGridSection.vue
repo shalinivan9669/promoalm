@@ -6,6 +6,12 @@ interface DescriptionHighlightConfig {
   tone?: "warm" | "gas" | "berry";
 }
 
+interface HomeServiceImageConfig {
+  src: string;
+  alt: string;
+  position?: string;
+}
+
 const FEATURED_SLUG = "fasadnye-vyveski";
 const PROMOTED_SLUGS = ["svetovye-koroba", "vyveski-dlya-seti"];
 const LOWER_FEATURED_SLUG = "vyveski-pod-klyuch";
@@ -17,6 +23,18 @@ const LOWER_SUPPORTING_ORDER = [
 ] as const;
 const LOWER_WIDE_SLUGS = ["obemnye-bukvy", "interernye-vyveski-dlya-biznesa"] as const;
 const LOWER_SERVICE_SLUGS = ["interernye-vyveski-dlya-biznesa", "montazh-vyvesok"] as const;
+const HOME_SERVICE_IMAGES: Partial<Record<ServiceCard["slug"], HomeServiceImageConfig>> = {
+  "fasadnye-vyveski": {
+    src: "/images/type/700x611.avif",
+    position: "74% center",
+    alt: "Фасадные вывески"
+  },
+  "vyveski-pod-klyuch": {
+    src: "/images/type/464x684.avif",
+    position: "72% center",
+    alt: "Вывески под ключ"
+  }
+};
 
 const props = withDefaults(
   defineProps<{
@@ -137,6 +155,27 @@ function isLowerServiceCard(slug: ServiceCard["slug"]) {
 function getLowerCtaLabel(slug: ServiceCard["slug"]) {
   return isLowerServiceCard(slug) ? "Подробнее" : "Открыть услугу";
 }
+
+function getHomeServiceImage(card: ServiceCard | null) {
+  if (!card) {
+    return null;
+  }
+
+  return HOME_SERVICE_IMAGES[card.slug] ?? null;
+}
+
+function getHomeServiceImageStyle(card: ServiceCard | null) {
+  const image = getHomeServiceImage(card);
+
+  if (!image) {
+    return undefined;
+  }
+
+  return {
+    "--service-card-bg-image": `url("${image.src}")`,
+    "--service-card-bg-position": image.position ?? "74% center"
+  };
+}
 </script>
 
 <template>
@@ -164,29 +203,47 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
 
       <template v-if="props.variant === 'home' && featuredCard">
         <div class="home-service-cluster__layout">
-          <article class="home-service-card home-service-card--featured">
-            <div class="flex flex-wrap gap-2">
-              <span
-                v-for="tag in featuredCard.tags"
-                :key="tag"
-                class="home-service-card__chip"
-              >
-                {{ tag }}
-              </span>
-            </div>
-            <h3 class="home-service-card__title home-service-card__title--featured">
-              {{ featuredCard.title }}
-            </h3>
-            <p class="max-w-2xl text-base leading-7 text-muted">
-              {{ featuredCard.summary }}
-            </p>
-            <div class="mt-auto pt-4">
-              <ButtonLink
-                :href="featuredCard.path"
-                label="Открыть услугу"
-                intent="secondary"
-                tracking-event="open_service_page"
-              />
+          <article
+            class="home-service-card home-service-card--featured"
+            :class="{
+              'home-service-card--image': Boolean(getHomeServiceImage(featuredCard)),
+              'home-service-card--interactive-image': Boolean(getHomeServiceImage(featuredCard)),
+              'home-service-card--featured-with-bg': Boolean(getHomeServiceImage(featuredCard))
+            }"
+            :style="getHomeServiceImageStyle(featuredCard)"
+          >
+            <div
+              v-if="getHomeServiceImage(featuredCard)"
+              aria-hidden="true"
+              class="home-service-card__media"
+            />
+            <div class="home-service-card__content-stack home-service-card__content-stack--featured home-service-card__content-stack--image">
+              <div class="home-service-card__chips">
+                <span
+                  v-for="tag in featuredCard.tags"
+                  :key="tag"
+                  class="home-service-card__chip"
+                >
+                  {{ tag }}
+                </span>
+              </div>
+              <div class="home-service-card__body home-service-card__body--feature">
+                <h3 class="home-service-card__title home-service-card__title--featured">
+                  {{ featuredCard.title }}
+                </h3>
+                <p class="max-w-2xl text-base leading-7 text-muted">
+                  {{ featuredCard.summary }}
+                </p>
+              </div>
+              <div class="mt-auto pt-4">
+                <ButtonLink
+                  :href="featuredCard.path"
+                  class="home-service-card__image-cta-link"
+                  label="Открыть услугу"
+                  intent="secondary"
+                  tracking-event="open_service_page"
+                />
+              </div>
             </div>
           </article>
 
@@ -231,32 +288,45 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
           <a
             :href="lowerFeaturedCard.path"
             class="home-service-card home-service-card--link home-service-card--lower-feature"
+            :class="{
+              'home-service-card--image': Boolean(getHomeServiceImage(lowerFeaturedCard)),
+              'home-service-card--interactive-image': Boolean(getHomeServiceImage(lowerFeaturedCard)),
+              'home-service-card--lower-feature-with-bg': Boolean(getHomeServiceImage(lowerFeaturedCard))
+            }"
+            :style="getHomeServiceImageStyle(lowerFeaturedCard)"
           >
-            <div class="home-service-card__chips">
-              <span
-                v-for="tag in getVisibleTags(lowerFeaturedCard, 3)"
-                :key="tag"
-                class="home-service-card__chip"
-              >
-                {{ tag }}
-              </span>
-            </div>
-            <div class="home-service-card__body home-service-card__body--feature">
-              <h3 class="home-service-card__title home-service-card__title--featured">
-                {{ lowerFeaturedCard.title }}
-              </h3>
-              <p class="text-base leading-7 text-muted">
-                {{ lowerFeaturedCard.summary }}
-              </p>
-            </div>
-            <div class="home-service-card__footer home-service-card__footer--feature">
-              <span class="home-service-card__button">Открыть услугу</span>
-              <span
-                v-if="getHiddenTagCount(lowerFeaturedCard, 3)"
-                class="home-service-card__meta"
-              >
-                +{{ getHiddenTagCount(lowerFeaturedCard, 3) }}
-              </span>
+            <div
+              v-if="getHomeServiceImage(lowerFeaturedCard)"
+              aria-hidden="true"
+              class="home-service-card__media"
+            />
+            <div class="home-service-card__content-stack home-service-card__content-stack--lower home-service-card__content-stack--image">
+              <div class="home-service-card__chips">
+                <span
+                  v-for="tag in getVisibleTags(lowerFeaturedCard, 3)"
+                  :key="tag"
+                  class="home-service-card__chip"
+                >
+                  {{ tag }}
+                </span>
+              </div>
+              <div class="home-service-card__body home-service-card__body--feature">
+                <h3 class="home-service-card__title home-service-card__title--featured">
+                  {{ lowerFeaturedCard.title }}
+                </h3>
+                <p class="text-base leading-7 text-muted">
+                  {{ lowerFeaturedCard.summary }}
+                </p>
+              </div>
+              <div class="home-service-card__footer home-service-card__footer--feature">
+                <span class="home-service-card__button">Открыть услугу</span>
+                <span
+                  v-if="getHiddenTagCount(lowerFeaturedCard, 3)"
+                  class="home-service-card__meta"
+                >
+                  +{{ getHiddenTagCount(lowerFeaturedCard, 3) }}
+                </span>
+              </div>
             </div>
           </a>
 
@@ -275,13 +345,13 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
                 <span
                   v-for="tag in getVisibleTags(card, 2)"
                   :key="tag"
-                   class="home-service-card__chip"
+                  class="home-service-card__chip"
                 >
                   {{ tag }}
                 </span>
                 <span
                   v-if="getHiddenTagCount(card, 2)"
-                   class="home-service-card__chip home-service-card__chip--more"
+                  class="home-service-card__chip home-service-card__chip--more"
                 >
                   +{{ getHiddenTagCount(card, 2) }}
                 </span>
@@ -352,3 +422,346 @@ function getLowerCtaLabel(slug: ServiceCard["slug"]) {
     </Container>
   </section>
 </template>
+
+<style scoped>
+.home-service-card--featured,
+.home-service-card--lower-feature {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.home-service-card--interactive-image {
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms ease;
+  will-change: transform, box-shadow;
+}
+
+.home-service-card__content-stack {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  min-height: 100%;
+  flex-direction: column;
+  gap: 1rem;
+  isolation: isolate;
+}
+
+.home-service-card__content-stack--featured {
+  max-width: min(45%, 25.5rem);
+}
+
+.home-service-card__content-stack--lower {
+  max-width: min(43%, 21.5rem);
+}
+
+.home-service-card--image {
+  border-color: rgba(245, 239, 230, 0.14);
+  background-color: rgb(19, 24, 29);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 20px 40px rgba(17, 22, 28, 0.18);
+}
+
+.home-service-card__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--service-card-bg-image);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: var(--service-card-bg-position, 74% center);
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.home-service-card--image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to top,
+      rgba(19, 24, 29, 0.8) 0%,
+      rgba(19, 24, 29, 0.56) 34%,
+      rgba(19, 24, 29, 0.22) 68%,
+      rgba(19, 24, 29, 0.04) 100%
+    ),
+    linear-gradient(
+      to right,
+      rgba(19, 24, 29, 0.72) 0%,
+      rgba(19, 24, 29, 0.44) 38%,
+      rgba(19, 24, 29, 0) 72%
+    );
+  opacity: 0.92;
+  pointer-events: none;
+  transition: opacity 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-service-card--image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 84% 18%, rgba(216, 95, 59, 0.12), rgba(216, 95, 59, 0) 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0) 16%),
+    linear-gradient(132deg, rgba(255, 255, 255, 0.028) 0%, rgba(255, 255, 255, 0.012) 24%, rgba(255, 255, 255, 0) 56%);
+  opacity: 0.7;
+  pointer-events: none;
+  transition:
+    opacity 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-service-card__content-stack--image::before {
+  content: "";
+  position: absolute;
+  inset: -1.4rem auto -1.65rem -1.5rem;
+  z-index: -1;
+  width: min(40rem, calc(100% + 2.4rem));
+  background:
+    radial-gradient(circle at 16% 22%, rgba(19, 24, 29, 0.66) 0%, rgba(19, 24, 29, 0.5) 34%, rgba(19, 24, 29, 0.28) 58%, rgba(19, 24, 29, 0.08) 76%, rgba(19, 24, 29, 0) 88%),
+    linear-gradient(90deg, rgba(19, 24, 29, 0.62) 0%, rgba(19, 24, 29, 0.34) 56%, rgba(19, 24, 29, 0.08) 82%, rgba(19, 24, 29, 0) 100%);
+  filter: blur(22px);
+  opacity: 1;
+  pointer-events: none;
+  transition:
+    opacity 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-service-card--image .home-service-card__title {
+  color: rgba(245, 239, 230, 0.96);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.16);
+  transition:
+    color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-service-card--image .home-service-card__title--featured {
+  line-height: 0.98;
+  letter-spacing: -0.038em;
+}
+
+.home-service-card--image .text-muted,
+.home-service-card--image .home-service-card__summary,
+.home-service-card--image .home-service-card__summary--compact {
+  color: rgba(245, 239, 230, 0.88);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  opacity: 0.9;
+  transition:
+    color 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-service-card--image .home-service-card__body--feature > .text-muted {
+  max-width: 31ch;
+}
+
+.home-service-card--image .home-service-card__content-stack--lower .home-service-card__body--feature > .text-muted {
+  max-width: 28ch;
+}
+
+.home-service-card--image .home-service-card__footer {
+  border-top-color: rgba(245, 239, 230, 0.14);
+}
+
+.home-service-card--image .home-service-card__meta {
+  color: rgba(245, 239, 230, 0.58);
+}
+
+.home-service-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.home-service-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.home-service-card__footer {
+  transition:
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 240ms ease;
+  will-change: transform;
+}
+
+.home-service-card__chips .home-service-card__chip:nth-child(1) {
+  transition-delay: 0ms;
+}
+
+.home-service-card__chips .home-service-card__chip:nth-child(2) {
+  transition-delay: 24ms;
+}
+
+.home-service-card__chips .home-service-card__chip:nth-child(3) {
+  transition-delay: 48ms;
+}
+
+.home-service-card--image .home-service-card__image-cta-link,
+.home-service-card--image .home-service-card__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8rem;
+  padding: 0.72rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 239, 230, 0.26);
+  background:
+    linear-gradient(180deg, rgba(251, 250, 247, 0.98), rgba(241, 236, 226, 0.9)),
+    rgba(251, 250, 247, 0.9);
+  color: rgb(19, 24, 29);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 12px 24px rgba(17, 22, 28, 0.18);
+  text-decoration: none;
+  transition:
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 240ms ease,
+    background-color 240ms ease,
+    color 240ms ease;
+  will-change: transform;
+}
+
+.home-service-card--interactive-image:is(:hover, :focus-within) {
+  transform: translateY(-4px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 26px 52px rgba(17, 22, 28, 0.24);
+}
+
+.home-service-card--interactive-image:is(:hover, :focus-within) .home-service-card__media {
+  transform: scale(1.04);
+}
+
+.home-service-card--interactive-image:is(:hover, :focus-within)::before {
+  opacity: 1;
+}
+
+.home-service-card--interactive-image:is(:hover, :focus-within)::after,
+.home-service-card--interactive-image:is(:hover, :focus-within) .home-service-card__content-stack--image::before {
+  opacity: 0.94;
+  transform: translateY(-2px);
+}
+
+.home-service-card--interactive-image:is(:hover, :focus-within) .home-service-card__chips {
+  transform: translateY(-2px);
+}
+
+.home-service-card--interactive-image:is(:hover, :focus-within) .home-service-card__body {
+  transform: translateY(-3px);
+}
+
+.home-service-card--interactive-image:is(:hover, :focus-within) .home-service-card__footer {
+  transform: translateY(-2px);
+}
+
+.home-service-card--interactive-image:is(:hover, :focus-within) .home-service-card__title {
+  color: rgba(255, 248, 242, 0.99);
+}
+
+.home-service-card--interactive-image:is(:hover, :focus-within) .text-muted,
+.home-service-card--interactive-image:is(:hover, :focus-within) .home-service-card__summary,
+.home-service-card--interactive-image:is(:hover, :focus-within) .home-service-card__summary--compact {
+  opacity: 0.98;
+  color: rgba(245, 239, 230, 0.94);
+}
+
+.home-service-card--interactive-image:is(:hover, :focus-within) .home-service-card__chip {
+  transform: translateY(-2px);
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0) 44%),
+    linear-gradient(180deg, rgba(255, 249, 232, 0.98), rgba(238, 219, 164, 0.94) 58%, rgba(214, 181, 93, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    0 10px 24px rgba(199, 170, 71, 0.2),
+    0 16px 34px rgba(17, 22, 28, 0.12);
+}
+
+.home-service-card--interactive-image:is(:hover, :focus-within) .home-service-card__image-cta-link,
+.home-service-card--interactive-image:is(:hover, :focus-within) .home-service-card__button {
+  border-color: rgba(216, 95, 59, 0.34);
+  background:
+    linear-gradient(180deg, rgba(253, 251, 246, 0.99), rgba(244, 236, 224, 0.94)),
+    rgba(251, 250, 247, 0.94);
+  color: rgb(216, 95, 59);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    0 16px 30px rgba(17, 22, 28, 0.22),
+    0 0 0 1px rgba(216, 95, 59, 0.08);
+  transform: translateY(-2px);
+}
+
+.home-service-card--image .home-service-card__image-cta-link {
+  font-weight: 700;
+}
+
+.home-service-card--image.home-service-card--link:is(:hover, :focus-visible) .home-service-card__title {
+  color: rgba(245, 239, 230, 0.96);
+}
+
+@media (max-width: 1279px) {
+  .home-service-card__content-stack--featured {
+    max-width: min(48%, 24rem);
+  }
+
+  .home-service-card__content-stack--lower {
+    max-width: min(46%, 20.5rem);
+  }
+}
+
+@media (max-width: 1023px) {
+  .home-service-card__content-stack--featured,
+  .home-service-card__content-stack--lower {
+    max-width: 100%;
+  }
+
+  .home-service-card__media {
+    background-position: center;
+  }
+
+  .home-service-card__content-stack--image::before {
+    inset: -1rem -1rem -1.2rem -1rem;
+    width: auto;
+    filter: blur(18px);
+  }
+}
+
+@media (max-width: 767px) {
+  .home-service-card--image::before {
+    background:
+      linear-gradient(
+        to top,
+        rgba(19, 24, 29, 0.84) 0%,
+        rgba(19, 24, 29, 0.62) 38%,
+        rgba(19, 24, 29, 0.24) 74%,
+        rgba(19, 24, 29, 0.04) 100%
+      ),
+      linear-gradient(
+        to right,
+        rgba(19, 24, 29, 0.62) 0%,
+        rgba(19, 24, 29, 0.34) 42%,
+        rgba(19, 24, 29, 0) 78%
+      );
+  }
+
+  .home-service-card__content-stack--image::before {
+    inset: -0.8rem -0.8rem -1rem -0.8rem;
+    filter: blur(14px);
+  }
+}
+</style>

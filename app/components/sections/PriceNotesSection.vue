@@ -58,7 +58,7 @@ function noteClass(index: number) {
           :key="note.title"
           :class="noteClass(index)"
         >
-          <h3 class="text-lg font-semibold text-white">
+          <h3 class="text-lg font-semibold text-ink">
             {{ note.title }}
           </h3>
           <p class="mt-3 text-sm leading-6 text-muted">

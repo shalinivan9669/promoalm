@@ -94,7 +94,7 @@ withDefaults(
               <p class="home-statement__stat-value">
                 {{ item.value }}
               </p>
-              <h3 class="mt-3 text-base font-semibold text-white">
+              <h3 class="mt-3 text-base font-semibold text-ink">
                 {{ item.label }}
               </h3>
               <p

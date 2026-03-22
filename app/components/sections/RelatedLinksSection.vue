@@ -40,7 +40,7 @@ function cardClass(index: number) {
           :key="link.href"
           :class="cardClass(index)"
         >
-          <h3 class="text-lg font-semibold text-white">
+          <h3 class="text-lg font-semibold text-ink">
             {{ link.label }}
           </h3>
           <p class="text-sm leading-6 text-muted">

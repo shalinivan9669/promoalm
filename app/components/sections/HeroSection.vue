@@ -22,8 +22,140 @@ const props = withDefaults(
   }
 );
 
+const HOME_HERO_TYPED_BASE = "Вывески";
+const HOME_HERO_TYPED_PHRASES = ["для бизнеса", "для сетей", "под ключ", "для магазина"] as const;
+const HOME_HERO_TYPED_ACCESSIBLE_TEXT = `${HOME_HERO_TYPED_BASE} ${HOME_HERO_TYPED_PHRASES[0]}`;
+
+const INITIAL_HOLD_MS = 2200;
+const SLIDE_VISIBLE_MS = 5200;
+const CROSSFADE_MS = 1200;
+const SLIDE_CYCLE_MS = SLIDE_VISIBLE_MS + CROSSFADE_MS;
+
 const isImageMode = computed(() => props.variant === "home" && props.mediaMode === "image" && props.mediaFrames.length > 0);
 const internalVariant = computed(() => (props.variant === "home" ? "default" : props.variant));
+const homeImageFrames = computed(() => (isImageMode.value ? props.mediaFrames : []));
+const homeHeroMotionStyle = computed(() => ({
+  "--home-hero-slide-cycle": `${SLIDE_CYCLE_MS}ms`,
+  "--home-hero-slide-crossfade": `${CROSSFADE_MS}ms`
+}));
+
+const activeFrameIndex = ref(0);
+const leavingFrameIndex = ref<number | null>(null);
+const prefersReducedMotion = ref(false);
+
+let advanceTimer: number | undefined;
+let leavingTimer: number | undefined;
+let motionQuery: MediaQueryList | null = null;
+let motionQueryHandler: ((event: MediaQueryListEvent) => void) | null = null;
+
+function clearAdvanceTimer() {
+  if (advanceTimer) {
+    clearTimeout(advanceTimer);
+    advanceTimer = undefined;
+  }
+}
+
+function clearLeavingTimer() {
+  if (leavingTimer) {
+    clearTimeout(leavingTimer);
+    leavingTimer = undefined;
+  }
+}
+
+function clearSliderTimers() {
+  clearAdvanceTimer();
+  clearLeavingTimer();
+}
+
+function resetSliderState() {
+  activeFrameIndex.value = 0;
+  leavingFrameIndex.value = null;
+}
+
+function queueSlideAdvance(delay: number) {
+  if (!import.meta.client || prefersReducedMotion.value || homeImageFrames.value.length < 2) {
+    return;
+  }
+
+  clearAdvanceTimer();
+  advanceTimer = window.setTimeout(() => {
+    const previousIndex = activeFrameIndex.value;
+
+    activeFrameIndex.value = (previousIndex + 1) % homeImageFrames.value.length;
+    leavingFrameIndex.value = previousIndex;
+
+    clearLeavingTimer();
+    leavingTimer = window.setTimeout(() => {
+      if (leavingFrameIndex.value === previousIndex) {
+        leavingFrameIndex.value = null;
+      }
+    }, CROSSFADE_MS);
+
+    queueSlideAdvance(SLIDE_CYCLE_MS);
+  }, delay);
+}
+
+function startAutoplay() {
+  resetSliderState();
+  queueSlideAdvance(INITIAL_HOLD_MS);
+}
+
+function stopAutoplay(resetToFirstSlide = false) {
+  clearSliderTimers();
+  leavingFrameIndex.value = null;
+
+  if (resetToFirstSlide) {
+    activeFrameIndex.value = 0;
+  }
+}
+
+function syncMotionPreference(matchesReducedMotion: boolean) {
+  prefersReducedMotion.value = matchesReducedMotion;
+
+  if (matchesReducedMotion) {
+    stopAutoplay(true);
+    return;
+  }
+
+  if (isImageMode.value && homeImageFrames.value.length > 1) {
+    startAutoplay();
+  }
+}
+
+onMounted(() => {
+  if (!isImageMode.value || !import.meta.client) {
+    return;
+  }
+
+  motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  syncMotionPreference(motionQuery.matches);
+
+  motionQueryHandler = (event) => {
+    syncMotionPreference(event.matches);
+  };
+
+  if (typeof motionQuery.addEventListener === "function") {
+    motionQuery.addEventListener("change", motionQueryHandler);
+    return;
+  }
+
+  motionQuery.addListener(motionQueryHandler);
+});
+
+onBeforeUnmount(() => {
+  clearSliderTimers();
+
+  if (!motionQuery || !motionQueryHandler) {
+    return;
+  }
+
+  if (typeof motionQuery.removeEventListener === "function") {
+    motionQuery.removeEventListener("change", motionQueryHandler);
+    return;
+  }
+
+  motionQuery.removeListener(motionQueryHandler);
+});
 </script>
 
 <template>
@@ -34,23 +166,54 @@ const internalVariant = computed(() => (props.variant === "home" ? "default" : p
     <div
       aria-hidden="true"
       class="home-hero__backdrop"
+      :class="{ 'home-hero__backdrop--image': isImageMode }"
+      :style="isImageMode ? homeHeroMotionStyle : undefined"
     >
-      <div class="home-hero__ambient home-hero__ambient--one" />
-      <div class="home-hero__ambient home-hero__ambient--two" />
-      <div class="home-hero__ambient home-hero__ambient--three" />
+      <template v-if="isImageMode">
+        <div class="home-hero__slide-track">
+          <img
+            v-for="(frame, index) in homeImageFrames"
+            :key="frame.src"
+            :src="frame.src"
+            alt=""
+            aria-hidden="true"
+            class="home-hero__slide"
+            width="1536"
+            height="1024"
+            :class="{
+              'is-active': index === activeFrameIndex,
+              'is-leaving': index === leavingFrameIndex,
+              'is-reduced': prefersReducedMotion
+            }"
+            decoding="async"
+            draggable="false"
+            sizes="100vw"
+            :fetchpriority="index === 0 ? frame.fetchPriority ?? 'high' : frame.fetchPriority ?? 'auto'"
+            :loading="index === 0 ? frame.loading ?? 'eager' : frame.loading ?? 'lazy'"
+          />
+        </div>
+        <div class="home-hero__image-overlay" />
+        <div class="home-hero__image-vignette" />
+      </template>
+
+      <template v-else>
+        <div class="home-hero__ambient home-hero__ambient--one" />
+        <div class="home-hero__ambient home-hero__ambient--two" />
+        <div class="home-hero__ambient home-hero__ambient--three" />
+      </template>
     </div>
 
-    <Container class="relative">
+    <div class="home-hero__content">
       <div class="home-hero__grid home-hero__grid--copy-only">
         <div class="home-hero__copy">
-          <p class="eyebrow">{{ hero.eyebrow }}</p>
           <h1 class="home-hero__title">
-            {{ hero.title }}
+            <HeroTypedHeadline
+              :base-text="HOME_HERO_TYPED_BASE"
+              :phrases="HOME_HERO_TYPED_PHRASES"
+              :accessible-text="HOME_HERO_TYPED_ACCESSIBLE_TEXT"
+            />
           </h1>
-          <p class="home-hero__description">
-            {{ hero.description }}
-          </p>
-          <div class="mt-8 flex flex-wrap gap-3">
+          <div class="home-hero__actions mt-8 flex flex-wrap gap-3">
             <ButtonLink
               v-for="action in hero.actions"
               :key="action.href + action.label"
@@ -69,7 +232,7 @@ const internalVariant = computed(() => (props.variant === "home" ? "default" : p
           </p>
         </div>
       </div>
-    </Container>
+    </div>
   </section>
 
   <section
@@ -140,3 +303,191 @@ const internalVariant = computed(() => (props.variant === "home" ? "default" : p
     </Container>
   </section>
 </template>
+
+<style scoped>
+.home-hero__content {
+  position: relative;
+  z-index: 1;
+  padding-top: clamp(3.2rem, 7vh, 5.2rem);
+  padding-right: clamp(1.25rem, 4.8vw, 4.75rem);
+  padding-bottom: 0;
+  padding-left: max(0px, calc(clamp(1.25rem, 4.8vw, 4.75rem) - 25px));
+}
+
+.home-hero__grid--copy-only {
+  max-width: 52rem;
+}
+
+.home-hero__copy {
+  display: flex;
+  min-height: clamp(38rem, calc(100svh - 6rem), 49rem);
+  flex-direction: column;
+  max-width: min(100%, 45rem);
+  padding-top: 0;
+}
+
+.home-hero__copy::before {
+  display: none;
+}
+
+.home-hero__title,
+.home-hero__description {
+  color: #c65a3a;
+}
+
+.home-hero__title {
+  font-size: clamp(5.8rem, 6.5vw, 9.8rem);
+  line-height: 0.88;
+}
+
+.home-hero__actions {
+  margin-top: auto;
+  padding-top: clamp(1rem, 6vh, 3.5rem);
+}
+
+.home-hero__note {
+  color: var(--color-warning);
+}
+
+.home-hero__actions :deep(a) {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background-repeat: no-repeat;
+  background-position: right center;
+  transition:
+    color 260ms ease,
+    border-color 260ms ease,
+    background-size 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 260ms ease;
+}
+
+.home-hero__actions :deep(a:nth-child(1)) {
+  border-color: var(--color-accent-cta);
+  background-color: var(--color-accent-cta);
+  background-image: linear-gradient(270deg, rgba(8, 11, 16, 0.96), rgba(8, 11, 16, 0.96));
+  background-size: 0% 100%;
+  color: var(--color-surface-dark);
+  box-shadow: 0 16px 30px rgba(198, 90, 58, 0.2);
+}
+
+.home-hero__actions :deep(a:nth-child(1):hover),
+.home-hero__actions :deep(a:nth-child(1):focus-visible) {
+  border-color: rgba(8, 11, 16, 0.92);
+  background-size: 100% 100%;
+  color: var(--color-surface);
+  box-shadow: 0 18px 32px rgba(8, 11, 16, 0.2);
+}
+
+.home-hero__actions :deep(a:nth-child(2)) {
+  border-color: rgba(8, 11, 16, 0.82);
+  background-color: rgba(8, 11, 16, 0.82);
+  background-image: linear-gradient(270deg, var(--color-accent-cta), var(--color-accent-cta));
+  background-size: 0% 100%;
+  color: var(--color-surface);
+}
+
+.home-hero__actions :deep(a:nth-child(2):hover),
+.home-hero__actions :deep(a:nth-child(2):focus-visible) {
+  border-color: var(--color-accent-cta);
+  background-size: 100% 100%;
+  color: var(--color-surface-dark);
+  box-shadow: 0 18px 32px rgba(198, 90, 58, 0.18);
+}
+
+.home-hero__backdrop--image {
+  background: #0a1016;
+}
+
+.home-hero__slide-track,
+.home-hero__image-overlay,
+.home-hero__image-vignette {
+  position: absolute;
+  inset: 0;
+}
+
+.home-hero__slide-track,
+.home-hero__image-overlay,
+.home-hero__image-vignette {
+  pointer-events: none;
+}
+
+.home-hero__slide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1536px;
+  height: 1024px;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  object-position: center;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity var(--home-hero-slide-crossfade) cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+.home-hero__slide.is-active {
+  opacity: 1;
+  animation: none;
+}
+
+.home-hero__slide.is-leaving {
+  opacity: 0;
+}
+
+.home-hero__slide.is-reduced,
+.home-hero__slide.is-reduced.is-active,
+.home-hero__slide.is-reduced.is-leaving {
+  animation: none;
+  transform: translate(-50%, -50%);
+}
+
+.home-hero__slide.is-reduced.is-active {
+  opacity: 1;
+}
+
+.home-hero__image-overlay {
+  display: none;
+}
+
+.home-hero__image-vignette {
+  display: none;
+}
+
+@media (max-width: 1536px), (max-height: 1024px) {
+  .home-hero__slide {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-hero__content {
+    padding-top: clamp(2.4rem, 6vh, 3.2rem);
+    padding-right: 0.85rem;
+    padding-bottom: 0;
+    padding-left: max(0px, calc(0.85rem - 25px));
+  }
+
+  .home-hero__copy {
+    min-height: clamp(25rem, 66svh, 33rem);
+    max-width: 100%;
+  }
+
+  .home-hero__title {
+    font-size: clamp(2.25rem, 7.8vw, 3.75rem);
+    line-height: 0.86;
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero__slide {
+    animation: none !important;
+    transition: none;
+    transform: translate(-50%, -50%) !important;
+  }
+}
+</style>

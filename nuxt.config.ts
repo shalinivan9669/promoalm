@@ -34,7 +34,7 @@ export default defineNuxtConfig({
       pathPrefix: false
     }
   ],
-  css: ["~/assets/css/main.css"],
+  css: ["lenis/dist/lenis.css", "~/assets/css/main.css"],
   devtools: { enabled: true  },
   typescript: {
     strict: true,

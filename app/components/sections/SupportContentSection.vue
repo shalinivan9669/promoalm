@@ -33,7 +33,7 @@ const isInternal = computed(() => props.variant !== "default");
           :key="section.title"
           :class="isInternal && index === 0 ? 'page-card page-card--feature lg:col-span-2' : isInternal ? 'page-card page-card--quiet' : 'surface p-6'"
         >
-          <h3 class="text-lg font-semibold text-white">
+          <h3 class="text-lg font-semibold text-ink">
             {{ section.title }}
           </h3>
           <p class="mt-3 text-sm leading-6 text-muted">

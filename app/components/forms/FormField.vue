@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <label class="form-field flex flex-col gap-2 text-sm text-white">
+  <label class="form-field flex flex-col gap-2 text-sm text-ink">
     <span class="form-field__label flex items-center gap-1">
       <span>{{ label }}</span>
       <span

@@ -41,14 +41,14 @@ const orderedChannels = computed(() =>
           "
         >
           <div class="flex items-center justify-between gap-3">
-            <h3 class="text-lg font-semibold text-white">
+            <h3 class="text-lg font-semibold text-ink">
               {{ channel.label }}
             </h3>
             <span :class="isContact ? 'page-chip' : 'chip'">
               {{ channel.available ? "Активно" : "Placeholder" }}
             </span>
           </div>
-          <p :class="isContact && index === 0 ? 'mt-5 text-2xl font-semibold text-white' : 'text-sm text-white'">
+          <p :class="isContact && index === 0 ? 'mt-5 text-2xl font-semibold text-ink' : 'text-sm text-ink'">
             {{ channel.value }}
           </p>
           <p

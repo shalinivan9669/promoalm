@@ -63,7 +63,7 @@ const quickRequest = buildQuickAction({
 <template>
   <div
     v-if="!hidden"
-    class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas px-3 py-3 lg:hidden"
+    class="fixed inset-x-0 bottom-0 z-40 border-t border-[color:rgba(212,208,199,0.72)] bg-[color:var(--color-glass-light)] px-3 py-3 backdrop-blur-xl lg:hidden"
   >
     <nav
       aria-label="Быстрые действия"

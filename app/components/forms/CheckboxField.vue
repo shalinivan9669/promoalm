@@ -3,7 +3,7 @@ const model = defineModel<boolean>();
 </script>
 
 <template>
-  <label class="flex items-start gap-3 rounded-3xl border border-line bg-canvas-soft px-4 py-3 text-sm text-white">
+  <label class="flex items-start gap-3 rounded-3xl border border-line bg-canvas-soft px-4 py-3 text-sm text-ink">
     <input
       v-model="model"
       type="checkbox"

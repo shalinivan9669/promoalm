@@ -21,13 +21,13 @@ defineProps<{
         <a
           v-if="!item.current"
           :href="item.href"
-          class="transition hover:text-white"
+          class="transition hover:text-[color:var(--color-accent)]"
         >
           {{ item.label }}
         </a>
         <span
           v-else
-          class="text-white"
+          class="text-ink"
         >
           {{ item.label }}
         </span>
