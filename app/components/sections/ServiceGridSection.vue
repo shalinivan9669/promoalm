@@ -22,8 +22,11 @@ const LOWER_SUPPORTING_ORDER = [
   "neonovye-vyveski",
   "montazh-vyvesok"
 ] as const;
-const LOWER_WIDE_SLUGS = ["obemnye-bukvy", "interernye-vyveski-dlya-biznesa"] as const;
+const LOWER_WIDE_SLUGS = ["obemnye-bukvy", "interernye-vyveski-dlya-biznesa", "montazh-vyvesok"] as const;
 const LOWER_SERVICE_SLUGS = ["interernye-vyveski-dlya-biznesa", "neonovye-vyveski", "montazh-vyvesok"] as const;
+const LOWER_SUPPORTING_GRID_COLUMNS = 7;
+const LOWER_SUPPORTING_WIDE_SPAN = 4;
+const LOWER_SUPPORTING_NARROW_SPAN = 3;
 const HOME_SERVICE_IMAGES: Partial<Record<ServiceCard["slug"], HomeServiceImageConfig>> = {
   "fasadnye-vyveski": {
     src: "/images/type/700x611.avif",
@@ -155,6 +158,56 @@ function isLowerServiceCard(slug: ServiceCard["slug"]) {
 
 function getLowerCtaLabel(slug: ServiceCard["slug"]) {
   return isLowerServiceCard(slug) ? "Подробнее" : "Открыть услугу";
+}
+
+function getLowerSupportingRowColumnsBefore(index: number) {
+  let usedColumns = 0;
+
+  for (let i = 0; i < index; i++) {
+    const card = lowerSupportingCards.value[i];
+
+    if (!card) {
+      continue;
+    }
+
+    const span = isLowerWideCard(card.slug) ? LOWER_SUPPORTING_WIDE_SPAN : LOWER_SUPPORTING_NARROW_SPAN;
+
+    if (usedColumns === 0) {
+      usedColumns = span;
+      continue;
+    }
+
+    if (usedColumns + span > LOWER_SUPPORTING_GRID_COLUMNS) {
+      usedColumns = span;
+      continue;
+    }
+
+    if (usedColumns + span === LOWER_SUPPORTING_GRID_COLUMNS) {
+      usedColumns = 0;
+      continue;
+    }
+
+    usedColumns += span;
+  }
+
+  return usedColumns;
+}
+
+function getLowerSupportingCardSpanClass(card: ServiceCard, index: number) {
+  const naturalClass = isLowerWideCard(card.slug)
+    ? "home-service-card--span-wide"
+    : "home-service-card--span-narrow";
+
+  if (index !== lowerSupportingCards.value.length - 1) {
+    return naturalClass;
+  }
+
+  const currentRowColumns = getLowerSupportingRowColumnsBefore(index);
+  const naturalSpan = isLowerWideCard(card.slug) ? LOWER_SUPPORTING_WIDE_SPAN : LOWER_SUPPORTING_NARROW_SPAN;
+
+  return currentRowColumns + naturalSpan === LOWER_SUPPORTING_GRID_COLUMNS
+    ? naturalClass
+    : "home-service-card--span-full";
 }
 
 function getHomeServiceImage(card: ServiceCard | null) {
@@ -333,14 +386,16 @@ function getHomeServiceImageStyle(card: ServiceCard | null) {
 
           <div class="home-service-cluster__supporting-matrix">
             <a
-              v-for="card in lowerSupportingCards"
+              v-for="(card, index) in lowerSupportingCards"
               :key="card.slug"
               :href="card.path"
-              :class="
+              :class="[
+                'home-service-card home-service-card--link home-service-card--lower-supporting',
                 isLowerServiceCard(card.slug)
-                  ? `home-service-card home-service-card--link home-service-card--lower-supporting home-service-card--supporting-service ${isLowerWideCard(card.slug) ? 'home-service-card--span-wide' : 'home-service-card--span-narrow'}`
-                  : `home-service-card home-service-card--link home-service-card--lower-supporting home-service-card--supporting-product ${isLowerWideCard(card.slug) ? 'home-service-card--span-wide' : 'home-service-card--span-narrow'}`
-              "
+                  ? 'home-service-card--supporting-service'
+                  : 'home-service-card--supporting-product',
+                getLowerSupportingCardSpanClass(card, index)
+              ]"
             >
               <div class="home-service-card__chips">
                 <span
