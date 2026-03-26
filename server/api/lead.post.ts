@@ -112,7 +112,18 @@ export default defineEventHandler(async (event): Promise<LeadApiSuccess | LeadAp
     return reject("duplicate", "Похожая заявка уже была отправлена недавно.");
   }
 
-  await deliverLead(normalized);
+  try {
+    await deliverLead(normalized);
+  } catch (error) {
+    console.error("[lead:delivery:error]", error);
+    logReject("delivery", { ip });
+
+    if (htmlRequest) {
+      return redirectToLeadForm(event, siteUrl, "error", "delivery");
+    }
+
+    return reject("delivery", "РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РїСЂР°РІРёС‚СЊ Р·Р°СЏРІРєСѓ. РџРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰С‘ СЂР°Р·.");
+  }
 
   if (htmlRequest) {
     return redirectToLeadForm(event, siteUrl, "success");

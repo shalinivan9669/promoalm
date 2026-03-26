@@ -86,7 +86,7 @@ const messageSuggestions = [
   "Несколько точек"
 ];
 
-const errorMessages: Record<LeadApiError["reason"], string> = {
+const errorMessages: Partial<Record<LeadApiError["reason"], string>> = {
   validation: "Проверьте поля формы и попробуйте ещё раз.",
   honeypot: "Заявка отклонена. Попробуйте ещё раз без автозаполнения скрытых полей.",
   "too-fast": "Форма отправлена слишком быстро. Проверьте данные и попробуйте ещё раз.",
@@ -96,13 +96,19 @@ const errorMessages: Record<LeadApiError["reason"], string> = {
   agent: "Автоматические запросы отключены. Отправьте заявку вручную."
 };
 
+const deliveryErrorMessage = "РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РїСЂР°РІРёС‚СЊ Р·Р°СЏРІРєСѓ РІ CRM. РџРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰С‘ СЂР°Р· РёР»Рё РЅР°РїРёС€РёС‚Рµ РЅР°Рј РІ WhatsApp.";
+
 const errorMessage = computed(() => {
+  if (leadStatus.value === "error" && leadReason.value === "delivery") {
+    return deliveryErrorMessage;
+  }
+
   if (leadStatus.value === "error" && leadReason.value && leadReason.value in errorMessages) {
-    return errorMessages[leadReason.value as LeadApiError["reason"]];
+    return errorMessages[leadReason.value as LeadApiError["reason"]] || errorMessages.validation || deliveryErrorMessage;
   }
 
   if (leadStatus.value === "error") {
-    return errorMessages.validation;
+    return errorMessages.validation || deliveryErrorMessage;
   }
 
   return "";

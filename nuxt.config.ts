@@ -63,9 +63,18 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
-    leadSalt: "replace-this-in-production",
+    leadSalt: process.env.LEAD_SALT || "replace-this-in-production",
+    amocrm: {
+      clientId: process.env.AMOCRM_CLIENT_ID || process.env.AMOCRM_INTEGRATION_ID || "",
+      clientSecret: process.env.AMOCRM_CLIENT_SECRET || "",
+      longLivedToken: process.env.AMOCRM_LONG_LIVED_TOKEN || "",
+      baseUrl: process.env.AMOCRM_BASE_URL || "",
+      redirectUri: process.env.AMOCRM_REDIRECT_URI || "",
+      pipelineId: process.env.AMOCRM_PIPELINE_ID || "",
+      statusId: process.env.AMOCRM_STATUS_ID || ""
+    },
     public: {
-      siteUrl: "https://example.com",
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || "https://example.com",
       siteName: "Neon Market",
       defaultOgImage: "/og/default-site.svg"
     }

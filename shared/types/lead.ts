@@ -58,6 +58,7 @@ export interface LeadApiError {
     | "too-fast"
     | "rate-limit"
     | "duplicate"
+    | "delivery"
     | "origin"
     | "agent";
   message: string;

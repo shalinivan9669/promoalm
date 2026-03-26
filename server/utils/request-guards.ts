@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 
 import type { H3Event } from "h3";
 import { getHeader, getRequestHost, getRequestProtocol } from "h3";
+import { isAllowedOriginValue } from "../../shared/utils/origin";
 
 export function getClientIp(event: H3Event) {
   const forwarded = getHeader(event, "x-forwarded-for");
@@ -28,7 +29,7 @@ export function getRequestOrigin(event: H3Event) {
 
 export function isAllowedOrigin(event: H3Event, allowedSiteUrl: string) {
   const requestOrigin = getRequestOrigin(event);
-  return requestOrigin === allowedSiteUrl;
+  return isAllowedOriginValue(requestOrigin, allowedSiteUrl);
 }
 
 export function isSuspiciousUserAgent(userAgent: string | undefined) {
