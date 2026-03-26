@@ -112,8 +112,7 @@ useHead({
     />
 
     <div class="home-confidence-band">
-      <CasePreviewSection
-        variant="home"
+      <HomeCasePreviewSection
         title="Что получает бизнес на старте работы"
         description="На старте важны не обещания, а понятный план: расчёт по вводным, макет до запуска, прозрачная логика работ и контроль, если адресов несколько."
         :cases="featuredCases"

@@ -8,6 +8,11 @@ interface HeroMediaFrame {
   loading?: "eager" | "lazy";
 }
 
+interface MountedHeroMediaFrame {
+  frame: HeroMediaFrame;
+  frameIndex: number;
+}
+
 const props = withDefaults(
   defineProps<{
     hero: HeroBlock;
@@ -37,18 +42,34 @@ const SLIDER_BOOT_DELAY_MS = 1200;
 const isImageMode = computed(() => props.variant === "home" && props.mediaMode === "image" && props.mediaFrames.length > 0);
 const internalVariant = computed(() => (props.variant === "home" ? "default" : props.variant));
 const homeImageFrames = computed(() => (isImageMode.value ? props.mediaFrames : []));
-const renderedHomeImageFrames = computed(() =>
-  isImageMode.value && isSliderEnhanced.value ? homeImageFrames.value : homeImageFrames.value.slice(0, 1)
-);
 const homeHeroMotionStyle = computed(() => ({
   "--home-hero-slide-cycle": `${SLIDE_CYCLE_MS}ms`,
   "--home-hero-slide-crossfade": `${CROSSFADE_MS}ms`
 }));
+const mountedHomeImageFrames = computed<MountedHeroMediaFrame[]>(() => {
+  if (!isImageMode.value || homeImageFrames.value.length === 0) {
+    return [];
+  }
+
+  if (!isSliderEnhanced.value) {
+    return [{ frame: homeImageFrames.value[0]!, frameIndex: 0 }];
+  }
+
+  const mountedFrameIndices = leavingFrameIndex.value !== null ? [leavingFrameIndex.value, activeFrameIndex.value] : [activeFrameIndex.value];
+
+  return mountedFrameIndices
+    .filter((frameIndex, index, collection) => collection.indexOf(frameIndex) === index)
+    .map((frameIndex) => ({
+      frame: homeImageFrames.value[frameIndex]!,
+      frameIndex
+    }));
+});
 
 const activeFrameIndex = ref(0);
 const leavingFrameIndex = ref<number | null>(null);
 const prefersReducedMotion = ref(false);
 const isSliderEnhanced = ref(false);
+const loadedFrameIndices = ref([0]);
 
 let advanceTimer: number | undefined;
 let leavingTimer: number | undefined;
@@ -57,6 +78,10 @@ let sliderBootstrapRaf: number | undefined;
 let sliderBootstrapFollowUpRaf: number | undefined;
 let motionQuery: MediaQueryList | null = null;
 let motionQueryHandler: ((event: MediaQueryListEvent) => void) | null = null;
+let sliderBootstrapIdle: number | ReturnType<typeof globalThis.setTimeout> | undefined;
+let isDisposed = false;
+
+const preloadedFramePromises = new Map<number, Promise<void>>();
 
 function clearAdvanceTimer() {
   if (advanceTimer) {
@@ -92,11 +117,70 @@ function clearSliderBootstrapTimers() {
     clearTimeout(sliderBootstrapTimer);
     sliderBootstrapTimer = undefined;
   }
+
+  if (sliderBootstrapIdle !== undefined && import.meta.client) {
+    if ("cancelIdleCallback" in window) {
+      window.cancelIdleCallback(sliderBootstrapIdle as number);
+    } else {
+      globalThis.clearTimeout(sliderBootstrapIdle);
+    }
+
+    sliderBootstrapIdle = undefined;
+  }
 }
 
 function resetSliderState() {
   activeFrameIndex.value = 0;
   leavingFrameIndex.value = null;
+}
+
+function isFrameLoaded(frameIndex: number) {
+  return loadedFrameIndices.value.includes(frameIndex);
+}
+
+function markFrameLoaded(frameIndex: number) {
+  if (isFrameLoaded(frameIndex)) {
+    return;
+  }
+
+  loadedFrameIndices.value = [...loadedFrameIndices.value, frameIndex];
+}
+
+function preloadFrame(frameIndex: number) {
+  if (!import.meta.client || frameIndex < 0 || frameIndex >= homeImageFrames.value.length || isFrameLoaded(frameIndex)) {
+    return Promise.resolve();
+  }
+
+  const existingPromise = preloadedFramePromises.get(frameIndex);
+
+  if (existingPromise) {
+    return existingPromise;
+  }
+
+  const frame = homeImageFrames.value[frameIndex];
+
+  if (!frame) {
+    return Promise.resolve();
+  }
+
+  const preloadPromise = new Promise<void>((resolve) => {
+    const image = new window.Image();
+
+    const finalize = () => {
+      preloadedFramePromises.delete(frameIndex);
+      markFrameLoaded(frameIndex);
+      resolve();
+    };
+
+    image.onload = finalize;
+    image.onerror = finalize;
+    image.decoding = "async";
+    image.src = frame.src;
+  });
+
+  preloadedFramePromises.set(frameIndex, preloadPromise);
+
+  return preloadPromise;
 }
 
 function queueSlideAdvance(delay: number) {
@@ -105,10 +189,17 @@ function queueSlideAdvance(delay: number) {
   }
 
   clearAdvanceTimer();
-  advanceTimer = window.setTimeout(() => {
+  advanceTimer = window.setTimeout(async () => {
     const previousIndex = activeFrameIndex.value;
+    const nextIndex = (previousIndex + 1) % homeImageFrames.value.length;
 
-    activeFrameIndex.value = (previousIndex + 1) % homeImageFrames.value.length;
+    await preloadFrame(nextIndex);
+
+    if (isDisposed || prefersReducedMotion.value || !isSliderEnhanced.value) {
+      return;
+    }
+
+    activeFrameIndex.value = nextIndex;
     leavingFrameIndex.value = previousIndex;
 
     clearLeavingTimer();
@@ -118,12 +209,14 @@ function queueSlideAdvance(delay: number) {
       }
     }, CROSSFADE_MS);
 
+    void preloadFrame((nextIndex + 1) % homeImageFrames.value.length);
     queueSlideAdvance(SLIDE_CYCLE_MS);
   }, delay);
 }
 
 function startAutoplay() {
   resetSliderState();
+  void preloadFrame(1);
   queueSlideAdvance(INITIAL_HOLD_MS);
 }
 
@@ -138,6 +231,7 @@ function stopAutoplay(resetToFirstSlide = false) {
 
 function commitSliderEnhancement() {
   sliderBootstrapTimer = undefined;
+  sliderBootstrapIdle = undefined;
 
   if (prefersReducedMotion.value || homeImageFrames.value.length < 2 || isSliderEnhanced.value) {
     return;
@@ -159,7 +253,18 @@ function queueSliderEnhancement() {
 
     sliderBootstrapFollowUpRaf = window.requestAnimationFrame(() => {
       sliderBootstrapFollowUpRaf = undefined;
-      sliderBootstrapTimer = window.setTimeout(commitSliderEnhancement, SLIDER_BOOT_DELAY_MS);
+
+      const scheduleCommit = () => {
+        sliderBootstrapIdle = undefined;
+        sliderBootstrapTimer = window.setTimeout(commitSliderEnhancement, SLIDER_BOOT_DELAY_MS);
+      };
+
+      if ("requestIdleCallback" in window) {
+        sliderBootstrapIdle = window.requestIdleCallback(scheduleCommit, { timeout: SLIDER_BOOT_DELAY_MS });
+        return;
+      }
+
+      sliderBootstrapIdle = globalThis.setTimeout(scheduleCommit, 0);
     });
   });
 }
@@ -204,8 +309,10 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  isDisposed = true;
   clearSliderBootstrapTimers();
   clearSliderTimers();
+  preloadedFramePromises.clear();
 
   if (!motionQuery || !motionQueryHandler) {
     return;
@@ -234,8 +341,8 @@ onBeforeUnmount(() => {
       <template v-if="isImageMode">
         <div class="home-hero__slide-track">
           <img
-            v-for="(frame, index) in renderedHomeImageFrames"
-            :key="frame.src"
+            v-for="{ frame, frameIndex } in mountedHomeImageFrames"
+            :key="`${frame.src}-${frameIndex}`"
             :src="frame.src"
             alt=""
             aria-hidden="true"
@@ -243,16 +350,15 @@ onBeforeUnmount(() => {
             width="1536"
             height="1024"
             :class="{
-              'is-active': index === activeFrameIndex,
-              'is-leaving': index === leavingFrameIndex,
-              'is-static': !isSliderEnhanced && index === 0,
+              'is-active': frameIndex === activeFrameIndex,
+              'is-leaving': frameIndex === leavingFrameIndex,
+              'is-static': !isSliderEnhanced && frameIndex === 0,
               'is-reduced': prefersReducedMotion
             }"
-            decoding="async"
+            :decoding="!isSliderEnhanced && frameIndex === 0 ? 'sync' : 'async'"
             draggable="false"
-            sizes="100vw"
-            :fetchpriority="index === 0 ? frame.fetchPriority ?? 'high' : frame.fetchPriority ?? 'auto'"
-            :loading="index === 0 ? frame.loading ?? 'eager' : frame.loading ?? 'lazy'"
+            :fetchpriority="!isSliderEnhanced && frameIndex === 0 ? frame.fetchPriority ?? 'high' : 'low'"
+            :loading="!isSliderEnhanced && frameIndex === 0 ? frame.loading ?? 'eager' : 'lazy'"
           />
         </div>
         <div class="home-hero__image-overlay" />

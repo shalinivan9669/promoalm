@@ -1,9 +1,8 @@
 import type { NavItem } from "../../shared/types/content";
-import { getPublishedSupportPages } from "../utils/content-guards";
 import { staticPagePaths } from "../utils/routes";
-import { publishedCityNavigation } from "./city-summaries";
+import { publishedCityNavigation } from "./city-navigation";
 import { publishedServiceNavigation } from "./service-summaries";
-import { supportPages } from "./support-pages";
+import { publishedSupportNavigation } from "./support-navigation";
 
 export interface PrimaryNavigationLink extends NavItem {
   kind: "link";
@@ -22,13 +21,7 @@ export const serviceNavigation: NavItem[] = publishedServiceNavigation;
 
 export const cityNavigation: NavItem[] = publishedCityNavigation;
 
-export const supportNavigation: NavItem[] = getPublishedSupportPages(supportPages)
-  .filter((page) => page.slug !== "politika-konfidentsialnosti")
-  .map((page) => ({
-    label: page.navLabel,
-    href: page.meta.path,
-    description: page.h1
-  }));
+export const supportNavigation: NavItem[] = publishedSupportNavigation;
 
 export const homeCityNavigation: NavItem[] = cityNavigation;
 
