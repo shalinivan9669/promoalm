@@ -6,6 +6,9 @@ import { normalizePathForMatch } from "../../utils/routes";
 const route = useRoute();
 const currentYear = new Date().getFullYear();
 const currentPath = computed(() => normalizePathForMatch(route.path));
+const whatsappChannel = contactInfo.channels.find((item) => item.type === "whatsapp");
+const phoneChannel = contactInfo.channels.find((item) => item.type === "phone");
+const emailChannel = contactInfo.channels.find((item) => item.type === "email");
 
 function isCurrentPath(href: string) {
   return currentPath.value === normalizePathForMatch(href);
@@ -34,6 +37,39 @@ function footerLinkClass(href: string) {
           <li>{{ contactInfo.minOrder }}</li>
           <li>{{ contactInfo.leadTime }}</li>
           <li>{{ contactInfo.warranty }}</li>
+        </ul>
+        <p class="mt-8 text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--color-surface)]">Контакты</p>
+        <ul class="mt-4 space-y-2 text-sm text-[color:rgba(244,241,232,0.72)]">
+          <li v-if="whatsappChannel?.href">
+            <a
+              :href="whatsappChannel.href"
+              class="transition hover:text-[color:var(--color-surface)]"
+            >
+              WhatsApp: {{ whatsappChannel.value }}
+            </a>
+          </li>
+          <li v-if="phoneChannel?.href">
+            <a
+              :href="phoneChannel.href"
+              class="transition hover:text-[color:var(--color-surface)]"
+            >
+              {{ phoneChannel.label }}: {{ phoneChannel.value }}
+            </a>
+          </li>
+          <li v-if="emailChannel?.href">
+            <a
+              :href="emailChannel.href"
+              class="transition hover:text-[color:var(--color-surface)]"
+            >
+              {{ emailChannel.label }}: {{ emailChannel.value }}
+            </a>
+          </li>
+          <li v-if="contactInfo.address">
+            Адрес: {{ contactInfo.address }}
+          </li>
+          <li v-if="contactInfo.workingHours">
+            Часы работы: {{ contactInfo.workingHours }}
+          </li>
         </ul>
       </div>
 

@@ -15,6 +15,8 @@ type QuickContactRenderCard =
       intent?: CTAConfig["intent"];
       trackingEvent?: string;
       available: boolean;
+      actionLabel?: string;
+      external?: boolean;
     }
   | {
       kind: "info";
@@ -58,7 +60,9 @@ const quickContactCards: QuickContactRenderCard[] = [
     href: method.href,
     intent: method.intent,
     trackingEvent: method.trackingEvent,
-    available: method.available
+    available: method.available,
+    actionLabel: method.actionLabel,
+    external: method.external
   })),
   ...quickContact.sideCards.map((card) => ({
     kind: "info" as const,
@@ -166,10 +170,10 @@ usePageSeo({
             >
               <ButtonLink
                 :href="card.href"
-                :label="card.intent === 'whatsapp' ? 'Написать' : 'Открыть форму'"
+                :label="card.actionLabel || 'Открыть форму'"
                 :intent="card.intent || 'secondary'"
                 :tracking-event="card.trackingEvent"
-                :external="card.intent === 'whatsapp'"
+                :external="card.external ?? false"
                 block
               />
             </div>

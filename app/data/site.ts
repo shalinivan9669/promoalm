@@ -38,27 +38,29 @@ export const contactInfo: ContactInfo = {
     {
       type: "whatsapp",
       label: "WhatsApp",
-      value: "+7 747 096 69 00",
-      href: "https://wa.me/77470966900",
+      value: "+7 778 415 55 11",
+      href: "https://wa.me/77784155511",
       note: "Быстрый старт: фото объекта, адрес точки или короткое ТЗ.",
       available: true,
       evidenceLevel: "confirmed"
     },
     {
       type: "phone",
-      label: "Телефон для звонка",
-      value: "Нужно предоставить",
-      note: "Для быстрого старта удобнее WhatsApp. Если нужен звонок, согласуем номер и время связи после заявки.",
-      available: false,
-      evidenceLevel: "placeholder"
+      label: "Телефон",
+      value: "+7 778 415 55 11",
+      href: "tel:+77784155511",
+      note: "Звонки и WhatsApp: 10:00–19:00.",
+      available: true,
+      evidenceLevel: "confirmed"
     },
     {
       type: "email",
-      label: "Email для документов",
-      value: "Нужно предоставить",
-      note: "Если нужен обмен документами или развёрнутое ТЗ, отправим рабочий email после первичного обращения.",
-      available: false,
-      evidenceLevel: "placeholder"
+      label: "Email",
+      value: "neon_vibe_market@mail.ru",
+      href: "mailto:neon_vibe_market@mail.ru",
+      note: "Для заявок и документов.",
+      available: true,
+      evidenceLevel: "confirmed"
     },
     {
       type: "form",
@@ -70,8 +72,10 @@ export const contactInfo: ContactInfo = {
       evidenceLevel: "confirmed"
     }
   ],
-  addressEvidenceLevel: "hidden",
-  legalNote: "Реквизиты, график и точные рабочие контакты можно запросить через WhatsApp или форму."
+  address: "г. Алматы, ул. Жумбактас, 3",
+  addressEvidenceLevel: "confirmed",
+  workingHours: "10:00–19:00",
+  legalNote: "Реквизиты и рабочие контакты доступны через WhatsApp, телефон, email и форму."
 };
 
 export const globalTrustStats: TrustStat[] = [

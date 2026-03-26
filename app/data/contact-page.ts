@@ -10,6 +10,8 @@ type ContactMethod = {
   intent?: CTAConfig["intent"];
   trackingEvent?: string;
   available: boolean;
+  actionLabel?: string;
+  external?: boolean;
 };
 
 type SimpleStat = {
@@ -36,6 +38,11 @@ const emailChannel = getChannel("email");
 
 const whatsappHref = whatsappChannel?.href ?? staticPagePaths.contacts;
 const formHref = formChannel?.href ?? `${staticPagePaths.contacts}#lead-form`;
+const addressLine = contactInfo.address ?? "г. Алматы, ул. Жумбактас, 3";
+const workingHours = contactInfo.workingHours ?? "10:00–19:00";
+const whatsappValue = whatsappChannel?.value ?? "+7 778 415 55 11";
+const phoneValue = phoneChannel?.value ?? "+7 778 415 55 11";
+const emailValue = emailChannel?.value ?? "neon_vibe_market@mail.ru";
 
 export const contactPageData = {
   hero: {
@@ -107,14 +114,16 @@ export const contactPageData = {
     description:
       "Если задача уже понятна, напишите в WhatsApp или отправьте форму. Если пока есть только фасад и адрес, этого тоже достаточно для старта.",
     methods: [
-    {
-      label: "WhatsApp",
-        value: whatsappChannel?.value || "+7 747 096 69 00",
+      {
+        label: "WhatsApp",
+        value: whatsappValue,
         note: whatsappChannel?.note || "Быстрый старт по фото объекта, адресу точки или короткому ТЗ.",
         href: whatsappHref,
         intent: "whatsapp",
         trackingEvent: "click_whatsapp",
-        available: Boolean(whatsappChannel?.available)
+        available: Boolean(whatsappChannel?.available),
+        actionLabel: "Написать в WhatsApp",
+        external: true
       },
       {
         label: "Форма заявки",
@@ -123,22 +132,36 @@ export const contactPageData = {
         href: formHref,
         intent: "calculate",
         trackingEvent: "click_calculate",
-        available: Boolean(formChannel?.available)
+        available: Boolean(formChannel?.available),
+        actionLabel: "Открыть форму"
       },
       {
         label: "Телефон",
-        value: phoneChannel?.value || "Нужно предоставить",
-        note: phoneChannel?.note || "Для быстрого старта удобнее WhatsApp. Если нужен звонок, согласуем номер и время связи после заявки.",
-        available: Boolean(phoneChannel?.available)
+        value: phoneValue,
+        note: phoneChannel?.note || "Звонки и WhatsApp: 10:00–19:00.",
+        href: phoneChannel?.href || "tel:+77784155511",
+        intent: "call",
+        trackingEvent: "click_call",
+        available: Boolean(phoneChannel?.available),
+        actionLabel: "Позвонить"
       },
       {
         label: "Email",
-        value: emailChannel?.value || "Нужно предоставить",
-        note: emailChannel?.note || "Если нужен обмен документами или развёрнутое ТЗ, отправим рабочий email после первичного обращения.",
-        available: Boolean(emailChannel?.available)
+        value: emailValue,
+        note: emailChannel?.note || "Для заявок и документов.",
+        href: emailChannel?.href || "mailto:neon_vibe_market@mail.ru",
+        intent: "secondary",
+        trackingEvent: "open_email",
+        available: Boolean(emailChannel?.available),
+        actionLabel: "Написать на почту"
       }
     ] satisfies ContactMethod[],
     sideCards: [
+      {
+        title: "Адрес и часы",
+        description: `Публичный адрес: ${addressLine}. Работаем ${workingHours}.`,
+        chips: [addressLine, workingHours]
+      },
       {
         title: "География и график",
         description:

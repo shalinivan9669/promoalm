@@ -69,12 +69,6 @@ useHead({
       as: "image",
       href: homeHeroFrames[0]!.src,
       type: "image/avif"
-    },
-    {
-      rel: "preload",
-      as: "image",
-      href: homeTransitionImage,
-      type: "image/avif"
     }
   ]
 });

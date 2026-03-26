@@ -32,10 +32,14 @@ const INITIAL_HOLD_MS = 2200;
 const SLIDE_VISIBLE_MS = 5200;
 const CROSSFADE_MS = 1200;
 const SLIDE_CYCLE_MS = SLIDE_VISIBLE_MS + CROSSFADE_MS;
+const SLIDER_BOOT_DELAY_MS = 1200;
 
 const isImageMode = computed(() => props.variant === "home" && props.mediaMode === "image" && props.mediaFrames.length > 0);
 const internalVariant = computed(() => (props.variant === "home" ? "default" : props.variant));
 const homeImageFrames = computed(() => (isImageMode.value ? props.mediaFrames : []));
+const renderedHomeImageFrames = computed(() =>
+  isImageMode.value && isSliderEnhanced.value ? homeImageFrames.value : homeImageFrames.value.slice(0, 1)
+);
 const homeHeroMotionStyle = computed(() => ({
   "--home-hero-slide-cycle": `${SLIDE_CYCLE_MS}ms`,
   "--home-hero-slide-crossfade": `${CROSSFADE_MS}ms`
@@ -44,9 +48,13 @@ const homeHeroMotionStyle = computed(() => ({
 const activeFrameIndex = ref(0);
 const leavingFrameIndex = ref<number | null>(null);
 const prefersReducedMotion = ref(false);
+const isSliderEnhanced = ref(false);
 
 let advanceTimer: number | undefined;
 let leavingTimer: number | undefined;
+let sliderBootstrapTimer: number | undefined;
+let sliderBootstrapRaf: number | undefined;
+let sliderBootstrapFollowUpRaf: number | undefined;
 let motionQuery: MediaQueryList | null = null;
 let motionQueryHandler: ((event: MediaQueryListEvent) => void) | null = null;
 
@@ -67,6 +75,23 @@ function clearLeavingTimer() {
 function clearSliderTimers() {
   clearAdvanceTimer();
   clearLeavingTimer();
+}
+
+function clearSliderBootstrapTimers() {
+  if (sliderBootstrapRaf !== undefined) {
+    cancelAnimationFrame(sliderBootstrapRaf);
+    sliderBootstrapRaf = undefined;
+  }
+
+  if (sliderBootstrapFollowUpRaf !== undefined) {
+    cancelAnimationFrame(sliderBootstrapFollowUpRaf);
+    sliderBootstrapFollowUpRaf = undefined;
+  }
+
+  if (sliderBootstrapTimer !== undefined) {
+    clearTimeout(sliderBootstrapTimer);
+    sliderBootstrapTimer = undefined;
+  }
 }
 
 function resetSliderState() {
@@ -111,16 +136,50 @@ function stopAutoplay(resetToFirstSlide = false) {
   }
 }
 
+function commitSliderEnhancement() {
+  sliderBootstrapTimer = undefined;
+
+  if (prefersReducedMotion.value || homeImageFrames.value.length < 2 || isSliderEnhanced.value) {
+    return;
+  }
+
+  isSliderEnhanced.value = true;
+  startAutoplay();
+}
+
+function queueSliderEnhancement() {
+  if (!import.meta.client || prefersReducedMotion.value || homeImageFrames.value.length < 2 || isSliderEnhanced.value) {
+    return;
+  }
+
+  clearSliderBootstrapTimers();
+
+  sliderBootstrapRaf = window.requestAnimationFrame(() => {
+    sliderBootstrapRaf = undefined;
+
+    sliderBootstrapFollowUpRaf = window.requestAnimationFrame(() => {
+      sliderBootstrapFollowUpRaf = undefined;
+      sliderBootstrapTimer = window.setTimeout(commitSliderEnhancement, SLIDER_BOOT_DELAY_MS);
+    });
+  });
+}
+
 function syncMotionPreference(matchesReducedMotion: boolean) {
   prefersReducedMotion.value = matchesReducedMotion;
 
   if (matchesReducedMotion) {
+    clearSliderBootstrapTimers();
     stopAutoplay(true);
     return;
   }
 
   if (isImageMode.value && homeImageFrames.value.length > 1) {
-    startAutoplay();
+    if (isSliderEnhanced.value) {
+      startAutoplay();
+      return;
+    }
+
+    queueSliderEnhancement();
   }
 }
 
@@ -145,6 +204,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  clearSliderBootstrapTimers();
   clearSliderTimers();
 
   if (!motionQuery || !motionQueryHandler) {
@@ -174,7 +234,7 @@ onBeforeUnmount(() => {
       <template v-if="isImageMode">
         <div class="home-hero__slide-track">
           <img
-            v-for="(frame, index) in homeImageFrames"
+            v-for="(frame, index) in renderedHomeImageFrames"
             :key="frame.src"
             :src="frame.src"
             alt=""
@@ -185,6 +245,7 @@ onBeforeUnmount(() => {
             :class="{
               'is-active': index === activeFrameIndex,
               'is-leaving': index === leavingFrameIndex,
+              'is-static': !isSliderEnhanced && index === 0,
               'is-reduced': prefersReducedMotion
             }"
             decoding="async"
@@ -500,12 +561,21 @@ onBeforeUnmount(() => {
   opacity: 0;
   transform: translate(-50%, -50%);
   transition: opacity var(--home-hero-slide-crossfade) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.home-hero__slide.is-active,
+.home-hero__slide.is-leaving {
   will-change: opacity;
 }
 
-.home-hero__slide.is-active {
+.home-hero__slide.is-active,
+.home-hero__slide.is-static {
   opacity: 1;
   animation: none;
+}
+
+.home-hero__slide.is-static {
+  transition: none;
 }
 
 .home-hero__slide.is-leaving {

@@ -5,8 +5,19 @@ import { contactInfo } from "../app/data/site";
 import { buildFaqSchema, buildLocalBusinessSchema } from "../app/utils/schema";
 
 describe("schema guards", () => {
-  it("does not create LocalBusiness without confirmed address", () => {
-    expect(buildLocalBusinessSchema("https://example.com", contactInfo)).toBeNull();
+  it("creates LocalBusiness with confirmed address", () => {
+    const schema = buildLocalBusinessSchema("https://example.com", contactInfo);
+
+    expect(schema).not.toBeNull();
+    expect(schema).toMatchObject({
+      name: contactInfo.publicName,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: contactInfo.address
+      },
+      telephone: contactInfo.channels.find((item) => item.type === "phone")?.value,
+      email: contactInfo.channels.find((item) => item.type === "email")?.value
+    });
   });
 
   it("does not mark city pages as having local business presence", () => {

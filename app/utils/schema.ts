@@ -1,5 +1,20 @@
-import type { BreadcrumbItem, CaseStudy, ContactInfo, FAQItem, SupportFaqGroup, SupportPageData } from "../../shared/types/content";
+import type { BreadcrumbItem, CaseStudy, ContactChannelType, ContactInfo, FAQItem, SupportFaqGroup, SupportPageData } from "../../shared/types/content";
 import { absoluteUrl } from "./seo";
+
+function getPublicAddress(contact: ContactInfo) {
+  if (!contact.address || contact.addressEvidenceLevel !== "confirmed") {
+    return undefined;
+  }
+
+  return {
+    "@type": "PostalAddress",
+    streetAddress: contact.address
+  };
+}
+
+function getPrimaryChannelValue(contact: ContactInfo, type: ContactChannelType) {
+  return contact.channels.find((channel) => channel.type === type && channel.available && channel.value)?.value;
+}
 
 export function buildBreadcrumbSchema(siteUrl: string, items: BreadcrumbItem[]) {
   return {
@@ -45,6 +60,7 @@ export function buildOrganizationSchema(siteUrl: string, contact: ContactInfo) {
     });
 
   const areaServed = [contact.primaryCity, contact.coverage].filter((item): item is string => Boolean(item));
+  const address = getPublicAddress(contact);
 
   return {
     "@context": "https://schema.org",
@@ -53,6 +69,9 @@ export function buildOrganizationSchema(siteUrl: string, contact: ContactInfo) {
     url: siteUrl,
     description: contact.shortDescription,
     areaServed,
+    address,
+    telephone: getPrimaryChannelValue(contact, "phone"),
+    email: getPrimaryChannelValue(contact, "email"),
     contactPoint: contactPoints,
     sameAs: contact.sameAs?.length ? contact.sameAs : undefined
   };
@@ -70,7 +89,9 @@ export function buildWebPageSchema(siteUrl: string, title: string, description: 
 }
 
 export function buildLocalBusinessSchema(siteUrl: string, contact: ContactInfo) {
-  if (!contact.address || contact.addressEvidenceLevel !== "confirmed") {
+  const address = getPublicAddress(contact);
+
+  if (!address) {
     return null;
   }
 
@@ -80,7 +101,9 @@ export function buildLocalBusinessSchema(siteUrl: string, contact: ContactInfo) 
     name: contact.publicName,
     url: siteUrl,
     description: contact.shortDescription,
-    address: contact.address
+    address,
+    telephone: getPrimaryChannelValue(contact, "phone"),
+    email: getPrimaryChannelValue(contact, "email")
   };
 }
 

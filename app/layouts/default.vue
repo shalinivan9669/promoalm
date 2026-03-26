@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const projectCompanionHref = "https://wa.me/77470966900";
+import { contactInfo } from "../data/site";
+
+const whatsappChannel = contactInfo.channels.find((item) => item.type === "whatsapp");
+const projectCompanionHref = whatsappChannel?.href ?? "/kontakty/";
 </script>
 
 <template>

@@ -25,7 +25,7 @@ const orderedChannels = computed(() =>
       <SectionHeader
         eyebrow="Контакты"
         title="Каналы связи и форма расчёта"
-        description="До подключения боевых номеров все лиды можно забирать через форму. Placeholder-каналы отмечены честно и не выданы за реальные."
+        description="Актуальные каналы связи и форма расчёта. Выберите удобный способ и отправьте фото, адрес или короткое ТЗ."
         :variant="isContact ? 'page' : 'default'"
       />
       <div :class="isContact ? 'page-contact-grid mt-8' : 'mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4'">
@@ -45,7 +45,7 @@ const orderedChannels = computed(() =>
               {{ channel.label }}
             </h3>
             <span :class="isContact ? 'page-chip' : 'chip'">
-              {{ channel.available ? "Активно" : "Placeholder" }}
+              {{ channel.available ? "Активно" : "По запросу" }}
             </span>
           </div>
           <p :class="isContact && index === 0 ? 'mt-5 text-2xl font-semibold text-ink' : 'text-sm text-ink'">
