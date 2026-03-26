@@ -4,6 +4,7 @@ import { homeCityNavigation, serviceNavigation } from "../data/navigation";
 import { homeFaqs } from "../data/faqs";
 import { serviceCards } from "../data/service-summaries";
 import { aboutPageData, contactInfo, globalTrustStats, homePageData, staticPageMeta } from "../data/site";
+import { buildWidthSrcSet, HOME_HERO_IMAGE_HEIGHT, HOME_HERO_IMAGE_SIZES, HOME_HERO_IMAGE_WIDTH } from "../utils/responsive-images";
 import { buildCollectionPageSchema, buildLocalBusinessSchema, buildOrganizationSchema } from "../utils/schema";
 
 const config = useRuntimeConfig();
@@ -14,15 +15,23 @@ const homeHero = {
   ...homePageData.hero,
   note: undefined
 };
-const homeHeroFrames = [
-  { src: "/images/hero/1.avif", alt: "", fetchPriority: "high" as const, loading: "eager" as const },
-  { src: "/images/hero/2.avif", alt: "", fetchPriority: "auto" as const, loading: "lazy" as const },
-  { src: "/images/hero/3.avif", alt: "", fetchPriority: "auto" as const, loading: "lazy" as const },
-  { src: "/images/hero/4.avif", alt: "", fetchPriority: "auto" as const, loading: "lazy" as const },
-  { src: "/images/hero/5.avif", alt: "", fetchPriority: "auto" as const, loading: "lazy" as const },
-  { src: "/images/hero/6.avif", alt: "", fetchPriority: "auto" as const, loading: "lazy" as const },
- 
-];
+const HOME_HERO_RESPONSIVE_WIDTHS = [640, 768, 960, 1280, 1536, 1920, 2560] as const;
+const HOME_HERO_PRELOAD_FALLBACK_SRC = "/images/hero/responsive/1-960.webp";
+const homeHeroFrames = ["1", "2", "3", "4", "5", "6"].map((name, index) => ({
+  src: `/images/hero/${name}.avif`,
+  srcset: buildWidthSrcSet(
+    HOME_HERO_RESPONSIVE_WIDTHS.map((width) => ({
+      src: `/images/hero/responsive/${name}-${width}.webp`,
+      width
+    }))
+  ),
+  sizes: HOME_HERO_IMAGE_SIZES,
+  alt: "",
+  width: HOME_HERO_IMAGE_WIDTH,
+  height: HOME_HERO_IMAGE_HEIGHT,
+  fetchPriority: index === 0 ? ("high" as const) : ("auto" as const),
+  loading: index === 0 ? ("eager" as const) : ("lazy" as const)
+}));
 const homeTransitionImage = "/images/bg/bg.avif";
 
 const heroQuickLinks = [
@@ -67,21 +76,22 @@ useHead({
     {
       rel: "preload",
       as: "image",
-      href: homeHeroFrames[0]!.src,
-      type: "image/avif"
+      href: HOME_HERO_PRELOAD_FALLBACK_SRC,
+      imagesrcset: homeHeroFrames[0]!.srcset,
+      imagesizes: HOME_HERO_IMAGE_SIZES,
+      type: "image/webp"
     }
   ]
 });
 </script>
 
 <template>
-  <div class="home-page">
-    <HeroSection
-      :hero="homeHero"
-      variant="home"
-      media-mode="image"
-      :media-frames="homeHeroFrames"
-    />
+  <HeroSection
+    :hero="homeHero"
+    variant="home"
+    media-mode="image"
+    :media-frames="homeHeroFrames"
+  />
 
     <HomeHeroTransitionScene :background-src="homeTransitionImage" />
 
@@ -155,5 +165,4 @@ useHead({
       description="Отправьте фото объекта, размеры, логотип и краткое описание задачи. Если точек несколько, сразу укажите количество адресов и города, чтобы быстрее получить понятный старт проекта."
       :cta="homePageData.finalCta"
     />
-  </div>
 </template>

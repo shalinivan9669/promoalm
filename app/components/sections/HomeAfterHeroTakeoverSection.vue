@@ -247,6 +247,10 @@ onBeforeUnmount(() => {
                 :src="mapSvgUrl"
                 alt=""
                 class="section-after-hero__map-image"
+                width="793"
+                height="435"
+                loading="lazy"
+                decoding="async"
               >
             </div>
           </div>

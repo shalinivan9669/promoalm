@@ -4,6 +4,10 @@ import type { CitySlug, HeroBlock } from "../../../shared/types/content";
 interface HeroMediaFrame {
   src: string;
   alt: string;
+  srcset?: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
   fetchPriority?: "high" | "auto";
   loading?: "eager" | "lazy";
 }
@@ -175,6 +179,15 @@ function preloadFrame(frameIndex: number) {
     image.onload = finalize;
     image.onerror = finalize;
     image.decoding = "async";
+
+    if (frame.srcset) {
+      image.srcset = frame.srcset;
+    }
+
+    if (frame.sizes) {
+      image.sizes = frame.sizes;
+    }
+
     image.src = frame.src;
   });
 
@@ -344,25 +357,25 @@ onBeforeUnmount(() => {
             v-for="{ frame, frameIndex } in mountedHomeImageFrames"
             :key="`${frame.src}-${frameIndex}`"
             :src="frame.src"
+            :srcset="frame.srcset"
+            :sizes="frame.sizes"
             alt=""
             aria-hidden="true"
             class="home-hero__slide"
-            width="1536"
-            height="1024"
+            :width="frame.width ?? 2560"
+            :height="frame.height ?? 1365"
             :class="{
               'is-active': frameIndex === activeFrameIndex,
               'is-leaving': frameIndex === leavingFrameIndex,
               'is-static': !isSliderEnhanced && frameIndex === 0,
               'is-reduced': prefersReducedMotion
             }"
-            :decoding="!isSliderEnhanced && frameIndex === 0 ? 'sync' : 'async'"
+            :decoding="frameIndex === 0 ? 'sync' : 'async'"
             draggable="false"
-            :fetchpriority="!isSliderEnhanced && frameIndex === 0 ? frame.fetchPriority ?? 'high' : 'low'"
-            :loading="!isSliderEnhanced && frameIndex === 0 ? frame.loading ?? 'eager' : 'lazy'"
+            :fetchpriority="frameIndex === 0 ? frame.fetchPriority ?? 'high' : 'low'"
+            :loading="frameIndex === 0 ? frame.loading ?? 'eager' : 'lazy'"
           />
         </div>
-        <div class="home-hero__image-overlay" />
-        <div class="home-hero__image-vignette" />
       </template>
 
       <template v-else>
@@ -641,16 +654,12 @@ onBeforeUnmount(() => {
   background: #0a1016;
 }
 
-.home-hero__slide-track,
-.home-hero__image-overlay,
-.home-hero__image-vignette {
+.home-hero__slide-track {
   position: absolute;
   inset: 0;
 }
 
-.home-hero__slide-track,
-.home-hero__image-overlay,
-.home-hero__image-vignette {
+.home-hero__slide-track {
   pointer-events: none;
 }
 
@@ -697,14 +706,6 @@ onBeforeUnmount(() => {
 
 .home-hero__slide.is-reduced.is-active {
   opacity: 1;
-}
-
-.home-hero__image-overlay {
-  display: none;
-}
-
-.home-hero__image-vignette {
-  display: none;
 }
 
 @media (max-width: 1536px), (max-height: 1024px) {

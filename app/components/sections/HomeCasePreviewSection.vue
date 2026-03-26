@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CaseStudy } from "../../../shared/types/content";
+import { buildWidthSrcSet, CASE_CARD_IMAGE_HEIGHT, CASE_CARD_IMAGE_SIZES, CASE_CARD_IMAGE_WIDTH } from "../../utils/responsive-images";
 
 const props = defineProps<{
   title: string;
@@ -11,6 +12,10 @@ type HomeCaseMediaKey = "game" | "cofe" | "retail";
 
 interface CaseMediaItem {
   src: string;
+  srcset?: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
   alt: string;
 }
 
@@ -37,6 +42,7 @@ const HOME_CASE_MEDIA_FILES: Record<HomeCaseMediaKey, string[]> = {
   cofe: ["1.avif", "2.avif", "3.avif"],
   retail: ["retail.avif", "retail2.avif"]
 };
+const CASE_CARD_RESPONSIVE_WIDTHS = [320, 420, CASE_CARD_IMAGE_WIDTH] as const;
 
 const mediaFileSorter = new Intl.Collator("ru", {
   numeric: true,
@@ -65,6 +71,40 @@ const homeCaseMediaBySlug = computed<Record<string, CaseMediaItem[]>>(() =>
     })
   )
 );
+const responsiveHomeCaseMediaBySlug = computed<Record<string, CaseMediaItem[]>>(() =>
+  Object.fromEntries(
+    props.cases.map((item) => {
+      const mediaKey = HOME_CASE_MEDIA_FOLDER_BY_SLUG[item.slug];
+
+      if (!mediaKey) {
+        return [item.slug, []];
+      }
+
+      const media = HOME_CASE_MEDIA_FILES[mediaKey]
+        .slice()
+        .sort(mediaFileSorter.compare)
+        .map((fileName, index) => {
+          const fileStem = fileName.replace(/\.avif$/u, "");
+
+          return {
+            src: `/images/cases/${mediaKey}/${fileName}`,
+            srcset: buildWidthSrcSet(
+              CASE_CARD_RESPONSIVE_WIDTHS.map((width) => ({
+                src: `/images/cases/${mediaKey}/responsive/${fileStem}-card-${width}.webp`,
+                width
+              }))
+            ),
+            sizes: CASE_CARD_IMAGE_SIZES,
+            width: CASE_CARD_IMAGE_WIDTH,
+            height: CASE_CARD_IMAGE_HEIGHT,
+            alt: `${item.title} - изображение ${index + 1}`
+          };
+        });
+
+      return [item.slug, media];
+    })
+  )
+);
 
 function getCaseCategoryLabel(item: CaseStudy) {
   for (const slug of item.relatedServiceSlugs) {
@@ -79,7 +119,7 @@ function getCaseCategoryLabel(item: CaseStudy) {
 }
 
 function getCaseMedia(item: CaseStudy) {
-  return homeCaseMediaBySlug.value[item.slug] ?? [];
+  return responsiveHomeCaseMediaBySlug.value[item.slug] ?? homeCaseMediaBySlug.value[item.slug] ?? [];
 }
 
 function isVisualLeading(index: number) {
@@ -176,15 +216,18 @@ function handleMediaKeydown(event: KeyboardEvent, caseId: string, slideCount: nu
                 >
                   <img
                     :src="image.src"
+                    :srcset="image.srcset"
+                    :sizes="image.sizes"
+                    :width="image.width"
+                    :height="image.height"
                     :alt="image.alt"
                     class="home-case-card__media-image"
                     loading="lazy"
+                    fetchpriority="low"
                     decoding="async"
                     draggable="false"
-                    sizes="(max-width: 1023px) 100vw, 50vw"
                   />
                 </figure>
-                <div class="home-case-card__media-vignette" />
               </div>
 
               <div
@@ -284,8 +327,7 @@ function handleMediaKeydown(event: KeyboardEvent, caseId: string, slideCount: nu
 }
 
 .home-case-card__media-stage,
-.home-case-card__media-slide,
-.home-case-card__media-vignette {
+.home-case-card__media-slide {
   position: absolute;
 }
 
@@ -313,14 +355,12 @@ function handleMediaKeydown(event: KeyboardEvent, caseId: string, slideCount: nu
     0 10px 22px rgba(17, 22, 28, 0.06);
 }
 
-.home-case-card__media-slide,
-.home-case-card__media-vignette {
+.home-case-card__media-slide {
   inset: 0;
 }
 
 .home-case-card__media-slide,
-.home-case-card__media-image,
-.home-case-card__media-vignette {
+.home-case-card__media-image {
   border-radius: inherit;
 }
 
@@ -342,11 +382,6 @@ function handleMediaKeydown(event: KeyboardEvent, caseId: string, slideCount: nu
   height: 100%;
   object-fit: cover;
   object-position: center;
-}
-
-.home-case-card__media-vignette {
-  pointer-events: none;
-  background: transparent;
 }
 
 .home-case-card__media-dots {
