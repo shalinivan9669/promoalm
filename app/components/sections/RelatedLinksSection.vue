@@ -49,7 +49,7 @@ function cardClass(index: number) {
           <div class="mt-auto">
             <ButtonLink
               :href="link.href"
-              label="Открыть"
+              :label="link.label"
               intent="secondary"
               block
             />

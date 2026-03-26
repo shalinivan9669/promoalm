@@ -61,7 +61,7 @@ const orderedChannels = computed(() =>
             <ButtonLink
               v-if="channel.href"
               :href="channel.href"
-              label="Открыть"
+              :label="channel.label"
               intent="secondary"
               block
             />

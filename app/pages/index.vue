@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { cases } from "../data/cases";
+import { homeHeroHeadline } from "../data/site";
 import { homeCityNavigation, serviceNavigation } from "../data/navigation";
 import { homeFaqs } from "../data/faqs";
 import { serviceCards } from "../data/service-summaries";
 import { aboutPageData, contactInfo, globalTrustStats, homePageData, staticPageMeta } from "../data/site";
 import { buildWidthSrcSet, HOME_HERO_IMAGE_HEIGHT, HOME_HERO_IMAGE_SIZES, HOME_HERO_IMAGE_WIDTH } from "../utils/responsive-images";
-import { buildCollectionPageSchema, buildLocalBusinessSchema, buildOrganizationSchema } from "../utils/schema";
+import { buildCollectionPageSchema, buildFaqSchema, buildLocalBusinessSchema, buildOrganizationSchema, buildWebSiteSchema } from "../utils/schema";
 
 const config = useRuntimeConfig();
 const siteUrl = config.public.siteUrl as string;
@@ -41,8 +42,8 @@ const heroQuickLinks = [
   })),
   ...[
     { slug: "fasadnye-vyveski", label: "Фасадные" },
+    { slug: "obemnye-bukvy", label: "Объёмные буквы" },
     { slug: "svetovye-koroba", label: "Световые короба" },
-    { slug: "neonovye-vyveski", label: "Неон" },
     { slug: "vyveski-dlya-seti", label: "Для сети" },
     { slug: "vyveski-pod-klyuch", label: "Под ключ" },
     { slug: "montazh-vyvesok", label: "Монтаж" }
@@ -60,10 +61,21 @@ const heroQuickLinks = [
     .filter((item): item is { label: string; href: string } => Boolean(item))
 ];
 
+const homeFaqLinks = ["fasadnye-vyveski", "svetovye-koroba", "vyveski-dlya-seti"]
+  .map((slug) => serviceNavigation.find((service) => service.href.includes(`/${slug}/`)))
+  .filter((item): item is (typeof serviceNavigation)[number] => Boolean(item))
+  .map((item) => ({
+    label: item.label,
+    href: item.href,
+    description: item.description || item.label
+  }));
+
 const schemas = [
   buildOrganizationSchema(siteUrl, contactInfo),
+  buildWebSiteSchema(siteUrl, contactInfo),
   buildLocalBusinessSchema(siteUrl, contactInfo),
-  buildCollectionPageSchema(siteUrl, "Кейсы", "Типовые сценарии по вывескам для бизнеса.", featuredCases)
+  buildCollectionPageSchema(siteUrl, "Кейсы", "Типовые сценарии по вывескам для бизнеса.", featuredCases),
+  buildFaqSchema(homeFaqs)
 ].filter(Boolean) as Record<string, unknown>[];
 
 usePageSeo({
@@ -91,6 +103,7 @@ useHead({
     variant="home"
     media-mode="image"
     :media-frames="homeHeroFrames"
+    :typed-headline="homeHeroHeadline"
   />
 
     <HomeHeroTransitionScene :background-src="homeTransitionImage" />
@@ -112,9 +125,9 @@ useHead({
     <ServiceGridSection
       variant="home"
       title="Какие вывески делаем для бизнеса"
-      description="Собрали направления под реальные задачи бизнеса: оформить фасад, сделать точку заметной, собрать единый формат для сети и запустить проект под ключ без поиска разных подрядчиков."
+      description="Собрали основные направления под реальные B2B-задачи: фасад, уличная видимость, единый формат для сети, проект под ключ и монтаж без лишних подрядчиков."
       :description-highlights="[
-        { text: 'сделать точку заметной', tone: 'warm' },
+        { text: 'уличная видимость', tone: 'warm' },
         { text: 'единый формат', tone: 'gas' },
         { text: 'проект под ключ', tone: 'berry' }
       ]"
@@ -157,6 +170,8 @@ useHead({
       title="Частые вопросы по старту проекта"
       description="Разобрали базовые вопросы по расчёту, срокам, удалённому согласованию, монтажу и запуску одной точки или сети."
       :items="homeFaqs"
+      :answer-cta="{ label: homePageData.finalCta.label, href: homePageData.finalCta.href }"
+      :related-links="homeFaqLinks"
     />
 
     <FinalCtaSection

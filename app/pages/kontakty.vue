@@ -457,6 +457,8 @@ usePageSeo({
       title="Частые вопросы по контакту и старту"
       description="Эти ответы закрывают географию, типы конструкций, удалённый старт и сетевые запросы."
       :items="contactFaqs"
+      :answer-cta="{ label: 'Открыть форму расчёта', href: '/kontakty/#lead-form' }"
+      :related-links="relatedLinks.slice(0, 2)"
       variant="contact"
     />
 

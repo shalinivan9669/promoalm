@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FAQItem } from "../../../shared/types/content";
+import type { CTAConfig, FAQItem, RelatedLink } from "../../../shared/types/content";
 
 const props = withDefaults(
   defineProps<{
@@ -7,15 +7,37 @@ const props = withDefaults(
     title: string;
     description: string;
     items: FAQItem[];
+    relatedLinks?: RelatedLink[];
+    answerCta?: Pick<CTAConfig, "label" | "href">;
     variant?: "default" | "home" | "service" | "city" | "support" | "about" | "cases" | "contact";
   }>(),
   {
-    variant: "default"
+    variant: "default",
+    relatedLinks: () => []
   }
 );
 
 const isInternal = computed(() => props.variant !== "default" && props.variant !== "home");
 const headerVariant = computed(() => (props.variant === "support" ? "support" : isInternal.value ? "page" : "default"));
+
+function getAnswerLinks() {
+  const links = props.relatedLinks.slice(0, 2).map((link) => ({
+    href: link.href,
+    label: link.label
+  }));
+
+  if (!props.answerCta) {
+    return links;
+  }
+
+  return [
+    {
+      href: props.answerCta.href,
+      label: props.answerCta.label
+    },
+    ...links
+  ];
+}
 </script>
 
 <template>
@@ -50,6 +72,19 @@ const headerVariant = computed(() => (props.variant === "support" ? "support" : 
           <p :class="props.variant === 'home' ? 'home-faq__answer' : isInternal ? 'page-faq__answer' : 'mt-4 text-sm leading-6 text-muted'">
             {{ item.answer }}
           </p>
+          <div
+            v-if="getAnswerLinks().length"
+            class="mt-3 flex flex-wrap gap-2"
+          >
+            <a
+              v-for="link in getAnswerLinks()"
+              :key="`${item.id}-${link.href}`"
+              :href="link.href"
+              class="rounded-full border border-line bg-canvas-soft px-3 py-1.5 text-xs font-semibold text-ink transition hover:border-[color:var(--color-accent)] hover:text-[color:var(--color-accent)]"
+            >
+              {{ link.label }}
+            </a>
+          </div>
         </details>
       </div>
     </Container>

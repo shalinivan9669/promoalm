@@ -86,6 +86,13 @@ const leadStats = computed(() =>
     note: item.description
   }))
 );
+const faqRelatedLinks = computed(() =>
+  props.relatedServiceCards.slice(0, 2).map((item) => ({
+    label: item.title,
+    href: item.path,
+    description: item.summary
+  }))
+);
 </script>
 
 <template>
@@ -143,6 +150,8 @@ const leadStats = computed(() =>
       :title="copy.faqTitle"
       :description="copy.faqDescription"
       :items="props.page.faq"
+      :answer-cta="{ label: props.page.cta.label, href: props.page.cta.href }"
+      :related-links="faqRelatedLinks"
       variant="city"
     />
 

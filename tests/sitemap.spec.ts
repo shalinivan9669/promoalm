@@ -18,4 +18,10 @@ describe("sitemap", () => {
     expect(xml).toContain("https://example.com/uslugi/fasadnye-vyveski/");
     expect(xml).toContain("<urlset");
   });
+
+  it("does not duplicate sitemap paths", () => {
+    const paths = getSitemapPaths();
+
+    expect(new Set(paths).size).toBe(paths.length);
+  });
 });

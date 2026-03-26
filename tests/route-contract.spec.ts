@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { cities } from "../app/data/cities";
-import { flattenPrimaryNavigation, footerNavigation, homeCityNavigation, primaryNavigation } from "../app/data/navigation";
+import { flattenPrimaryNavigation, footerNavigation, homeCityNavigation, primaryNavigation, serviceNavigation } from "../app/data/navigation";
 import { services } from "../app/data/services";
 import { supportPages } from "../app/data/support-pages";
 import { getSitemapPaths } from "../server/utils/sitemap";
@@ -58,5 +58,15 @@ describe("route contract", () => {
     expect(primaryLeafPaths).toContain("/goroda/astana/");
     expect(primaryLeafPaths).toContain("/goroda/shymkent/");
     expect(homeCityPaths).toEqual(["/goroda/almaty/", "/goroda/astana/", "/goroda/shymkent/"]);
+  });
+
+  it("keeps neon below the core b2b services in service navigation", () => {
+    const servicePaths = serviceNavigation.map((item) => item.href);
+    const neonIndex = servicePaths.indexOf("/uslugi/neonovye-vyveski/");
+
+    expect(neonIndex).toBeGreaterThan(servicePaths.indexOf("/uslugi/fasadnye-vyveski/"));
+    expect(neonIndex).toBeGreaterThan(servicePaths.indexOf("/uslugi/svetovye-koroba/"));
+    expect(neonIndex).toBeGreaterThan(servicePaths.indexOf("/uslugi/vyveski-dlya-seti/"));
+    expect(neonIndex).toBeGreaterThan(servicePaths.indexOf("/uslugi/vyveski-pod-klyuch/"));
   });
 });

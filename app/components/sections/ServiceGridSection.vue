@@ -157,7 +157,13 @@ function isLowerServiceCard(slug: ServiceCard["slug"]) {
 }
 
 function getLowerCtaLabel(slug: ServiceCard["slug"]) {
-  return isLowerServiceCard(slug) ? "Подробнее" : "Открыть услугу";
+  const card = props.cards.find((item) => item.slug === slug);
+
+  if (!card) {
+    return "Услуга";
+  }
+
+  return card.title;
 }
 
 function getLowerSupportingRowColumnsBefore(index: number) {
@@ -293,7 +299,7 @@ function getHomeServiceImageStyle(card: ServiceCard | null) {
                 <ButtonLink
                   :href="featuredCard.path"
                   class="home-service-card__image-cta-link"
-                  label="Открыть услугу"
+                  :label="featuredCard.title"
                   intent="secondary"
                   tracking-event="open_service_page"
                 />
@@ -325,7 +331,7 @@ function getHomeServiceImageStyle(card: ServiceCard | null) {
               <div class="mt-auto pt-3">
                 <ButtonLink
                   :href="card.path"
-                  label="Открыть услугу"
+                  :label="card.title"
                   intent="secondary"
                   tracking-event="open_service_page"
                   block
@@ -373,7 +379,7 @@ function getHomeServiceImageStyle(card: ServiceCard | null) {
                 </p>
               </div>
               <div class="home-service-card__footer home-service-card__footer--feature">
-                <span class="home-service-card__button">Открыть услугу</span>
+                <span class="home-service-card__button">{{ lowerFeaturedCard.title }}</span>
                 <span
                   v-if="getHiddenTagCount(lowerFeaturedCard, 3)"
                   class="home-service-card__meta"
@@ -467,7 +473,7 @@ function getHomeServiceImageStyle(card: ServiceCard | null) {
           <div class="mt-auto pt-2">
             <ButtonLink
               :href="card.path"
-              label="Открыть услугу"
+              :label="card.title"
               intent="secondary"
               tracking-event="open_service_page"
               block

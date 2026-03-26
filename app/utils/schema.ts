@@ -77,6 +77,21 @@ export function buildOrganizationSchema(siteUrl: string, contact: ContactInfo) {
   };
 }
 
+export function buildWebSiteSchema(siteUrl: string, contact: ContactInfo) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: contact.publicName,
+    url: siteUrl,
+    inLanguage: "ru",
+    publisher: {
+      "@type": "Organization",
+      name: contact.publicName,
+      url: siteUrl
+    }
+  };
+}
+
 export function buildWebPageSchema(siteUrl: string, title: string, description: string, path: string) {
   return {
     "@context": "https://schema.org",

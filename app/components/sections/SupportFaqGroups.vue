@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import type { SupportFaqGroup } from "../../../shared/types/content";
+import type { CTAConfig, RelatedLink, SupportFaqGroup } from "../../../shared/types/content";
 
 const props = defineProps<{
   anchorId?: string;
   title: string;
   description: string;
   groups: SupportFaqGroup[];
+  relatedLinks?: RelatedLink[];
+  answerCta?: Pick<CTAConfig, "label" | "href">;
 }>();
 </script>
 
@@ -31,6 +33,8 @@ const props = defineProps<{
         :title="group.title"
         :description="group.description"
         :items="group.items"
+        :related-links="props.relatedLinks"
+        :answer-cta="props.answerCta"
         variant="support"
       />
     </div>

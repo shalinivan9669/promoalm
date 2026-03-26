@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { cases } from "../../data/cases";
 import { services } from "../../data/services";
+import { contactInfo } from "../../data/site";
 import { getCasesByIds } from "../../utils/links";
-import { buildBreadcrumbSchema, buildFaqSchema, buildServiceSchema } from "../../utils/schema";
+import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationSchema, buildServiceSchema, buildWebPageSchema } from "../../utils/schema";
 
 const route = useRoute();
 const slug = route.params.slug as string;
@@ -17,7 +18,9 @@ const siteUrl = config.public.siteUrl as string;
 const breadcrumbs = useBreadcrumbs([{ label: page.name, href: page.meta.path, current: true }]);
 const relatedCases = getCasesByIds(cases.filter((item) => item.status === "published"), page.caseIds);
 const schemas = [
+  buildOrganizationSchema(siteUrl, contactInfo),
   buildBreadcrumbSchema(siteUrl, breadcrumbs),
+  buildWebPageSchema(siteUrl, page.h1, page.meta.description, page.meta.path),
   buildServiceSchema(siteUrl, page),
   buildFaqSchema(page.faq)
 ].filter(Boolean) as Record<string, unknown>[];

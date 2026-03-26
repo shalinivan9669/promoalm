@@ -25,7 +25,7 @@ const serviceSummaries: ServiceSummary[] = [
     name: "Фасадные вывески",
     navLabel: "Фасадные вывески",
     intro:
-      "Фасад — это не место для случайного декора. Здесь важны масштаб, видимость с дистанции, крепление и то, как вывеска работает в реальном городском потоке.",
+      "Фасадные вывески для бизнеса под улицу, читаемость, крепление и монтаж. Подходит для одной точки, сети и объектов по Казахстану.",
     path: "/uslugi/fasadnye-vyveski/",
     isOutdoor: true,
     supportsMultiLocation: true,
@@ -37,7 +37,7 @@ const serviceSummaries: ServiceSummary[] = [
     name: "Объёмные буквы",
     navLabel: "Объёмные буквы",
     intro:
-      "Объёмные буквы не обязаны быть дорогой игрушкой. Они нужны там, где бренд должен смотреться собранно и держать нормальное качество по материалам и свету.",
+      "Объёмные буквы для фасадов и фирменной подачи: подбор материалов, свет, производство и монтаж по объекту.",
     path: "/uslugi/obemnye-bukvy/",
     isOutdoor: true,
     supportsMultiLocation: true,
@@ -49,7 +49,7 @@ const serviceSummaries: ServiceSummary[] = [
     name: "Световые короба",
     navLabel: "Световые короба",
     intro:
-      "Световой короб — это рабочий инструмент видимости, а не временная заглушка. Он особенно полезен, когда фасад небольшой, а точка должна читаться сразу.",
+      "Световые короба и лайтбоксы для фасадов, входных зон и торговых точек, где важны быстрая видимость и понятный запуск.",
     path: "/uslugi/svetovye-koroba/",
     isOutdoor: true,
     supportsMultiLocation: true,
@@ -61,7 +61,7 @@ const serviceSummaries: ServiceSummary[] = [
     name: "Крышные установки",
     navLabel: "Крышные установки",
     intro:
-      "Крышная установка — не товар из прайса. Это проект, где ошибки на входе дорого стоят и по срокам, и по бюджету, и по монтажу.",
+      "Крышные установки для заметных объектов: сначала конструктив, доступ и монтажный сценарий, затем производство.",
     path: "/uslugi/kryshnye-ustanovki/",
     isOutdoor: true,
     supportsMultiLocation: false,
@@ -73,7 +73,7 @@ const serviceSummaries: ServiceSummary[] = [
     name: "Вывески для сети",
     navLabel: "Вывески для сети",
     intro:
-      "Сетевой заказ ломается не на дизайне, а на рассинхроне: разные материалы, плавающие размеры, хаос в логистике и монтаж без общей схемы. Мы закрываем именно это.",
+      "Rollout для сети и нескольких точек: единый стандарт, повторяемое качество, логистика по адресам и монтаж по согласованию.",
     path: "/uslugi/vyveski-dlya-seti/",
     isOutdoor: true,
     supportsMultiLocation: true,
@@ -85,8 +85,20 @@ const serviceSummaries: ServiceSummary[] = [
     name: "Вывески под ключ",
     navLabel: "Под ключ",
     intro:
-      "Подходит, когда нужен один ответственный маршрут: от входных данных и визуального решения до производства и запуска. Удобно для бизнеса, который не хочет отдельно координировать несколько подрядчиков.",
+      "Вывески под ключ для бизнеса: бриф, макет, производство, доставка и монтаж без сборки подрядчиков по частям.",
     path: "/uslugi/vyveski-pod-klyuch/",
+    isOutdoor: true,
+    supportsMultiLocation: true,
+    installationMode: "available"
+  },
+  {
+    slug: "montazh-vyvesok",
+    status: "published",
+    name: "Монтаж вывесок",
+    navLabel: "Монтаж",
+    intro:
+      "Монтаж вывесок с учётом объекта, крепления, высоты и графика работ. Для регионов и нескольких адресов считаем отдельно.",
+    path: "/uslugi/montazh-vyvesok/",
     isOutdoor: true,
     supportsMultiLocation: true,
     installationMode: "available"
@@ -97,7 +109,7 @@ const serviceSummaries: ServiceSummary[] = [
     name: "Интерьерные вывески для бизнеса",
     navLabel: "Интерьерные вывески",
     intro:
-      "Для ресепшен-зон, торговых точек, офисов, шоурумов и других внутренних брендовых носителей. Подходят компаниям, которым важно поддерживать единый стандарт исполнения внутри пространства, тиражировать решения на несколько точек и запускать объекты без ручной пересборки процесса каждый раз.",
+      "Интерьерные вывески, логотипы и световые акценты для шоурумов, офисов продаж и клиентских зон.",
     path: "/uslugi/interernye-vyveski-dlya-biznesa/",
     isOutdoor: false,
     supportsMultiLocation: true,
@@ -109,21 +121,9 @@ const serviceSummaries: ServiceSummary[] = [
     name: "Неоновые вывески",
     navLabel: "Неон",
     intro:
-      "Неоновая вывеска нужна там, где нужен заметный световой акцент в помещении: ресепшн, витрина, шоурум или фотозона. Подбираем форму, цвет и монтаж под конкретный объект.",
+      "Неоновые вывески для коммерческих интерьеров, витрин и клиентских зон. Это отдельная интерьерная ветка, а не ядро фасадных услуг.",
     path: "/uslugi/neonovye-vyveski/",
     isOutdoor: false,
-    supportsMultiLocation: true,
-    installationMode: "available"
-  },
-  {
-    slug: "montazh-vyvesok",
-    status: "published",
-    name: "Монтаж вывесок",
-    navLabel: "Монтаж",
-    intro:
-      "Самая частая ошибка в монтаже — считать его приложением к вывеске. На деле это отдельный блок риска, особенно на фасадах, высоте и в регионах.",
-    path: "/uslugi/montazh-vyvesok/",
-    isOutdoor: true,
     supportsMultiLocation: true,
     installationMode: "available"
   },
@@ -132,7 +132,7 @@ const serviceSummaries: ServiceSummary[] = [
     status: "planned",
     name: "Замена вывески",
     navLabel: "Замена вывески",
-    intro: "Служебная запись для будущего расширения семантики без тонкой и дублирующей страницы.",
+    intro: "Служебная запись для будущего расширения семантики без дубля с монтажом и новыми проектами.",
     path: "/uslugi/zamena-vyveski/",
     isOutdoor: true,
     supportsMultiLocation: false,
@@ -143,7 +143,7 @@ const serviceSummaries: ServiceSummary[] = [
     status: "planned",
     name: "Ремонт вывесок",
     navLabel: "Ремонт вывесок",
-    intro: "Черновая запись для будущего расширения. Не должна конкурировать с монтажом и новыми проектами.",
+    intro: "Черновая запись для будущего расширения. Не должна конкурировать с монтажом и новыми вывесками.",
     path: "/uslugi/remont-vyvesok/",
     isOutdoor: true,
     supportsMultiLocation: false,

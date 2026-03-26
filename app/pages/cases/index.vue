@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { cases } from "../../data/cases";
+import { casesPageHero, casesPageLeadIntro } from "../../data/cases-page";
 import { contactInfo, staticPageMeta } from "../../data/site";
-import { buildBreadcrumbSchema, buildCollectionPageSchema, buildOrganizationSchema } from "../../utils/schema";
+import { cityPath, servicePath, staticPagePaths } from "../../utils/routes";
+import { buildBreadcrumbSchema, buildCollectionPageSchema, buildOrganizationSchema, buildWebPageSchema } from "../../utils/schema";
 
 const publishedCases = cases.filter((item) => item.status === "published");
 const config = useRuntimeConfig();
@@ -10,24 +12,41 @@ const breadcrumbs = useBreadcrumbs([{ label: "Кейсы", href: "/cases/", curr
 const schemas = [
   buildOrganizationSchema(siteUrl, contactInfo),
   buildBreadcrumbSchema(siteUrl, breadcrumbs),
+  buildWebPageSchema(siteUrl, casesPageHero.title, staticPageMeta.cases.description, staticPageMeta.cases.path),
   buildCollectionPageSchema(siteUrl, "Кейсы и сценарии", "Типовые сценарии по вывескам для бизнеса.", publishedCases)
 ];
-
-const hero = {
-  eyebrow: "Кейсы",
-  title: "Типовые кейсы по вывескам для бизнеса",
-  description:
-    "Здесь собраны типовые сценарии, близкие к реальным задачам бизнеса: фасадные вывески, световые решения, сетевые проекты и объекты со сложным монтажом. Раздел помогает понять формат задач, подход к расчёту и логику запуска проекта.",
-  facts: ["Типовые задачи бизнеса", "Привязка к услугам и городам", "Понятный сценарий запуска"],
-  actions: [
-    {
-      label: "Запросить проект",
-      href: "/kontakty/#lead-form",
-      intent: "calculate" as const,
-      trackingEvent: "click_calculate"
-    }
-  ]
-};
+const relatedLinks = [
+  {
+    label: "Фасадные вывески",
+    href: servicePath("fasadnye-vyveski"),
+    description: "Основная money page по фасадным вывескам и уличной читаемости."
+  },
+  {
+    label: "Световые короба",
+    href: servicePath("svetovye-koroba"),
+    description: "Лайтбоксы и световые короба для точек, которым нужна быстрая видимость."
+  },
+  {
+    label: "Вывески для сети",
+    href: servicePath("vyveski-dlya-seti"),
+    description: "Rollout для нескольких адресов, франшиз и повторяемых запусков."
+  },
+  {
+    label: "Алматы",
+    href: cityPath("almaty"),
+    description: "Локальный хаб по фасадным и сетевым вывескам в Алматы."
+  },
+  {
+    label: "Астана",
+    href: cityPath("astana"),
+    description: "Хаб по заметным объектам, крышным и фасадным решениям в Астане."
+  },
+  {
+    label: "Контакты",
+    href: staticPagePaths.contacts,
+    description: "Отправьте объект, адрес и задачу, чтобы перейти от сценария к расчёту."
+  }
+];
 
 usePageSeo({
   meta: staticPageMeta.cases,
@@ -40,11 +59,11 @@ usePageSeo({
   <div>
     <PageTopStrip
       :breadcrumbs="breadcrumbs"
-      :chips="hero.facts"
+      :chips="casesPageHero.facts"
     />
 
     <HeroSection
-      :hero="hero"
+      :hero="casesPageHero"
       variant="cases"
     />
 
@@ -52,7 +71,7 @@ usePageSeo({
       variant="cases"
     >
       <p class="max-w-3xl text-lg leading-8 text-muted">
-        По мере публикации новых кейсов раздел будет расширяться по городам, форматам вывесок и типам объектов.
+        {{ casesPageLeadIntro }}
       </p>
     </PageLeadSection>
 
@@ -60,6 +79,13 @@ usePageSeo({
       title="Все кейсы"
       description="Каждый кейс показывает тип задачи, ограничения по объекту и формат решения."
       :cases="publishedCases"
+      variant="cases"
+    />
+
+    <RelatedLinksSection
+      title="Куда перейти из сценария"
+      description="Если вы нашли похожий формат задачи, ниже короткий путь к нужной услуге, городскому хабу и форме расчёта."
+      :links="relatedLinks"
       variant="cases"
     />
 

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { cities } from "../app/data/cities";
 import { contactInfo } from "../app/data/site";
-import { buildFaqSchema, buildLocalBusinessSchema } from "../app/utils/schema";
+import { buildFaqSchema, buildLocalBusinessSchema, buildServiceSchema } from "../app/utils/schema";
 
 describe("schema guards", () => {
   it("creates LocalBusiness with confirmed address", () => {
@@ -35,5 +35,18 @@ describe("schema guards", () => {
   it("creates FAQ schema only when items exist", () => {
     expect(buildFaqSchema([])).toBeNull();
     expect(buildFaqSchema([cities[0]!.faq[0]!])).not.toBeNull();
+  });
+
+  it("builds city pages as services without local business claims", () => {
+    for (const city of cities.filter((item) => item.status === "published")) {
+      const schema = buildServiceSchema("https://example.com", {
+        h1: city.h1,
+        meta: city.meta,
+        city: city.city
+      });
+
+      expect(schema.areaServed).toBe(city.city);
+      expect(schema.name).toBe(city.h1);
+    }
   });
 });

@@ -57,6 +57,8 @@ const tocItems = computed(() => [
       :title="copy.faqTitle"
       :description="copy.faqDescription"
       :groups="props.page.faqGroups"
+      :related-links="props.page.relatedLinks"
+      :answer-cta="{ label: props.page.cta.label, href: props.page.cta.href }"
     />
 
     <SupportRelatedLinks

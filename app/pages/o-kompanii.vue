@@ -2,14 +2,15 @@
 import { aboutFaqs } from "../data/faqs";
 import { cases } from "../data/cases";
 import { aboutPageData, contactInfo, globalTrustStats, staticPageMeta } from "../data/site";
-import { buildBreadcrumbSchema, buildOrganizationSchema } from "../utils/schema";
+import { buildBreadcrumbSchema, buildOrganizationSchema, buildWebPageSchema } from "../utils/schema";
 
 const config = useRuntimeConfig();
 const siteUrl = config.public.siteUrl as string;
 const breadcrumbs = useBreadcrumbs([{ label: "О компании", href: "/o-kompanii/", current: true }]);
 const schemas = [
   buildOrganizationSchema(siteUrl, contactInfo),
-  buildBreadcrumbSchema(siteUrl, breadcrumbs)
+  buildBreadcrumbSchema(siteUrl, breadcrumbs),
+  buildWebPageSchema(siteUrl, aboutPageData.hero.title, staticPageMeta.about.description, staticPageMeta.about.path)
 ];
 
 usePageSeo({
@@ -70,6 +71,7 @@ usePageSeo({
       title="FAQ о подрядчике"
       description="Коротко о специализации, сетевых задачах и реальном фокусе сайта."
       :items="aboutFaqs"
+      :answer-cta="{ label: aboutPageData.finalCta.label, href: aboutPageData.finalCta.href }"
       variant="about"
     />
 

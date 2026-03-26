@@ -17,19 +17,27 @@ interface MountedHeroMediaFrame {
   frameIndex: number;
 }
 
+interface TypedHeadlineConfig {
+  baseText: string;
+  phrases: readonly string[];
+  accessibleText?: string;
+}
+
 const props = withDefaults(
   defineProps<{
     hero: HeroBlock;
     variant?: "default" | "home" | "service" | "city" | "support" | "about" | "cases" | "contact";
     mediaMode?: "abstract" | "image";
     mediaFrames?: HeroMediaFrame[];
+    typedHeadline?: TypedHeadlineConfig;
     cityName?: string;
     citySlug?: CitySlug;
   }>(),
   {
     variant: "default",
     mediaMode: "abstract",
-    mediaFrames: () => []
+    mediaFrames: () => [],
+    typedHeadline: undefined
   }
 );
 
@@ -46,6 +54,11 @@ const SLIDER_BOOT_DELAY_MS = 1200;
 const isImageMode = computed(() => props.variant === "home" && props.mediaMode === "image" && props.mediaFrames.length > 0);
 const internalVariant = computed(() => (props.variant === "home" ? "default" : props.variant));
 const homeImageFrames = computed(() => (isImageMode.value ? props.mediaFrames : []));
+const resolvedTypedHeadline = computed<TypedHeadlineConfig>(() => ({
+  baseText: props.typedHeadline?.baseText || HOME_HERO_TYPED_BASE,
+  phrases: props.typedHeadline?.phrases?.length ? props.typedHeadline.phrases : HOME_HERO_TYPED_PHRASES,
+  accessibleText: props.typedHeadline?.accessibleText || HOME_HERO_TYPED_ACCESSIBLE_TEXT
+}));
 const homeHeroMotionStyle = computed(() => ({
   "--home-hero-slide-cycle": `${SLIDE_CYCLE_MS}ms`,
   "--home-hero-slide-crossfade": `${CROSSFADE_MS}ms`
@@ -390,9 +403,9 @@ onBeforeUnmount(() => {
         <div class="home-hero__copy">
           <h1 class="home-hero__title">
             <HeroTypedHeadline
-              :base-text="HOME_HERO_TYPED_BASE"
-              :phrases="HOME_HERO_TYPED_PHRASES"
-              :accessible-text="HOME_HERO_TYPED_ACCESSIBLE_TEXT"
+              :base-text="resolvedTypedHeadline.baseText"
+              :phrases="resolvedTypedHeadline.phrases"
+              :accessible-text="resolvedTypedHeadline.accessibleText"
             />
           </h1>
           <div class="home-hero__actions mt-8 flex flex-wrap gap-3">

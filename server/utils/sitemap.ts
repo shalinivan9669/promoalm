@@ -15,7 +15,7 @@ export function getSitemapPaths() {
     .filter((city) => city.status === "published" && !city.meta.noindex)
     .map((city) => city.meta.path);
 
-  return [
+  return [...new Set([
     staticPagePaths.home,
     staticPagePaths.about,
     staticPagePaths.contacts,
@@ -23,7 +23,7 @@ export function getSitemapPaths() {
     ...supportPaths,
     ...servicePaths,
     ...cityPaths
-  ];
+  ])];
 }
 
 export function buildSitemapXml(siteUrl: string) {

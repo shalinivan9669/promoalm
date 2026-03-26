@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CaseStudy } from "../../../shared/types/content";
+import { getCaseMediaAlt, getCaseMediaConfig } from "../../data/case-media";
 import { buildWidthSrcSet, CASE_CARD_IMAGE_HEIGHT, CASE_CARD_IMAGE_SIZES, CASE_CARD_IMAGE_WIDTH } from "../../utils/responsive-images";
 
 const props = withDefaults(
@@ -36,8 +37,6 @@ const CASE_CATEGORY_LABELS: Partial<Record<CaseStudy["relatedServiceSlugs"][numb
   "vyveski-dlya-seti": "Сетевой кейс",
   "montazh-vyvesok": "Монтажный кейс"
 };
-
-type HomeCaseMediaKey = "game" | "cofe" | "retail";
 
 interface CaseMediaItem {
   src: string;
@@ -82,17 +81,6 @@ type CaseEditorialPlacement =
   | "row3-left"
   | "row3-right";
 
-const HOME_CASE_MEDIA_FOLDER_BY_SLUG: Partial<Record<CaseStudy["slug"], HomeCaseMediaKey>> = {
-  "cyber-club-facade-rollout": "game",
-  "coffee-lightbox-entry": "cofe",
-  "roof-sign-retail": "retail"
-};
-
-const HOME_CASE_MEDIA_FILES: Record<HomeCaseMediaKey, string[]> = {
-  game: ["game.avif"],
-  cofe: ["1.avif", "2.avif", "3.avif"],
-  retail: ["retail.avif", "retail2.avif"]
-};
 const CASE_CARD_RESPONSIVE_WIDTHS = [320, 420, CASE_CARD_IMAGE_WIDTH] as const;
 
 const mediaFileSorter = new Intl.Collator("ru", {
@@ -104,18 +92,18 @@ const activeSlides = ref<Record<string, number>>({});
 const homeCaseMediaBySlug = computed<Record<string, CaseMediaItem[]>>(() =>
   Object.fromEntries(
     props.cases.map((item) => {
-      const mediaKey = HOME_CASE_MEDIA_FOLDER_BY_SLUG[item.slug];
+      const mediaConfig = getCaseMediaConfig(item.slug);
 
-      if (!mediaKey) {
+      if (!mediaConfig) {
         return [item.slug, []];
       }
 
-      const media = HOME_CASE_MEDIA_FILES[mediaKey]
+      const media = mediaConfig.files
         .slice()
         .sort(mediaFileSorter.compare)
         .map((fileName, index) => ({
-          src: `/images/cases/${mediaKey}/${fileName}`,
-          alt: `${item.title} - изображение ${index + 1}`
+          src: `/images/cases/${mediaConfig.folder}/${fileName}`,
+          alt: getCaseMediaAlt(item.slug, index, item.title)
         }));
 
       return [item.slug, media];
@@ -125,30 +113,30 @@ const homeCaseMediaBySlug = computed<Record<string, CaseMediaItem[]>>(() =>
 const responsiveHomeCaseMediaBySlug = computed<Record<string, CaseMediaItem[]>>(() =>
   Object.fromEntries(
     props.cases.map((item) => {
-      const mediaKey = HOME_CASE_MEDIA_FOLDER_BY_SLUG[item.slug];
+      const mediaConfig = getCaseMediaConfig(item.slug);
 
-      if (!mediaKey) {
+      if (!mediaConfig) {
         return [item.slug, []];
       }
 
-      const media = HOME_CASE_MEDIA_FILES[mediaKey]
+      const media = mediaConfig.files
         .slice()
         .sort(mediaFileSorter.compare)
         .map((fileName, index) => {
           const fileStem = fileName.replace(/\.avif$/u, "");
 
           return {
-            src: `/images/cases/${mediaKey}/${fileName}`,
+            src: `/images/cases/${mediaConfig.folder}/${fileName}`,
             srcset: buildWidthSrcSet(
               CASE_CARD_RESPONSIVE_WIDTHS.map((width) => ({
-                src: `/images/cases/${mediaKey}/responsive/${fileStem}-card-${width}.webp`,
+                src: `/images/cases/${mediaConfig.folder}/responsive/${fileStem}-card-${width}.webp`,
                 width
               }))
             ),
             sizes: CASE_CARD_IMAGE_SIZES,
             width: CASE_CARD_IMAGE_WIDTH,
             height: CASE_CARD_IMAGE_HEIGHT,
-            alt: `${item.title} - изображение ${index + 1}`
+            alt: getCaseMediaAlt(item.slug, index, item.title)
           };
         });
 
@@ -613,7 +601,7 @@ function handleMediaKeydown(event: KeyboardEvent, caseId: string, slideCount: nu
             <div class="case-collection-card__footer">
               <ButtonLink
                 :href="`/cases/#${item.slug}`"
-                label="Открыть кейс"
+                :label="item.title"
                 intent="secondary"
                 tracking-event="open_case"
                 block
@@ -705,7 +693,7 @@ function handleMediaKeydown(event: KeyboardEvent, caseId: string, slideCount: nu
             <div class="case-collection-card__footer">
               <ButtonLink
                 :href="`/cases/#${item.slug}`"
-                label="Открыть кейс"
+                :label="item.title"
                 intent="secondary"
                 tracking-event="open_case"
                 block
