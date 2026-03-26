@@ -3559,15 +3559,15 @@
     gap: 0.9rem;
   }
 
-  .contact-intake-state__title {
-    max-width: 18ch;
-    font-family: var(--font-display);
-    font-size: clamp(1.95rem, 3.5vw, 2.75rem);
-    line-height: 1.03;
-    font-weight: 700;
-    letter-spacing: var(--tracking-display);
-    color: #ffffff;
-  }
+.contact-intake-state__title {
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.95rem, 3.5vw, 2.75rem);
+  line-height: 1.03;
+  font-weight: 700;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-ink);
+}
 
   .contact-intake-state__description {
     max-width: 40rem;
