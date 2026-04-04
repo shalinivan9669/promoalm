@@ -16,7 +16,6 @@ const staticRoutes = [
   "/politika-konfidentsialnosti/",
   "/cases/",
   "/robots.txt",
-  "/sitemap.xml",
   ...services
     .filter((service) => service.status === "published")
     .map((service) => `/uslugi/${service.slug}/`),
@@ -101,6 +100,5 @@ export default defineNuxtConfig({
     "/uslugi/**": { prerender: true },
     "/goroda/**": { prerender: true },
     "/robots.txt": { prerender: true },
-    "/sitemap.xml": { prerender: true }
   }
 });

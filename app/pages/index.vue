@@ -6,6 +6,7 @@ import { homeFaqs } from "../data/faqs";
 import { serviceCards } from "../data/service-summaries";
 import { aboutPageData, contactInfo, globalTrustStats, homePageData, staticPageMeta } from "../data/site";
 import { buildWidthSrcSet, HOME_HERO_IMAGE_HEIGHT, HOME_HERO_IMAGE_SIZES, HOME_HERO_IMAGE_WIDTH } from "../utils/responsive-images";
+import { staticPagePaths } from "../utils/routes";
 import { buildCollectionPageSchema, buildFaqSchema, buildLocalBusinessSchema, buildOrganizationSchema, buildWebSiteSchema } from "../utils/schema";
 
 const config = useRuntimeConfig();
@@ -70,6 +71,44 @@ const homeFaqLinks = ["fasadnye-vyveski", "svetovye-koroba", "vyveski-dlya-seti"
     description: item.description || item.label
   }));
 
+const homeGuideLinks = [
+  {
+    label: "FAQ",
+    href: staticPagePaths.faq,
+    description: "Короткие ответы по цене, срокам, монтажу и удалённому запуску."
+  },
+  {
+    label: "Доставка",
+    href: staticPagePaths.delivery,
+    description: "Как ведём проекты по Казахстану и что нужно для старта."
+  },
+  {
+    label: "Оплата и гарантия",
+    href: staticPagePaths.payment,
+    description: "Предоплата, этапы запуска и гарантийные условия."
+  },
+  {
+    label: "Кейсы",
+    href: staticPagePaths.cases,
+    description: "Посмотреть типовые сценарии по вывескам и сетевым проектам."
+  },
+  {
+    label: "О компании",
+    href: staticPagePaths.about,
+    description: "Понять, как устроен проектный маршрут от брифа до монтажа."
+  },
+  {
+    label: "Контакты",
+    href: staticPagePaths.contacts,
+    description: "Отправить вводные и получить расчёт по задаче."
+  },
+  {
+    label: "Политика конфиденциальности",
+    href: staticPagePaths.privacy,
+    description: "Как мы обрабатываем данные, отправленные через форму."
+  }
+];
+
 const schemas = [
   buildOrganizationSchema(siteUrl, contactInfo),
   buildWebSiteSchema(siteUrl, contactInfo),
@@ -120,6 +159,12 @@ useHead({
       :city-navigation="homeCityNavigation"
       :trust-items="globalTrustStats"
       :industries="homePageData.industries"
+    />
+
+    <RelatedLinksSection
+      title="Быстрые разделы"
+      description="Если уже понятен формат задачи, здесь собраны страницы, которые быстрее всего ведут к расчёту и условиям работы."
+      :links="homeGuideLinks"
     />
 
     <ServiceGridSection
