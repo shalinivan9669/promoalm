@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { BreadcrumbItem, CaseStudy, CityPageData, ServiceCard } from "../../../shared/types/content";
+import { staticPagePaths } from "../../utils/routes";
 
 type CityHubCopy = {
   proofTitle: string;
@@ -93,6 +94,31 @@ const faqRelatedLinks = computed(() =>
     description: item.summary
   }))
 );
+const hubLinks = computed(() => [
+  {
+    label: "Все услуги",
+    href: staticPagePaths.uslugi,
+    description: "Основные коммерческие направления и money pages."
+  },
+  {
+    label: "Все города",
+    href: staticPagePaths.goroda,
+    description: "Карта локальных страниц по Казахстану."
+  }
+]);
+const allRelatedLinks = computed(() => {
+  const links = [...props.page.relatedLinks, ...hubLinks.value];
+  const seen = new Set<string>();
+
+  return links.filter((link) => {
+    if (seen.has(link.href)) {
+      return false;
+    }
+
+    seen.add(link.href);
+    return true;
+  });
+});
 </script>
 
 <template>
@@ -158,7 +184,7 @@ const faqRelatedLinks = computed(() =>
     <RelatedLinksSection
       :title="copy.relatedTitle"
       :description="copy.relatedDescription"
-      :links="props.page.relatedLinks"
+      :links="allRelatedLinks"
       variant="city"
     />
 

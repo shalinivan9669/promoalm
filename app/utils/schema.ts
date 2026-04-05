@@ -1,4 +1,4 @@
-import type { BreadcrumbItem, CaseStudy, ContactChannelType, ContactInfo, FAQItem, SupportFaqGroup, SupportPageData } from "../../shared/types/content";
+import type { BreadcrumbItem, ContactChannelType, ContactInfo, FAQItem, SupportFaqGroup, SupportPageData } from "../../shared/types/content";
 import { absoluteUrl } from "./seo";
 
 function getPublicAddress(contact: ContactInfo) {
@@ -211,20 +211,26 @@ export function buildSupportPageSchemas(siteUrl: string, page: SupportPageData, 
   return schemas.filter(Boolean) as Record<string, unknown>[];
 }
 
-export function buildCollectionPageSchema(siteUrl: string, title: string, description: string, items: CaseStudy[]) {
+export function buildCollectionPageSchema(
+  siteUrl: string,
+  title: string,
+  description: string,
+  path: string,
+  items: { name: string; url: string }[]
+) {
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: title,
     description,
-    url: absoluteUrl(siteUrl, "/cases/"),
+    url: absoluteUrl(siteUrl, path),
     mainEntity: {
       "@type": "ItemList",
       itemListElement: items.map((item, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        name: item.title,
-        url: absoluteUrl(siteUrl, `/cases/#${item.slug}`)
+        name: item.name,
+        url: absoluteUrl(siteUrl, item.url)
       }))
     }
   };

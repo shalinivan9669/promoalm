@@ -13,9 +13,28 @@ const schemas = [
   buildOrganizationSchema(siteUrl, contactInfo),
   buildBreadcrumbSchema(siteUrl, breadcrumbs),
   buildWebPageSchema(siteUrl, casesPageHero.title, staticPageMeta.cases.description, staticPageMeta.cases.path),
-  buildCollectionPageSchema(siteUrl, "Кейсы и сценарии", "Типовые сценарии по вывескам для бизнеса.", publishedCases)
+  buildCollectionPageSchema(
+    siteUrl,
+    "Кейсы и сценарии",
+    "Типовые сценарии по вывескам для бизнеса.",
+    staticPageMeta.cases.path,
+    publishedCases.map((item) => ({
+      name: item.title,
+      url: `/cases/#${item.slug}`
+    }))
+  )
 ];
 const relatedLinks = [
+  {
+    label: "Все услуги",
+    href: staticPagePaths.uslugi,
+    description: "Основные услуги и money pages по вывескам."
+  },
+  {
+    label: "Все города",
+    href: staticPagePaths.goroda,
+    description: "Локальные страницы по городам Казахстана."
+  },
   {
     label: "Фасадные вывески",
     href: servicePath("fasadnye-vyveski"),

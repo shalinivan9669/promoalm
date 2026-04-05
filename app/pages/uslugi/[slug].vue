@@ -3,6 +3,7 @@ import { cases } from "../../data/cases";
 import { services } from "../../data/services";
 import { contactInfo } from "../../data/site";
 import { getCasesByIds } from "../../utils/links";
+import { staticPagePaths } from "../../utils/routes";
 import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationSchema, buildServiceSchema, buildWebPageSchema } from "../../utils/schema";
 
 const route = useRoute();
@@ -15,7 +16,10 @@ if (!page) {
 
 const config = useRuntimeConfig();
 const siteUrl = config.public.siteUrl as string;
-const breadcrumbs = useBreadcrumbs([{ label: page.name, href: page.meta.path, current: true }]);
+const breadcrumbs = useBreadcrumbs([
+  { label: "Услуги", href: staticPagePaths.uslugi },
+  { label: page.name, href: page.meta.path, current: true }
+]);
 const relatedCases = getCasesByIds(cases.filter((item) => item.status === "published"), page.caseIds);
 const schemas = [
   buildOrganizationSchema(siteUrl, contactInfo),

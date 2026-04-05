@@ -1,7 +1,7 @@
 import type { NavItem } from "../../shared/types/content";
 import { staticPagePaths } from "../utils/routes";
+import { services } from "./services";
 import { publishedCityNavigation } from "./city-navigation";
-import { publishedServiceNavigation } from "./service-summaries";
 import { publishedSupportNavigation } from "./support-navigation";
 
 export interface PrimaryNavigationLink extends NavItem {
@@ -17,13 +17,26 @@ export interface PrimaryNavigationGroup {
 
 export type PrimaryNavigationItem = PrimaryNavigationLink | PrimaryNavigationGroup;
 
-export const serviceNavigation: NavItem[] = publishedServiceNavigation;
+export const serviceNavigation: NavItem[] = [
+  {
+    label: "Все услуги",
+    href: staticPagePaths.uslugi,
+    description: "Карта основных услуг и money pages."
+  },
+  ...services
+    .filter((service) => service.status === "published")
+    .map((service) => ({
+      label: service.navLabel,
+      href: `/uslugi/${service.slug}/`,
+      description: service.intro
+    }))
+];
 
 export const cityNavigation: NavItem[] = publishedCityNavigation;
 
 export const supportNavigation: NavItem[] = publishedSupportNavigation;
 
-export const homeCityNavigation: NavItem[] = cityNavigation;
+export const homeCityNavigation: NavItem[] = cityNavigation.filter((item) => item.href !== staticPagePaths.goroda);
 
 export const primaryNavigation: PrimaryNavigationItem[] = [
   {

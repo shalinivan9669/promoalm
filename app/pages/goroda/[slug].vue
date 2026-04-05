@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { cases } from "../../data/cases";
 import { cities } from "../../data/cities";
-import { serviceCards } from "../../data/service-summaries";
+import { serviceCards } from "../../data/services";
 import { contactInfo } from "../../data/site";
 import { getCasesByIds, getServiceCardsBySlugs } from "../../utils/links";
+import { staticPagePaths } from "../../utils/routes";
 import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationSchema, buildServiceSchema, buildWebPageSchema } from "../../utils/schema";
 
 const route = useRoute();
@@ -16,7 +17,10 @@ if (!page) {
 
 const config = useRuntimeConfig();
 const siteUrl = config.public.siteUrl as string;
-const breadcrumbs = useBreadcrumbs([{ label: page.city, href: page.meta.path, current: true }]);
+const breadcrumbs = useBreadcrumbs([
+  { label: "Города", href: staticPagePaths.goroda },
+  { label: page.city, href: page.meta.path, current: true }
+]);
 const relatedCases = getCasesByIds(cases.filter((item) => item.status === "published"), page.relatedCaseIds);
 const relatedServiceCards = getServiceCardsBySlugs(serviceCards.filter((item) => item.status === "published"), page.relatedServiceSlugs);
 const schemas = [

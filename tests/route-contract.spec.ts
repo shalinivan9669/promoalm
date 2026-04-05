@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { cities } from "../app/data/cities";
-import { flattenPrimaryNavigation, footerNavigation, homeCityNavigation, primaryNavigation, serviceNavigation } from "../app/data/navigation";
+import { cityNavigation, flattenPrimaryNavigation, footerNavigation, homeCityNavigation, primaryNavigation, serviceNavigation } from "../app/data/navigation";
 import { services } from "../app/data/services";
 import { supportPages } from "../app/data/support-pages";
 import { getSitemapPaths } from "../server/utils/sitemap";
@@ -53,11 +53,17 @@ describe("route contract", () => {
     const primaryLeafPaths = flattenPrimaryNavigation(primaryNavigation).map((item) => item.href);
     const homeCityPaths = homeCityNavigation.map((item) => item.href);
 
+    expect(serviceNavigation[0]?.href).toBe("/uslugi/");
+    expect(cityNavigation[0]?.href).toBe("/goroda/");
+    expect(primaryLeafPaths).toContain("/uslugi/");
+    expect(primaryLeafPaths).toContain("/goroda/");
     expect(primaryLeafPaths).toContain("/faq/");
     expect(primaryLeafPaths).toContain("/goroda/almaty/");
     expect(primaryLeafPaths).toContain("/goroda/astana/");
     expect(primaryLeafPaths).toContain("/goroda/shymkent/");
     expect(homeCityPaths).toEqual(["/goroda/almaty/", "/goroda/astana/", "/goroda/shymkent/"]);
+    expect(footerNavigation.services[0]?.href).toBe("/uslugi/");
+    expect(footerNavigation.cities[0]?.href).toBe("/goroda/");
   });
 
   it("keeps neon below the core b2b services in service navigation", () => {

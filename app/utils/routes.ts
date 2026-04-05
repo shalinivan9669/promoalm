@@ -27,6 +27,8 @@ export function supportPagePath(slug: SupportPageSlug) {
 
 export const staticPagePaths = {
   home: "/",
+  uslugi: "/uslugi/",
+  goroda: "/goroda/",
   about: "/o-kompanii/",
   contacts: "/kontakty/",
   faq: "/faq/",

@@ -1,7 +1,12 @@
 import type { NavItem } from "../../shared/types/content";
-import { cityPath } from "../utils/routes";
+import { cityPath, staticPagePaths } from "../utils/routes";
 
 export const publishedCityNavigation: NavItem[] = [
+  {
+    label: "Все города",
+    href: staticPagePaths.goroda,
+    description: "Локальные страницы по городам Казахстана."
+  },
   {
     label: "Алматы",
     href: cityPath("almaty"),

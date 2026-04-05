@@ -17,6 +17,8 @@ export function getSitemapPaths() {
 
   return [...new Set([
     staticPagePaths.home,
+    staticPagePaths.uslugi,
+    staticPagePaths.goroda,
     staticPagePaths.about,
     staticPagePaths.contacts,
     staticPagePaths.cases,

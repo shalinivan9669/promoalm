@@ -3,6 +3,7 @@ import { caseMediaBySlug } from "../app/data/case-media";
 import { casesPageHero } from "../app/data/cases-page";
 import { cases } from "../app/data/cases";
 import { contactPageData } from "../app/data/contact-page";
+import { citiesHubPageData, servicesHubPageData } from "../app/data/hub-pages";
 import { services } from "../app/data/services";
 import { aboutPageData, homePageData, staticPageMeta } from "../app/data/site";
 import { supportPages } from "../app/data/support-pages";
@@ -71,6 +72,20 @@ try {
       description: staticPageMeta.cases.description,
       h1: casesPageHero.title,
       canonical: staticPageMeta.cases.path
+    },
+    {
+      key: "uslugi-hub",
+      title: servicesHubPageData.meta.title,
+      description: servicesHubPageData.meta.description,
+      h1: servicesHubPageData.hero.title,
+      canonical: servicesHubPageData.meta.path
+    },
+    {
+      key: "goroda-hub",
+      title: citiesHubPageData.meta.title,
+      description: citiesHubPageData.meta.description,
+      h1: citiesHubPageData.hero.title,
+      canonical: citiesHubPageData.meta.path
     },
     ...publishedServices.map((item) => ({
       key: item.slug,

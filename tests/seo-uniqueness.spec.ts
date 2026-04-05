@@ -4,6 +4,7 @@ import { cities } from "../app/data/cities";
 import { caseMediaBySlug } from "../app/data/case-media";
 import { casesPageHero } from "../app/data/cases-page";
 import { contactPageData } from "../app/data/contact-page";
+import { citiesHubPageData, servicesHubPageData } from "../app/data/hub-pages";
 import { services } from "../app/data/services";
 import { aboutPageData, homePageData, staticPageMeta } from "../app/data/site";
 import { supportPages as supportData } from "../app/data/support-pages";
@@ -13,14 +14,23 @@ describe("seo uniqueness", () => {
   const publishedCities = cities.filter((item) => item.status === "published");
   const publishedSupport = supportData.filter((item) => item.status === "published");
   const staticMetas = Object.values(staticPageMeta);
-  const staticH1s = [homePageData.hero.title, aboutPageData.hero.title, contactPageData.hero.title, casesPageHero.title];
+  const hubMetas = [servicesHubPageData.meta, citiesHubPageData.meta];
+  const staticH1s = [
+    homePageData.hero.title,
+    aboutPageData.hero.title,
+    contactPageData.hero.title,
+    casesPageHero.title,
+    servicesHubPageData.hero.title,
+    citiesHubPageData.hero.title
+  ];
 
   it("keeps titles unique", () => {
     const titles = [
       ...publishedServices.map((item) => item.meta.title),
       ...publishedCities.map((item) => item.meta.title),
       ...publishedSupport.map((item) => item.meta.title),
-      ...staticMetas.map((item) => item.title)
+      ...staticMetas.map((item) => item.title),
+      ...hubMetas.map((item) => item.title)
     ];
 
     expect(new Set(titles).size).toBe(titles.length);
@@ -31,7 +41,8 @@ describe("seo uniqueness", () => {
       ...publishedServices.map((item) => item.meta.description),
       ...publishedCities.map((item) => item.meta.description),
       ...publishedSupport.map((item) => item.meta.description),
-      ...staticMetas.map((item) => item.description)
+      ...staticMetas.map((item) => item.description),
+      ...hubMetas.map((item) => item.description)
     ];
 
     expect(new Set(descriptions).size).toBe(descriptions.length);
@@ -53,7 +64,8 @@ describe("seo uniqueness", () => {
       ...publishedServices.map((item) => item.meta.canonical ?? item.meta.path),
       ...publishedCities.map((item) => item.meta.canonical ?? item.meta.path),
       ...publishedSupport.map((item) => item.meta.canonical ?? item.meta.path),
-      ...staticMetas.map((item) => item.path)
+      ...staticMetas.map((item) => item.path),
+      ...hubMetas.map((item) => item.path)
     ];
 
     expect(new Set(paths).size).toBe(paths.length);
@@ -78,6 +90,12 @@ describe("seo uniqueness", () => {
         description: item.meta.description,
         h1: item.h1,
         canonical: item.meta.canonical ?? item.meta.path
+      })),
+      ...hubMetas.map((item, index) => ({
+        title: item.title,
+        description: item.description,
+        h1: staticH1s[4 + index]!,
+        canonical: item.path
       })),
       ...staticMetas.map((item, index) => ({
         title: item.title,

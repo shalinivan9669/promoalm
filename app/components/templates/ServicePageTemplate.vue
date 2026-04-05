@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { BreadcrumbItem, CaseStudy, ServicePageData } from "../../../shared/types/content";
 import { cities } from "../../data/cities";
-import { serviceCards } from "../../data/service-summaries";
+import { servicePath, staticPagePaths } from "../../utils/routes";
 
 const props = defineProps<{
   page: ServicePageData;
@@ -12,7 +12,11 @@ const props = defineProps<{
 const page = computed(() => props.page);
 const breadcrumbs = computed(() => props.breadcrumbs);
 const caseStudies = computed(() => props.caseStudies);
-const topChips = computed(() => serviceCards.find((item) => item.slug === page.value.slug)?.tags ?? []);
+const topChips = computed(() => [
+  page.value.isOutdoor ? "Улица" : "Интерьер",
+  page.value.supportsMultiLocation ? "Сети" : "Одна точка",
+  page.value.installationMode === "available" ? "Монтаж" : "По согласованию"
+]);
 const serviceCopy = computed<
   Record<
     | "trustTitle"
@@ -83,16 +87,16 @@ const serviceCopy = computed<
       };
     case "vyveski-dlya-seti":
       return {
-        trustTitle: "Что важно для сети и rollout",
-        industryTitle: "Где rollout особенно нужен",
-        proofTitle: "Что фиксируем по сети до запуска партии",
-        priceTitle: "Как считаем проект для сети",
-        processTitle: "Как идёт rollout по сети",
+        trustTitle: "Что важно для фасадных вывесок в сети",
+        industryTitle: "Где фасадные вывески для сети особенно нужны",
+        proofTitle: "Что фиксируем до старта первой партии",
+        priceTitle: "Как считаем фасадные вывески для сети",
+        processTitle: "Как идёт проект фасадных вывесок для сети",
         materialsTitle: "Материалы и стандарты для сети",
         caseTitle: "Сценарии для сети и нескольких точек",
-        faqTitle: "Что спрашивают по сетевым вывескам",
-        relatedTitle: "Что посмотреть рядом с rollout-проектом",
-        ctaTitle: "Нужен расчёт для сети?"
+        faqTitle: "Что спрашивают по фасадным вывескам для сети",
+        relatedTitle: "Что посмотреть рядом с сетевым проектом",
+        ctaTitle: "Нужен расчет для сети?"
       };
     case "vyveski-pod-klyuch":
       return {
@@ -162,8 +166,31 @@ const cityHubLinks = computed(() => {
       description: `Локальный хаб по ${city.city}: расчёт, логистика и монтаж по объекту.`
     }));
 });
+const bridgeLinks = computed(() =>
+  page.value.slug === "fasadnye-vyveski"
+    ? [
+        {
+          label: "Фасадные вывески для сети и нескольких точек",
+          href: servicePath("vyveski-dlya-seti"),
+          description: "Если у вас 3+ адреса и нужен единый стандарт по материалам, партиям и монтажу."
+        }
+      ]
+    : []
+);
+const hubLinks = computed(() => [
+  {
+    label: "Все услуги",
+    href: staticPagePaths.uslugi,
+    description: "Карта основных коммерческих направлений."
+  },
+  {
+    label: "Все города",
+    href: staticPagePaths.goroda,
+    description: "Локальные страницы по Казахстану."
+  }
+]);
 const allRelatedLinks = computed(() => {
-  const links = [...page.value.relatedLinks, ...cityHubLinks.value];
+  const links = [...page.value.relatedLinks, ...bridgeLinks.value, ...cityHubLinks.value, ...hubLinks.value];
   const seen = new Set<string>();
 
   return links.filter((link) => {

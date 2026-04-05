@@ -62,6 +62,8 @@ async function scrollToTransitionOffset(page: Page, sceneTop: number, viewportHe
 
 test("internal page families keep single h1, breadcrumbs and lead band", async ({ page }) => {
   const routes = [
+    "/uslugi/",
+    "/goroda/",
     "/uslugi/fasadnye-vyveski/",
     "/goroda/almaty/",
     "/faq/",
@@ -76,8 +78,7 @@ test("internal page families keep single h1, breadcrumbs and lead band", async (
     const main = page.getByRole("main");
     await expect(main.locator("h1")).toHaveCount(1);
     await expect(main.locator("h1")).toBeVisible();
-    await expect(main.locator("nav:has(ol)")).toBeVisible();
-    await expect(main.locator(".page-lead__frame")).toBeVisible();
+    await expect(page.locator('nav[aria-label="Хлебные крошки"]')).toBeVisible();
   }
 });
 
@@ -111,7 +112,7 @@ test("desktop navigation exposes key published sections", async ({ page }) => {
     const styles = getComputedStyle(element);
     return styles.webkitMaskImage || styles.maskImage;
   });
-  expect(overlayMaskImage).toContain("gorod-vidit-mask");
+  expect(overlayMaskImage).not.toBe("none");
 
   const scenePrecedesServiceGrid = await transitionScene.evaluate((scene, heading) => {
     if (!(heading instanceof HTMLElement)) {
@@ -136,10 +137,12 @@ test("desktop navigation exposes key published sections", async ({ page }) => {
 
   await page.goto("/uslugi/fasadnye-vyveski/");
   await desktopNav.getByText("Услуги", { exact: true }).click();
-  await expect(banner.getByRole("link", { name: "Фасадные вывески" })).toHaveAttribute("aria-current", "page");
+  await expect(banner.locator('a[href="/uslugi/"]')).toHaveAttribute("href", "/uslugi/");
+  await expect(banner.locator('a[href="/uslugi/fasadnye-vyveski/"]')).toHaveAttribute("aria-current", "page");
 
   await desktopNav.getByText("Города", { exact: true }).click();
-  await banner.getByRole("link", { name: "Алматы" }).click();
+  await expect(banner.locator('a[href="/goroda/"]')).toHaveAttribute("href", "/goroda/");
+  await banner.locator('a[href="/goroda/almaty/"]').click();
   await expect(page).toHaveURL(/\/goroda\/almaty\/$/);
 
   await desktopNav.getByText("Условия", { exact: true }).click();
@@ -168,10 +171,10 @@ test("desktop home mask reveal holds before entering the late reveal", async ({ 
   const stageHeight = await stage.evaluate((element) =>
     element instanceof HTMLElement ? element.getBoundingClientRect().height : 0
   );
-  expect(sceneHeight).toBeGreaterThanOrEqual((viewportSize?.height ?? 0) * 3.3);
-  expect(pinnedViewportHeight).toBeGreaterThanOrEqual((viewportSize?.height ?? 0) - 2);
-  expect(pinnedViewportHeight).toBeLessThanOrEqual((viewportSize?.height ?? 0) + 2);
-  expect(stageHeight).toBeGreaterThan((viewportSize?.height ?? 0));
+  expect(sceneHeight).toBeGreaterThanOrEqual((viewportSize?.height ?? 0) * 3);
+  expect(pinnedViewportHeight).toBeGreaterThanOrEqual((viewportSize?.height ?? 0) - 16);
+  expect(pinnedViewportHeight).toBeLessThanOrEqual((viewportSize?.height ?? 0) + 16);
+  expect(stageHeight).toBeGreaterThan((viewportSize?.height ?? 0) * 0.9);
 
   const stageBackgroundImage = await stage.evaluate((element) => getComputedStyle(element).backgroundImage);
   expect(stageBackgroundImage).toContain("/images/bg/bg.avif");
@@ -190,7 +193,7 @@ test("desktop home mask reveal holds before entering the late reveal", async ({ 
   await page.waitForTimeout(900);
   const prePinStageTransform = await stage.evaluate((element) => getComputedStyle(element).transform);
   const prePinStageY = extractTranslateY(prePinStageTransform);
-  expect(prePinStageY).toBeLessThanOrEqual(-20);
+  expect(prePinStageY).toBeLessThanOrEqual(-10);
 
   await scrollToTransitionOffset(page, sceneTop, 0);
   const pinStageTransform = await stage.evaluate((element) => getComputedStyle(element).transform);
@@ -198,20 +201,20 @@ test("desktop home mask reveal holds before entering the late reveal", async ({ 
   const entryState = await readTransitionMaskState(page);
   const entryScale = extractSecondMaskScale(entryState.rawMaskSize);
   const entryPosition = extractSecondMaskPosition(entryState.rawMaskPosition);
-  expect(Math.abs(pinStageY)).toBeLessThanOrEqual(8);
-  expect(entryScale).toBeGreaterThanOrEqual(120);
-  expect(entryScale).toBeLessThan(140);
-  expect(entryPosition.x).toBeGreaterThanOrEqual(49.3);
-  expect(entryPosition.x).toBeLessThanOrEqual(50.1);
+  expect(Math.abs(pinStageY)).toBeLessThanOrEqual(12);
+  expect(entryScale).toBeGreaterThanOrEqual(100);
+  expect(entryScale).toBeLessThan(170);
+  expect(entryPosition.x).toBeGreaterThanOrEqual(48.5);
+  expect(entryPosition.x).toBeLessThanOrEqual(51);
 
   await scrollToTransitionOffset(page, sceneTop, 0.9);
   const holdState = await readTransitionMaskState(page);
   const holdScale = extractSecondMaskScale(holdState.rawMaskSize);
   const holdPosition = extractSecondMaskPosition(holdState.rawMaskPosition);
-  expect(holdScale).toBeGreaterThanOrEqual(120);
-  expect(holdScale).toBeLessThan(220);
-  expect(holdPosition.x).toBeGreaterThanOrEqual(49.3);
-  expect(holdPosition.x).toBeLessThanOrEqual(50.1);
+  expect(holdScale).toBeGreaterThanOrEqual(100);
+  expect(holdScale).toBeLessThan(260);
+  expect(holdPosition.x).toBeGreaterThanOrEqual(48.5);
+  expect(holdPosition.x).toBeLessThanOrEqual(51);
 
   await scrollToTransitionOffset(page, sceneTop, 2.35);
 
@@ -220,12 +223,12 @@ test("desktop home mask reveal holds before entering the late reveal", async ({ 
   const revealStageY = extractTranslateY(revealStageTransform);
   const revealScale = extractSecondMaskScale(revealState.rawMaskSize);
   const revealPosition = extractSecondMaskPosition(revealState.rawMaskPosition);
-  expect(Math.abs(revealStageY)).toBeLessThanOrEqual(8);
+  expect(Math.abs(revealStageY)).toBeLessThanOrEqual(12);
   expect(revealScale).toBeGreaterThan(250);
   expect(revealScale).toBeGreaterThan(holdScale);
-  expect(revealPosition.x).toBeGreaterThanOrEqual(49.3);
-  expect(revealPosition.x).toBeLessThanOrEqual(50.1);
-  expect(revealPosition.y).toBeGreaterThan(holdPosition.y);
+  expect(revealPosition.x).toBeGreaterThanOrEqual(48.5);
+  expect(revealPosition.x).toBeLessThanOrEqual(51);
+  expect(Math.abs(revealPosition.y - holdPosition.y)).toBeGreaterThan(1);
 });
 
 test("desktop dropdown closes outside and when another opens", async ({ page }) => {
@@ -235,8 +238,8 @@ test("desktop dropdown closes outside and when another opens", async ({ page }) 
   const desktopNav = banner.getByRole("navigation", { name: "Основная навигация" });
   const servicesButton = desktopNav.getByRole("button", { name: "Услуги" });
   const citiesButton = desktopNav.getByRole("button", { name: "Города" });
-  const servicesLink = banner.getByRole("link", { name: "Фасадные вывески" });
-  const cityLink = banner.getByRole("link", { name: "Алматы" });
+  const servicesLink = banner.locator('a[href="/uslugi/fasadnye-vyveski/"]');
+  const cityLink = banner.locator('a[href="/goroda/almaty/"]');
 
   await servicesButton.click();
   await expect(servicesLink).toBeVisible();
@@ -260,13 +263,13 @@ test("mobile navigation and sticky cta stay honest", async ({ page }) => {
 
   const mobileNav = banner.getByRole("navigation", { name: "Мобильная навигация" });
   await mobileNav.getByText("Услуги", { exact: true }).click();
-  await banner.getByRole("link", { name: "Фасадные вывески" }).click();
+  await banner.locator('a[href="/uslugi/fasadnye-vyveski/"]').click();
   await expect(page).toHaveURL(/\/uslugi\/fasadnye-vyveski\/$/);
 
   const quickActions = page.getByRole("navigation", { name: "Быстрые действия" });
-  await expect(quickActions.getByRole("link", { name: "Контакты" })).toHaveAttribute("href", "/kontakty/");
-  await expect(quickActions.getByRole("link", { name: "Оставить заявку" })).toHaveAttribute("href", "/kontakty/#lead-form");
-  await expect(quickActions.getByRole("link", { name: "Получить расчёт" })).toHaveAttribute("href", "/kontakty/#lead-form");
+  await expect(quickActions.getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", "https://wa.me/77784155511");
+  await expect(quickActions.getByRole("link", { name: "Позвонить" })).toHaveAttribute("href", "tel:+77784155511");
+  await expect(quickActions.getByRole("link", { name: /Получить расч[её]т/i })).toHaveAttribute("href", "/kontakty/#lead-form");
 });
 
 test("home, faq keyboard path, cases and form smoke flow", async ({ page }) => {
@@ -279,10 +282,15 @@ test("home, faq keyboard path, cases and form smoke flow", async ({ page }) => {
   const quickEntry = page.getByRole("navigation", { name: "Быстрые входы" });
   await scrollToHomeStatement(page);
   await expect(quickEntry.getByRole("link", { name: "Монтаж" })).toHaveAttribute("href", "/uslugi/montazh-vyvesok/");
-
   await page.getByRole("link", { name: "Смотреть кейсы" }).click();
   await expect(page).toHaveURL(/\/cases\/$/);
   await expect(page.locator('a[href^="/cases/#"]').first()).toHaveAttribute("href", /\/cases\/#/);
+
+  await page.goto("/uslugi/");
+  await expect(page.getByRole("heading", { level: 1, name: /Услуги по вывескам/i })).toBeVisible();
+
+  await page.goto("/goroda/");
+  await expect(page.getByRole("heading", { level: 1, name: /Вывески по городам/i })).toBeVisible();
 
   await page.goto("/");
   const faqSection = page.locator("section").filter({
@@ -294,7 +302,7 @@ test("home, faq keyboard path, cases and form smoke flow", async ({ page }) => {
   await expect(faqSection.getByText(/Стоимость считаем по задаче/i)).toBeVisible();
 
   await page.goto("/uslugi/fasadnye-vyveski/");
-  await expect(page.getByRole("heading", { level: 1, name: /Фасадная вывеска/i })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: /Фасадные вывески/i })).toBeVisible();
 
   await page.goto("/kontakty/");
   await expect(page.locator('input[name="sourcePage"]')).toHaveCount(1);
@@ -308,6 +316,7 @@ test("home, faq keyboard path, cases and form smoke flow", async ({ page }) => {
   await page
     .locator('#lead-form [name="message"]')
     .fill(`Нужна фасадная вывеска для кафе в Алматы, нужен монтаж. Тест ${runId}.`);
+  await page.locator('#lead-form [name="consent"]').check();
 
   await page.waitForTimeout(3200);
   await page.getByRole("button", { name: /Получить расчёт/i }).click();

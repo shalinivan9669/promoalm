@@ -3,7 +3,7 @@ import { cases } from "../data/cases";
 import { homeHeroHeadline } from "../data/site";
 import { homeCityNavigation, serviceNavigation } from "../data/navigation";
 import { homeFaqs } from "../data/faqs";
-import { serviceCards } from "../data/service-summaries";
+import { serviceCards } from "../data/services";
 import { aboutPageData, contactInfo, globalTrustStats, homePageData, staticPageMeta } from "../data/site";
 import { buildWidthSrcSet, HOME_HERO_IMAGE_HEIGHT, HOME_HERO_IMAGE_SIZES, HOME_HERO_IMAGE_WIDTH } from "../utils/responsive-images";
 import { staticPagePaths } from "../utils/routes";
@@ -37,6 +37,14 @@ const homeHeroFrames = ["1", "2", "3", "4", "5", "6"].map((name, index) => ({
 const homeTransitionImage = "/images/bg/bg.avif";
 
 const heroQuickLinks = [
+  {
+    label: "Все услуги",
+    href: staticPagePaths.uslugi
+  },
+  {
+    label: "Все города",
+    href: staticPagePaths.goroda
+  },
   ...homeCityNavigation.slice(0, 3).map((item) => ({
     label: item.label,
     href: item.href
@@ -72,6 +80,16 @@ const homeFaqLinks = ["fasadnye-vyveski", "svetovye-koroba", "vyveski-dlya-seti"
   }));
 
 const homeGuideLinks = [
+  {
+    label: "Все услуги",
+    href: staticPagePaths.uslugi,
+    description: "Карта всех основных коммерческих направлений."
+  },
+  {
+    label: "Все города",
+    href: staticPagePaths.goroda,
+    description: "Локальные страницы по Казахстану."
+  },
   {
     label: "FAQ",
     href: staticPagePaths.faq,
@@ -113,7 +131,16 @@ const schemas = [
   buildOrganizationSchema(siteUrl, contactInfo),
   buildWebSiteSchema(siteUrl, contactInfo),
   buildLocalBusinessSchema(siteUrl, contactInfo),
-  buildCollectionPageSchema(siteUrl, "Кейсы", "Типовые сценарии по вывескам для бизнеса.", featuredCases),
+  buildCollectionPageSchema(
+    siteUrl,
+    "Кейсы",
+    "Типовые сценарии по вывескам для бизнеса.",
+    staticPagePaths.cases,
+    featuredCases.map((item) => ({
+      name: item.title,
+      url: `/cases/#${item.slug}`
+    }))
+  ),
   buildFaqSchema(homeFaqs)
 ].filter(Boolean) as Record<string, unknown>[];
 

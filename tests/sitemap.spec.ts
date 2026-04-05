@@ -7,6 +7,8 @@ describe("sitemap", () => {
     const paths = getSitemapPaths();
 
     expect(paths).toContain("/");
+    expect(paths).toContain("/uslugi/");
+    expect(paths).toContain("/goroda/");
     expect(paths).toContain("/uslugi/fasadnye-vyveski/");
     expect(paths).toContain("/goroda/almaty/");
     expect(paths).toContain("/dostavka-po-kazahstanu/");
@@ -15,6 +17,8 @@ describe("sitemap", () => {
   it("builds xml with absolute urls", () => {
     const xml = buildSitemapXml("https://example.com");
 
+    expect(xml).toContain("https://example.com/uslugi/");
+    expect(xml).toContain("https://example.com/goroda/");
     expect(xml).toContain("https://example.com/uslugi/fasadnye-vyveski/");
     expect(xml).toContain("<urlset");
   });
